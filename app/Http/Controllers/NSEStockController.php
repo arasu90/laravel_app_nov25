@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\NSEClient;
+use Illuminate\Support\Facades\Log;
 
-class StockController extends Controller
+class NSEStockController extends Controller
 {
     protected $nse;
 
@@ -41,5 +42,34 @@ class StockController extends Controller
     public function indices()
     {
         return response()->json($this->nse->getIndices());
+    }
+
+    public function test()
+    {
+        return response()->json(['message' => 'Test endpoint working']);
+    }
+
+    public function allStocks()
+    {
+        $data = $this->nse->getAllStockSymbol();
+        // Log::info($data);
+        $symbols = array_map(function($item) {
+            return $item['metadata']['symbol'];
+        }, $data['data']);
+        sort($symbols);
+        return $data ? response()->json($symbols) : response()->json(['error' => 'Data not found'], 404);
+    }
+
+    public function marketHolidays(Request $request)
+    {
+        $type = $request->query('type', 'trading');
+        $data = $this->nse->getMarketHolidays($type);
+        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+    }
+
+    public function corporateInfo($symbol)
+    {
+        $data = $this->nse->getCorporateInfo($symbol);
+        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
     }
 }

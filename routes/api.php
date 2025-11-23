@@ -1,8 +1,11 @@
 <?php
 
-use App\Http\Controllers\StockController;
+use App\Http\Controllers\NSEStockController;
 
-Route::get('/market-status', [StockController::class, 'marketStatus']);
-Route::get('/stock/{symbol}', [StockController::class, 'equity']);
-Route::get('/stock/{symbol}/historical', [StockController::class, 'equityHistorical']);
-Route::get('/indices', [StockController::class, 'indices']);
+Route::get('/market-status', [NSEStockController::class, 'marketStatus']);
+Route::get('/stock/{symbol}', [NSEStockController::class, 'equity']);
+Route::get('/stock/{symbol}/historical', [NSEStockController::class, 'equityHistorical']);
+Route::get('/indices', [NSEStockController::class, 'indices']);
+Route::get('/all-stocks', [NSEStockController::class, 'allStocks']);
+Route::get('/holidays', [NSEStockController::class, 'marketHolidays']);
+Route::get('/corporate-info/{symbol}', [NSEStockController::class, 'corporateInfo']);

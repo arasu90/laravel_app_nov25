@@ -86,4 +86,38 @@ class NSEClient
     {
         return Carbon::now()->subDays($n)->format('d-m-Y');
     }
+
+    /**
+     * Fetch all stock symbols
+     */
+    public function getAllStockSymbol()
+    {
+        $url = $this->baseUrl . '/market-data-pre-open?key=ALL';
+        $response = Http::withHeaders($this->getHeaders())->get($url);
+        
+        return $response->ok() ? $response->json() : null;
+    }
+    
+
+    /**
+     * Fetch market holidays by type
+     */
+    public function getMarketHolidays($type='trading')
+    {
+        $url = $this->baseUrl . '/holiday-master?type=' . $type;
+        $response = Http::withHeaders($this->getHeaders())->get($url);
+
+        return $response->ok() ? $response->json() : null;
+    }
+
+    /**
+     * Fetch corporate information by symbol
+     */
+    public function getCorporateInfo($symbol)
+    {
+        $url = $this->baseUrl . '/top-corp-info?symbol=' . strtoupper($symbol).'&market=equities';
+        $response = Http::withHeaders($this->getHeaders())->get($url);
+
+        return $response->ok() ? $response->json() : null;
+    }
 }
