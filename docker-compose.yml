@@ -1,0 +1,30 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - db
+
+  webserver:
+    image: nginx:alpine
+    ports:
+      - "8095:80"
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+
+  db:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nse_stock
+      MYSQL_USER: stock_admin
+      MYSQL_PASSWORD: admin_stock
+    ports:
+      - "3395:3306"
