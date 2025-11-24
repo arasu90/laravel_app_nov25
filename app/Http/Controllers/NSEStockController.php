@@ -49,15 +49,24 @@ class NSEStockController extends Controller
         return response()->json(['message' => 'Test endpoint working']);
     }
 
-    public function allStocks()
+    public function getAllStocksArray()
     {
         $data = $this->nse->getAllStockSymbol();
         // Log::info($data);
+
         $symbols = array_map(function($item) {
             return $item['metadata']['symbol'];
         }, $data['data']);
         sort($symbols);
-        return $data ? response()->json($symbols) : response()->json(['error' => 'Data not found'], 404);
+        return $symbols;
+    }
+
+     // GET /api/all-stocks
+
+    public function allStocks()
+    {
+        $symbols = $this->getAllStocksArray();
+        return $symbols ? response()->json($symbols) : response()->json(['error' => 'Data not found'], 404);
     }
 
     public function marketHolidays(Request $request)
