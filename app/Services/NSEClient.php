@@ -40,7 +40,7 @@ class NSEClient
      */
     public function getEquityDetails($symbol)
     {
-        $url = $this->baseUrl . '/quote-equity?symbol=' . strtoupper($symbol);
+        $url = $this->baseUrl . '/quote-equity?symbol=' . urlencode(strtoupper($symbol));
         $response = Http::withHeaders($this->getHeaders())->get($url);
 
         return $response->ok() ? $response->json() : null;

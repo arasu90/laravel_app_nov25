@@ -14,3 +14,10 @@ Route::get('/all-stocks', [StockController::class, 'allStocks'])->name('allStock
 
 // routes/web.php
 Route::get('/stocks/monthly', [StockController::class, 'monthlyView']);
+
+Route::get('/trigger-stock-update', function () {
+    exec('php /var/www/artisan update:stocks > /dev/null 2>&1 &');
+    return "Running in background";
+});
+
+Route::get('/update-stock-data/{symbol}', [StockController::class, 'processStockData'])->where('symbol', '.*');
