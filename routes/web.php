@@ -11,3 +11,6 @@ use App\Http\Controllers\StockController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/all-stocks', [StockController::class, 'allStocks'])->name('allStocks');
+
+// routes/web.php
+Route::get('/stocks/monthly', [StockController::class, 'monthlyView']);

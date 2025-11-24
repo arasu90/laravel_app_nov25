@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('symbol')->unique();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+
+            $table->index(['symbol'], 'idx_symbol');
+            $table->index(['symbol', 'is_active'], 'idx_symbol_is_active');
         });
     }
 
