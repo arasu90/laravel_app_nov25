@@ -32,7 +32,6 @@ return new class extends Migration
             $table->decimal('intra_day_high_low_min', 10, 2);
             $table->decimal('intra_day_high_low_max', 10, 2);
             // $table->decimal('week_high_low_min', 10, 2);
-            $table->json('day_reocrds');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->useCurrent();
             $table->unique(['symbol', 'date'], 'unique_symbol_date');

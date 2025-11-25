@@ -39,10 +39,10 @@ class UpdateStocks extends Command
             $this->batchCount++;
             foreach ($stocks as $key=>$stock) {
                 $this->totalStocks++;
-                $this->stockCount--;
                 $data = (new StockController())->processStockData($stock->symbol);
                 Log::info(date('Y-m-d H:i:s').' - Stock updated: ' . $this->stockCount. ' totalStocks: ' . $this->totalStocks . ' of batchCount: ' . $this->batchCount . ' - $key: ' . ($key+1) . ' of ' . $this->batchSize . ' - ' . $stock->symbol.' - '.$data);
                 $this->info('Stock updated: ' . $this->stockCount. ' totalStocks: ' . $this->totalStocks . ' of batchCount: ' . $this->batchCount . ' - $key: ' . ($key+1) . ' of ' . $this->batchSize . ' - ' . $stock->symbol.' - '.$data);
+                $this->stockCount--;
             }
         });
         

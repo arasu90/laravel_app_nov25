@@ -9,6 +9,10 @@ use App\Http\Controllers\StockController;
 // });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/table', [HomeController::class, 'stockListTableView'])->name('stockListTableView');
+Route::get('/table/data-table', [HomeController::class, 'dataTableView'])->name('dataTableView');
+
+
 
 Route::get('/all-stocks', [StockController::class, 'allStocks'])->name('allStocks');
 

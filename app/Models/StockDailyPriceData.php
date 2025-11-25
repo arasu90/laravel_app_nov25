@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\StockSymbol;
 class StockDailyPriceData extends Model
 {
     protected $table = 's_stock_daily_price_data';
@@ -25,6 +25,6 @@ class StockDailyPriceData extends Model
     public $timestamps = true;
     public function symbol()
     {
-        return $this->belongsTo(StockSymbol::class, 'symbol', 'symbol');
+        return $this->belongsTo(StockSymmbol::class, 'symbol', 'symbol');
     }
 }
