@@ -27,4 +27,8 @@ class StockDailyPriceData extends Model
     {
         return $this->belongsTo(StockSymmbol::class, 'symbol', 'symbol');
     }
+    public function details()
+    {
+        return $this->belongsTo(StockDetails::class, 'symbol', 'symbol');
+    }
 }

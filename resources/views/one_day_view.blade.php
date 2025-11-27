@@ -56,7 +56,7 @@
     </div>
   </div>
   <div class="col-md-12">
-    <h4 class="badge badge-dark">{{ $day_records->count() }} Stocks found for today</h4>
+    <h4 class="badge badge-dark">{{ $day_records->count() }} out of {{ $fullStockRecords->count() }} Stocks found for {{ $record_date ?? 'today' }}</h4>
   </div>
   @foreach($day_records as $record) 
     <div class="col-6 col-sm-3 col-md-4 col-lg-2">
@@ -64,6 +64,7 @@
         <div class="info-price">
           <h4>
             {{ $record->symbol }}
+            <i class="btn btn-sm fa fa-fw fa-lg {{ $record->p_change > 0 ? 'fa-arrow-up' : ($record->p_change < 0 ? 'fa-arrow-down' : 'fa-arrow-right') }}"></i>
           </h4>
           <span style="font-size: 0.6rem;">{{ $record->company_name }}</span>
           <div class="info-price">

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\StockDailyPriceData;
 
 class HomeController extends Controller
 {
@@ -15,9 +16,8 @@ class HomeController extends Controller
     public function stockListTableView()
     {
         $end = now()->format('Y-m-d');              // today
-        $start = now()->subMonth()->format('Y-m-d'); // 1 month back
+        $start = now()->subDays(5)->format('Y-m-d'); // 5 days back
         DB::enableQueryLog();
-        // 1️⃣ Fetch price data for selected month
         $prices = DB::table('s_stock_daily_price_data')
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
             ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
@@ -36,27 +36,10 @@ class HomeController extends Controller
             ->orderBy('s_stock_daily_price_data.date')
             ->get();
 
-        // $prices = DB::getQueryLog();
-        // echo "<pre>";
-        // print_r($prices);
-        // echo "</pre>";
-        // exit;
-        // $dates = [];
-        // $period = new \DatePeriod(
-        //     new \DateTime($start),
-        //     new \DateInterval('P1D'),
-        //     (new \DateTime($end))->modify('+1 day')
-        // );
-        // foreach ($period as $dt) {
-        //     $dates[] = $dt->format("Y-m-d");
-        // }
         // 3️⃣ Transform into pivot data
         $grouped = $prices->groupBy('symbol');
         $dates =  $prices->unique('date')->pluck('date')->toArray();
-        // echo "<pre>";
-        // print_r($dates);
-        // echo "</pre>";
-        // exit();
+
         $result = [];
         foreach ($grouped as $symbol => $records) {
             $row = ['symbol' => $symbol, 'company_name' => $records->first()->company_name];
@@ -72,12 +55,7 @@ class HomeController extends Controller
             }
 
             $result[] = $row;
-            // break;
         }
-        // echo "<pre>";
-        // print_r($result);
-        // echo "</pre>";
-        // exit;
         return view('stock_list_table', compact('dates', 'result'));
     }
 
@@ -183,8 +161,17 @@ class HomeController extends Controller
                 'where' => null,
             ],
         };
+
+        
+        $today = now()->format('Y-m-d');
+        $stockCount = StockDailyPriceData::where('date', $today)->count();
+        if($stockCount == 0):
+            $today = now()->subDays(1)->format('Y-m-d');
+            $stockCount = StockDailyPriceData::where('date', $today)->count();
+        endif;
+        $record_date = $today;
         $day_records = DB::table('s_stock_daily_price_data')
-            ->where('date', now()->format('Y-m-d'))
+            ->where('date', $today)
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
             ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
             ->select(
@@ -202,14 +189,14 @@ class HomeController extends Controller
             // ->orderBy('s_stock_daily_price_data.date')
             // ->orderBy('s_stock_daily_price_data.p_change', 'desc')
             ->orderBy($sort_by_column['column'], $sort_by_column['order']);
-            if(!empty($stock_name)):
-                $day_records = $day_records->where('s_stock_symbols.symbol', 'like', '%'.$stock_name.'%')->orWhere('s_stock_details.company_name', 'like', '%'.$stock_name.'%');
-            endif;
-            $day_records = $day_records->get();
-        // echo "<pre>";
-        // print_r($day_records);
-        // echo "</pre>";
-        // exit;
-        return view('one_day_view', compact('day_records'));
+            
+        if(!empty($stock_name)):
+            $day_records = $day_records->where('s_stock_symbols.symbol', 'like', '%'.$stock_name.'%')->orWhere('s_stock_details.company_name', 'like', '%'.$stock_name.'%');
+        endif;
+        $day_records = $day_records->get();
+
+        $fullStockRecords = StockDailyPriceData::where('date', $today)->with('details')->get();
+
+        return view('one_day_view', compact('day_records', 'record_date', 'fullStockRecords'));
     }
 }
