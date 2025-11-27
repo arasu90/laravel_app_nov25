@@ -81,8 +81,135 @@ class HomeController extends Controller
         return view('stock_list_table', compact('dates', 'result'));
     }
 
-    public function dataTableView()
+    public function oneDayView(Request $request)
     {
-        return view('table_data_table');
+        $stock_name = $request->input('stock_name');
+        $sort_by = $request->input('sort_by');
+        
+        $sort_by_column = match($sort_by) {
+            'name_az' => [
+                'column' => 's_stock_symbols.symbol',
+                'order' => 'asc',
+                'where' => null,
+            ],
+            'name_za' => [
+                'column' => 's_stock_symbols.symbol',
+                'order' => 'desc',
+                'where' => null,
+            ],
+            'low_price' => [
+                'column' => 's_stock_daily_price_data.last_price',
+                'order' => 'asc',
+                'where' => null,
+            ],
+            'high_price' => [
+                'column' => 's_stock_daily_price_data.last_price',
+                'order' => 'desc',
+                'where' => null,
+            ],
+            'p_change_asc' => [
+                'column' => 's_stock_daily_price_data.p_change',
+                'order' => 'asc',
+                'where' => null,
+            ],
+            'p_change_desc' => [
+                'column' => 's_stock_daily_price_data.p_change',
+                'order' => 'desc',
+                'where' => null,
+            ],
+            'low_price_zero' => [
+                'column' => 's_stock_daily_price_data.last_price',
+                'order' => 'asc',
+                'where' => 's_stock_daily_price_data.last_price != 0',
+            ],
+            'high_price_zero' => [
+                'column' => 's_stock_daily_price_data.last_price',
+                'order' => 'desc',
+                'where' => 's_stock_daily_price_data.last_price != 0',
+            ],
+            'p_change_asc_gt_zero' => [
+                'column' => 's_stock_daily_price_data.p_change',
+                'order' => 'asc',
+                'where' => 's_stock_daily_price_data.p_change > 0',
+            ],
+            'p_change_desc_gt_zero' => [
+                'column' => 's_stock_daily_price_data.p_change',
+                'order' => 'desc',
+                'where' => 's_stock_daily_price_data.p_change > 0',
+            ],
+            'p_change_asc_lt_zero' => [
+                'column' => 's_stock_daily_price_data.p_change',
+                'order' => 'asc',
+                'where' => 's_stock_daily_price_data.p_change < 0',
+            ],
+            'p_change_desc_lt_zero' => [
+                'column' => 's_stock_daily_price_data.p_change',
+                'order' => 'desc',
+                'where' => 's_stock_daily_price_data.p_change < 0',
+            ],
+            'low_price_price' => [
+                'column' => 's_stock_daily_price_data.change',
+                'order' => 'asc',
+                'where' => null,
+            ],
+            'high_price_price' => [
+                'column' => 's_stock_daily_price_data.change',
+                'order' => 'desc',
+                'where' => null,
+            ],
+            'p_change_price_asc_gt_zero' => [
+                'column' => 's_stock_daily_price_data.change',
+                'order' => 'asc',
+                'where' => 's_stock_daily_price_data.change > 0',
+            ],
+            'p_change_price_desc_gt_zero' => [
+                'column' => 's_stock_daily_price_data.change',
+                'order' => 'desc',
+                'where' => 's_stock_daily_price_data.change > 0',
+            ],
+            'p_change_price_asc_lt_zero' => [
+                'column' => 's_stock_daily_price_data.change',
+                'order' => 'asc',
+                'where' => 's_stock_daily_price_data.change < 0',
+            ],
+            'p_change_price_desc_lt_zero' => [
+                'column' => 's_stock_daily_price_data.change',
+                'order' => 'desc',
+                'where' => 's_stock_daily_price_data.change < 0',
+            ],
+            default => [
+                'column' => 's_stock_symbols.symbol',
+                'order' => 'asc',
+                'where' => null,
+            ],
+        };
+        $day_records = DB::table('s_stock_daily_price_data')
+            ->where('date', now()->format('Y-m-d'))
+            ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
+            ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
+            ->select(
+                's_stock_daily_price_data.symbol',
+                's_stock_details.company_name',
+                's_stock_daily_price_data.date',
+                's_stock_daily_price_data.last_price',
+                's_stock_daily_price_data.change',
+                's_stock_daily_price_data.p_change'
+            )
+            // ->limit(110)
+            ->whereRaw($sort_by_column['where'] ?? '1=1')
+            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date')
+            // ->orderBy('s_stock_daily_price_data.symbol')
+            // ->orderBy('s_stock_daily_price_data.date')
+            // ->orderBy('s_stock_daily_price_data.p_change', 'desc')
+            ->orderBy($sort_by_column['column'], $sort_by_column['order']);
+            if(!empty($stock_name)):
+                $day_records = $day_records->where('s_stock_symbols.symbol', 'like', '%'.$stock_name.'%')->orWhere('s_stock_details.company_name', 'like', '%'.$stock_name.'%');
+            endif;
+            $day_records = $day_records->get();
+        // echo "<pre>";
+        // print_r($day_records);
+        // echo "</pre>";
+        // exit;
+        return view('one_day_view', compact('day_records'));
     }
 }
