@@ -7,6 +7,8 @@ use App\Models\StockSymbol;
 use App\Models\StockDetails;
 use App\Models\DailyData;
 use App\Models\StockDailyPriceData;
+use App\Models\StockHoliday;
+use App\Models\StockIndexName;
 use Illuminate\Support\Facades\Log;
 use DB;
 
@@ -158,10 +160,20 @@ class StockController extends Controller
 
     public function processStockData($symbol)
     {
-        $data = (new NSEStockController())->equity($symbol)->getData(true);
+        $today = (new NSEStockController())->today();
+        try {
+            $data = (new NSEStockController())->equity($symbol)->getData(true);
 
-        if (!$data) {
-            return null;
+            if (!$data) {
+                Log::warning("No data returned for stock: {$symbol}");
+                return null;
+            }
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::error("Connection error for stock {$symbol}: " . $e->getMessage());
+            throw $e; // Re-throw to be caught by the command handler
+        } catch (\Exception $e) {
+            Log::error("Error fetching data for stock {$symbol}: " . $e->getMessage());
+            throw $e;
         }
 
         try {
@@ -232,7 +244,7 @@ class StockController extends Controller
 
             $insertPriceDataValues = [
                 'symbol' => $infoStockSymbol,
-                'date' => now()->format('Y-m-d'),
+                'date' => $today,
                 'last_price' => round($priceInfoLastPrice, 2),
                 'change' => round($priceInfoChange, 2),
                 'p_change' => round($priceInfoPChange, 2),
@@ -247,15 +259,15 @@ class StockController extends Controller
 
             $insertDailyData = [
                 'symbol' => $infoStockSymbol,
-                'date' => now()->format('Y-m-d'),
+                'date' => $today,
                 'daily_data' => json_encode($data),
             ];
 
-            DailyData::updateOrCreate(['symbol' => $infoStockSymbol, 'date' => now()->format('Y-m-d')], $insertDailyData);
+            DailyData::insert($insertDailyData);
 
             $insertPriceData = StockDailyPriceData::updateOrCreate(
                 ['symbol' => $infoStockSymbol,
-                'date' => now()->format('Y-m-d')],
+                'date' => $today],
                 $insertPriceDataValues
             );
             
@@ -268,5 +280,43 @@ class StockController extends Controller
             Log::error('Error processing stock data: ' . $e->getMessage());
             throw new \Exception('Error processing stock data: ' . $e->getMessage());
         }
+    }
+
+    public function getHolidayList(Request $request)
+    {
+        // echo "getHolidayList: " . print_r($request->all(), true);
+        $type = $request->query('type');
+        $response = (new NSEStockController())->marketHolidays($type);
+        $holidaysData = $response->getData(true);
+        if(empty($holidaysData['CM'])) {
+            return response()->json(['error' => 'No data found']);
+        }
+        $holidays = $holidaysData['CM'];
+        foreach($holidays as $holiday) {
+            $year = date('Y', strtotime($holiday['tradingDate']));
+            $date = date('Y-m-d', strtotime($holiday['tradingDate']));
+            $week_day = $holiday['weekDay'];
+            $description = $holiday['description'];
+            StockHoliday::updateOrCreate(['year' => $year, 'date' => $date], ['year' => $year, 'date' => $date, 'week_day' => $week_day, 'description' => $description]);
+        }
+        return response()->json(['success' => 'Inserted successfully']);
+    }
+
+    public function getIndexNames()
+    {
+        $response = (new NSEStockController())->getIndexNames();
+        $indexNames = $response->getData(true);
+        // if(empty($indexNames['stn'])) {
+        //     return response()->json(['error' => 'No data found']);
+        // }-
+        // $indexNamesData = $indexNames['stn'];
+        // echo "<pre>";
+        // print_r($indexNames['stn']);
+        foreach($indexNames['stn'] as $indexName) {
+            list($indexSymbol, $indexNameValue) = $indexName;
+            StockIndexName::updateOrCreate(['index_symbol' => $indexSymbol], ['index_symbol' => $indexSymbol, 'index_name' => $indexNameValue]);
+        }
+        // die();
+        return response()->json(['success' => 'Inserted successfully']);
     }
 }

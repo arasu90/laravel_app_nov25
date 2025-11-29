@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\NSEClient;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class NSEStockController extends Controller
 {
@@ -69,9 +70,8 @@ class NSEStockController extends Controller
         return $symbols ? response()->json($symbols) : response()->json(['error' => 'Data not found'], 404);
     }
 
-    public function marketHolidays(Request $request)
+    public function marketHolidays($type='trading')
     {
-        $type = $request->query('type', 'trading');
         $data = $this->nse->getMarketHolidays($type);
         return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
     }
@@ -80,5 +80,21 @@ class NSEStockController extends Controller
     {
         $data = $this->nse->getCorporateInfo($symbol);
         return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+    }
+
+    public function getIndexNames()
+    {
+        $data = $this->nse->getIndexNames();
+        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+    }
+
+    public function today()
+    {
+        $date = now()->isWeekend()
+            ? now()->previous(Carbon::FRIDAY)
+            : now();
+
+        $finalDate = $date->format('Y-m-d');
+        return $finalDate;
     }
 }

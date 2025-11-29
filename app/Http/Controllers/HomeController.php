@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\StockDailyPriceData;
 
+use App\Models\StockDailyPriceData;
+use App\Models\StockHoliday;
+use App\Models\StockDetails;
+use App\Models\StockSymbol;
 class HomeController extends Controller
 {
     public function index()
@@ -198,5 +201,22 @@ class HomeController extends Controller
         $fullStockRecords = StockDailyPriceData::where('date', $today)->with('details')->get();
 
         return view('one_day_view', compact('day_records', 'record_date', 'fullStockRecords'));
+    }
+
+    public function holidayList()
+    {
+        $holidays = StockHoliday::where('year', date('Y'))->get();
+        return view('holiday_list', compact('holidays'));
+    }
+
+    public function stockDetailView(Request $request)
+    {
+        $stock_name = $request->input('stock_name') ?? 'TNTELE';
+        $stock_daily_price_data = StockDailyPriceData::where('symbol', $stock_name)
+        ->orderBy('date', 'desc')
+        ->get();
+        $stock_details = StockDetails::where('symbol', $stock_name)->first();
+        $stock_list = StockSymbol::with('details')->get();
+        return view('stock_detail_view', compact('stock_daily_price_data', 'stock_details', 'stock_list', 'stock_name'));
     }
 }

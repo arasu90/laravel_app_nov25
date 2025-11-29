@@ -18,6 +18,9 @@ Route::get('/table/data-table', [HomeController::class, 'dataTableView'])->name(
 
 // insert all stocks into database
 Route::get('/all-stocks', [StockController::class, 'allStocks'])->name('allStocks');
+// Route::get('/get-holiday-list/{type}', [StockController::class, 'getHolidayList'])->name('getHolidayList');
+// Route::get('/get-holiday-list?type={type}', [StockController::class, 'getHolidayList'])->where('type', '.*')->name('getHolidayList');
+Route::get('/get-holiday-list', [StockController::class, 'getHolidayList'])->name('getHolidayList');
 
 // monthly view
 Route::get('/stocks/monthly', [StockController::class, 'monthlyView']);
@@ -33,3 +36,15 @@ Route::get('/update-stock-data/{symbol}', [StockController::class, 'processStock
 
 // one day view all stocks changes
 Route::get('/one-day-view', [HomeController::class, 'oneDayView'])->name('oneDayView');
+
+// holiday list
+Route::get('/holiday-list', [HomeController::class, 'holidayList'])->name('holidayList');
+
+// get index names
+Route::get('/get-index-names', [StockController::class, 'getIndexNames'])->name('getIndexNames');
+
+// list index names
+Route::get('/index-list', [HomeController::class, 'indexList'])->name('indexList');
+
+// stock detail view
+Route::get('/stock-detail-view', [HomeController::class, 'stockDetailView'])->name('stockDetailView');

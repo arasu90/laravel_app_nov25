@@ -10,6 +10,8 @@
         <li><a class="app-menu__item active" href="/"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Dashboard</span></a></li>
         <li><a class="app-menu__item" href="/stock-table"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Stock Table</span></a></li>
         <li><a class="app-menu__item" href="/one-day-view"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">One Day View</span></a></li>
+        <li><a class="app-menu__item" href="/holiday-list"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Holiday List</span></a></li>
+        <li><a class="app-menu__item" href="/stock-detail-view"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Stock Detail View</span></a></li>
         <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-laptop"></i><span class="app-menu__label">UI Elements</span><i class="treeview-indicator fa fa-angle-right"></i></a>
             <ul class="treeview-menu">
             <li><a class="treeview-item" href="bootstrap-components.html"><i class="icon fa fa-circle-o"></i> Bootstrap Elements</a></li>

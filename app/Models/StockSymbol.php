@@ -12,4 +12,9 @@ class StockSymbol extends Model
         'symbol'
     ];
     public $timestamps = true;
+
+    public function details()
+    {
+        return $this->hasOne(StockDetails::class, 'symbol', 'symbol');
+    }
 }

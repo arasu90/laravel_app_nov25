@@ -9,3 +9,4 @@ Route::get('/indices', [NSEStockController::class, 'indices']);
 Route::get('/all-stocks', [NSEStockController::class, 'allStocks']);
 Route::get('/holidays', [NSEStockController::class, 'marketHolidays']);
 Route::get('/corporate-info/{symbol}', [NSEStockController::class, 'corporateInfo']);
+Route::get('/all-index-names', [NSEStockController::class, 'getIndexNames']);

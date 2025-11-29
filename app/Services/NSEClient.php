@@ -34,7 +34,8 @@ class NSEClient
             return $this->cookies;
         }
 
-        $response = Http::withHeaders($this->getHeaders())
+        $response = Http::timeout(30) // Increase timeout for cookie request
+            ->withHeaders($this->getHeaders())
             ->withOptions([
                 'verify' => false,
                 'version' => CURL_HTTP_VERSION_1_1,
@@ -53,7 +54,8 @@ class NSEClient
     {
         $cookies = $this->getCookies();
 
-        $response = Http::retry(3, 300)
+        $response = Http::timeout(30) // Increase timeout to 30 seconds
+            ->retry(3, 300)
             ->withHeaders($this->getHeaders())
             ->withCookies($cookies, 'www.nseindia.com')
             ->withOptions([
@@ -120,5 +122,10 @@ class NSEClient
     public function dateNDaysAgo($n)
     {
         return Carbon::now()->subDays($n)->format('d-m-Y');
+    }
+
+    public function getIndexNames()
+    {
+        return $this->request($this->baseUrl . "/index-names");
     }
 }

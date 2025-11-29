@@ -7,6 +7,15 @@
 <script src="js/plugins/pace.min.js"></script>
 <!-- Page specific javascripts-->
 <script type="text/javascript" src="js/plugins/chart.js"></script>
+<!-- Select2 plugin-->
+<script type="text/javascript" src="js/plugins/select2.min.js"></script>
+<script type="text/javascript">
+    $('.select2').select2({
+        placeholder: 'Select Stock',
+        width: '100%',
+        allowClear: true,
+    });
+</script>
 <!-- Data table plugin-->
 <script type="text/javascript" src="js/plugins/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="js/plugins/dataTables.bootstrap.min.js"></script>
