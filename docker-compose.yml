@@ -1,4 +1,5 @@
 version: "3.8"
+
 services:
   app:
     build:
@@ -19,12 +20,41 @@ services:
     depends_on:
       - app
 
+  # ✅ Add queue worker service
+  queue-worker:
+    user: "www-data"
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    command: >
+      bash -c "
+        php artisan config:clear &&
+        php artisan cache:clear &&
+        php artisan queue:work --tries=3 --timeout=120 --sleep=1 &
+        php artisan queue:work --tries=3 --timeout=120 --sleep=1 &
+        php artisan queue:work --tries=3 --timeout=120 --sleep=1 &
+        php artisan queue:work --tries=3 --timeout=120 --sleep=1 &
+        php artisan queue:work --tries=3 --timeout=120 --sleep=1 &
+        php artisan queue:work --tries=3 --timeout=120 --sleep=1 &
+        php artisan queue:work --tries=3 --timeout=120 --sleep=1 &
+        php artisan queue:work --tries=3 --timeout=120 --sleep=1 &
+        php artisan queue:work --tries=3 --timeout=120 --sleep=1 &
+        php artisan queue:work --tries=3 --timeout=120 --sleep=1
+      "
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - db
+    restart: always   # always restart queue workers
+
   db:
     image: mysql:8
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: nse_stock
-      MYSQL_USER: stock_admin
-      MYSQL_PASSWORD: admin_stock
+      - TZ=Asia/Kolkata
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=nse_stock
+      - MYSQL_USER=stock_admin
+      - MYSQL_PASSWORD=admin_stock
     ports:
       - "3395:3306"
+    command: --default-time-zone="+05:30"

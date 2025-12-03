@@ -9,6 +9,7 @@ use App\Models\DailyData;
 use App\Models\StockDailyPriceData;
 use App\Models\StockHoliday;
 use App\Models\StockIndexName;
+use App\Models\DailyStockJsonData;
 use Illuminate\Support\Facades\Log;
 use DB;
 
@@ -162,7 +163,9 @@ class StockController extends Controller
     {
         $today = (new NSEStockController())->today();
         try {
+            Log::info("processStockData: {$symbol} :: ");
             $data = (new NSEStockController())->equity($symbol)->getData(true);
+            Log::info("Data returned for stock: {$symbol} :: ");
 
             if (!$data) {
                 Log::warning("No data returned for stock: {$symbol}");
@@ -318,5 +321,29 @@ class StockController extends Controller
         }
         // die();
         return response()->json(['success' => 'Inserted successfully']);
+    }
+
+    public function insertStockDailyData($symbol)
+    {
+        $today = (new NSEStockController())->todayDateTime();
+        $data = (new NSEStockController())->equity($symbol)->getData(true);
+        if (!$data) {
+            Log::warning("No data returned for stock: {$symbol}");
+            return null;
+        }
+        Log::info("Inserting stock daily data for {$symbol} :: Started");
+        Log::channel('stock_backup_json')->info("Stock {date('Y-m-d H:i:s')} {$symbol} Daily Data :: ".json_encode($data));
+        $metaDataLastUpdateTime = $data['metadata']['lastUpdateTime'] ?? 'N/A';
+        $nseDate = date('Y-m-d H:i:s', strtotime($metaDataLastUpdateTime));
+        
+        $insertData = [
+                'symbol' => $symbol,
+                'date' => $today,
+                'nse_date' => $nseDate,
+                'daily_data' => json_encode($data),
+        ];
+        DailyStockJsonData::insert($insertData);
+        Log::info("Stock {$symbol} Daily Json Data Inserted Successfully");
+        return $symbol;
     }
 }

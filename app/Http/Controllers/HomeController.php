@@ -4,11 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Log;
 use App\Models\StockDailyPriceData;
 use App\Models\StockHoliday;
 use App\Models\StockDetails;
 use App\Models\StockSymbol;
+
 class HomeController extends Controller
 {
     public function index()
@@ -218,5 +219,30 @@ class HomeController extends Controller
         $stock_details = StockDetails::where('symbol', $stock_name)->first();
         $stock_list = StockSymbol::with('details')->get();
         return view('stock_detail_view', compact('stock_daily_price_data', 'stock_details', 'stock_list', 'stock_name'));
+    }
+
+    public function dbQuery()
+    {
+        $data = StockDailyPriceData::get();
+        foreach($data as $item):
+            $symbol = $item->symbol;
+            $date = $item->date;
+            $last_price = $item->last_price;
+            $change = $item->change;
+            $p_change = $item->p_change;
+            $previous_close = $item->previous_close;
+            $open = $item->open;
+            $close = $item->close;
+            $lower_cp = $item->lower_cp;
+            $upper_cp = $item->upper_cp;
+            $intra_day_high_low_min = $item->intra_day_high_low_min;
+            $intra_day_high_low_max = $item->intra_day_high_low_max;
+
+            $logQuery = "INSERT INTO s_stock_daily_price_data (`symbol`, `date`, `last_price`, `change`, `p_change`, `previous_close`, `open`, `close`, `lower_cp`, `upper_cp`, `intra_day_high_low_min`, `intra_day_high_low_max`) VALUES ('$symbol', '$date', '$last_price', '$change', '$p_change', '$previous_close', '$open', '$close', '$lower_cp', '$upper_cp', '$intra_day_high_low_min', '$intra_day_high_low_max')";
+            // Log::info($logQuery);
+            Log::channel('stock_backup')->info($logQuery);
+            // break;
+        endforeach;
+        return "Data inserted successfully";
     }
 }

@@ -48,26 +48,61 @@ class NSEClient
     }
 
     /**
+     * Force refresh cookies (clear cached cookies and get new ones)
+     */
+    protected function refreshCookies()
+    {
+        $this->cookies = null;
+        return $this->getCookies();
+    }
+
+    /**
      * Centralized NSE request handler (with cookies + retry)
      */
     protected function request($url)
     {
-        $cookies = $this->getCookies();
+        $maxAttempts = 3;
+        $attempt = 0;
 
-        $response = Http::timeout(30) // Increase timeout to 30 seconds
-            ->retry(3, 300)
-            ->withHeaders($this->getHeaders())
-            ->withCookies($cookies, 'www.nseindia.com')
-            ->withOptions([
-                'verify' => false,
-                'version' => CURL_HTTP_VERSION_1_1,
-                'curl' => [
-                    CURLOPT_ENCODING => 'gzip',
-                ],
-            ])
-            ->get($url);
+        while ($attempt < $maxAttempts) {
+            $attempt++;
+            $cookies = $this->getCookies();
 
-        return $response->ok() ? $response->json() : null;
+            // Add a small delay between requests to avoid rate limiting
+            usleep(500000); // 500ms delay
+
+            $response = Http::timeout(30)
+                ->withHeaders($this->getHeaders())
+                ->withCookies($cookies, 'www.nseindia.com')
+                ->withOptions([
+                    'verify' => false,
+                    'version' => CURL_HTTP_VERSION_1_1,
+                    'curl' => [
+                        CURLOPT_ENCODING => 'gzip',
+                    ],
+                ])
+                ->get($url);
+
+            if ($response->ok()) {
+                return $response->json();
+            }
+
+            // If 403 Forbidden, refresh cookies and retry
+            if ($response->status() === 403) {
+                \Illuminate\Support\Facades\Log::warning("NSE 403 error on attempt {$attempt}, refreshing cookies...");
+                $this->refreshCookies();
+                // Increase delay on 403 to avoid further rate limiting
+                sleep(2);
+                continue;
+            }
+
+            // For other errors, throw exception with details
+            if (!$response->ok()) {
+                $response->throw();
+            }
+        }
+
+        return null;
     }
 
 

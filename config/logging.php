@@ -127,6 +127,30 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'stock_backup' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/stock_backup.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 30,
+            'replace_placeholders' => true,
+            'tap' => [App\Logging\CustomizeFormatter::class],
+        ],
+
+        'stock_backup_json' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/stock_backup_json.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 30,
+            'tap' => [App\Logging\CustomizeFormatter::class],
+        ],
+        
+        'stock_process' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/stock_process.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 30,
+        ],
+
     ],
 
 ];

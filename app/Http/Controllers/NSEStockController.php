@@ -97,4 +97,14 @@ class NSEStockController extends Controller
         $finalDate = $date->format('Y-m-d');
         return $finalDate;
     }
+
+    public function todayDateTime()
+    {
+        $date = now()->isWeekend()
+            ? now()->previous(Carbon::FRIDAY)
+            : now();
+
+        $finalDateTime = $date->format('Y-m-d H:i:s');
+        return $finalDateTime;
+    }
 }

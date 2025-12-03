@@ -48,3 +48,13 @@ Route::get('/index-list', [HomeController::class, 'indexList'])->name('indexList
 
 // stock detail view
 Route::get('/stock-detail-view', [HomeController::class, 'stockDetailView'])->name('stockDetailView');
+
+
+// get records insert into database for all stocks from nse api
+Route::get('/insert-stock-daily-data', function () {
+    exec('php /var/www/artisan insert:stock-daily-data > /dev/null 2>&1 &');
+    return "Running in background";
+});
+
+
+Route::get('/db-query', [HomeController::class, 'dbQuery'])->name('dbQuery');
