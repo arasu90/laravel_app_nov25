@@ -17,4 +17,8 @@ class StockSymbol extends Model
     {
         return $this->hasOne(StockDetails::class, 'symbol', 'symbol');
     }
+    public function stockDailyPriceData()
+    {
+        return $this->hasOne(StockDailyPriceData::class, 'symbol', 'symbol');
+    }
 }

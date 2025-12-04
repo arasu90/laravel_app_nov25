@@ -58,3 +58,9 @@ Route::get('/insert-stock-daily-data', function () {
 
 
 Route::get('/db-query', [HomeController::class, 'dbQuery'])->name('dbQuery');
+
+Route::get('/average-stock', [HomeController::class, 'averageStock'])->name('averageStock');
+
+Route::get('/my-portfolio', [HomeController::class, 'myPortfolio'])->name('myPortfolio');
+Route::post('/add-my-portfolio', [HomeController::class, 'addMyPortfolio'])->name('addMyPortfolio');
+Route::get('/my-watchlist', [HomeController::class, 'myWatchlist'])->name('myWatchlist');

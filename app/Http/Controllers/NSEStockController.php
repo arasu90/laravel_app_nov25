@@ -90,10 +90,18 @@ class NSEStockController extends Controller
 
     public function today()
     {
-        $date = now()->isWeekend()
-            ? now()->previous(Carbon::FRIDAY)
-            : now();
+        $now = now();
 
+        if ($now->isWeekend()) {
+            // Weekend → use previous Friday
+            $date = $now->previous(Carbon::FRIDAY);
+        } elseif ($now->format('H') < 10) {
+            // Weekday but before 10 AM → use previous date
+            $date = $now->subDay();
+        } else {
+            // After 10 AM on weekday → use today
+            $date = $now;
+        }
         $finalDate = $date->format('Y-m-d');
         return $finalDate;
     }
