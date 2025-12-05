@@ -98,6 +98,7 @@ class StockController extends Controller
         // return $symbols;
     }
 
+    // no more used this function
     public function monthlyView(Request $request)
     {
         // $month = $request->month ?? now()->format('Y-m');
@@ -111,6 +112,7 @@ class StockController extends Controller
         // 1️⃣ Fetch price data for selected month
         $prices = DB::table('s_stock_prices')
             ->join('s_stock_symbols', 's_stocks_symbols.id', '=', 's_stock_prices.stock_id')
+            ->where('s_stock_symbols.is_active', true)
             ->whereBetween('s_stock_prices.date', [$start, $end])
             ->select(
                 's_stock_symbols.symbol',
@@ -118,7 +120,7 @@ class StockController extends Controller
                 's_stock_prices.price_close'
             )
             ->orderBy('s_stock_symbols.symbol')
-            ->orderBy('s_stock_symbols.date')
+            ->orderBy('s_stock_prices.date')
             ->get();
 
         // 2️⃣ Prepare date list for header

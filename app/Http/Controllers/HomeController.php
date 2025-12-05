@@ -30,6 +30,7 @@ class HomeController extends Controller
             ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
             ->whereBetween('s_stock_daily_price_data.date', [$start, $end])
             // ->where('s_stock_symbols.symbol', '3MINDIA')
+            ->where('s_stock_symbols.is_active', true)
             ->select(
                 's_stock_daily_price_data.symbol',
                 's_stock_details.company_name',
@@ -181,6 +182,7 @@ class HomeController extends Controller
             ->where('date', $today)
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
             ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
+            ->where('s_stock_symbols.is_active', true)
             ->select(
                 's_stock_daily_price_data.symbol',
                 's_stock_details.company_name',
@@ -209,7 +211,16 @@ class HomeController extends Controller
 
     public function holidayList()
     {
-        $holidays = StockHoliday::where('year', date('Y'))->get();
+        $today = (new NSEStockController())->today();
+        $currentMonth = date('m', strtotime($today));
+        $holidays = StockHoliday::where('year', date('Y'));
+            // ->where(DB::raw('MONTH(date)'), $currentMonth)
+        if($currentMonth > 6):
+            $holidays = $holidays->orderBy('date', 'desc');
+        else:
+            $holidays = $holidays->orderBy('date', 'asc');
+        endif;
+        $holidays = $holidays->get();
         return view('holiday_list', compact('holidays'));
     }
 
@@ -220,7 +231,7 @@ class HomeController extends Controller
         ->orderBy('date', 'desc')
         ->get();
         $stock_details = StockDetails::where('symbol', $stock_name)->first();
-        $stock_list = StockSymbol::with('details')->get();
+        $stock_list = StockSymbol::with('details')->where('is_active', true)->get();
         return view('stock_detail_view', compact('stock_daily_price_data', 'stock_details', 'stock_list', 'stock_name'));
     }
 
@@ -289,7 +300,7 @@ class HomeController extends Controller
 
     public function myPortfolio()
     {
-        $stock_list = StockSymbol::with('details')->get();
+        $stock_list = StockSymbol::with('details')->where('is_active', true)->get();
         // $myPortfolioStocks = MyPortfolioStock::with('stockSymbol')->with('stockDailyPriceData')
         //     ->whereHas('stockSymbol.stockDailyPriceData', function($q) {
         //         $q->where('date', now()->format('Y-m-d'));
@@ -311,6 +322,7 @@ class HomeController extends Controller
             ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
             ->join('s_stock_daily_price_data', 's_stock_daily_price_data.symbol', '=', 's_portfolio_stocks.symbol')
             ->where('s_stock_daily_price_data.date', $today)
+            ->where('s_stock_symbols.is_active', true)
             ->select('s_portfolio_stocks.symbol', 's_stock_details.company_name', 's_portfolio_stocks.buy_price', 's_portfolio_stocks.buy_qty', 's_portfolio_stocks.buy_date', 's_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change')
             ->groupBy('s_portfolio_stocks.symbol', 's_stock_details.company_name', 's_portfolio_stocks.buy_price', 's_portfolio_stocks.buy_qty', 's_portfolio_stocks.buy_date', 's_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change')
             ->orderBy('s_portfolio_stocks.symbol', 'asc')
@@ -410,6 +422,7 @@ class HomeController extends Controller
                 ->join('s_stock_daily_price_data', 's_stock_daily_price_data.symbol', '=', 's_stock_symbols.symbol')
                 ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
                 ->where('s_stock_daily_price_data.date', $today)
+                ->where('s_stock_symbols.is_active', true)
                 ->whereRaw($defaultWatchList['condition'])
                 ->select('s_stock_symbols.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change', 's_stock_daily_price_data.previous_close', 's_stock_daily_price_data.open', 's_stock_daily_price_data.close', 's_stock_daily_price_data.lower_cp', 's_stock_daily_price_data.upper_cp', 's_stock_daily_price_data.intra_day_high_low_min', 's_stock_daily_price_data.intra_day_high_low_max', 's_stock_details.week_high_low_min', 's_stock_details.week_high_low_min_date', 's_stock_details.week_high_low_max', 's_stock_details.week_high_low_max_date')
                 ->orderBy('s_stock_daily_price_data.last_price')
@@ -427,16 +440,17 @@ class HomeController extends Controller
         foreach($watchListMaster as $watchList):
             $watchListItems = DB::table('s_watchlist_items')
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_watchlist_items.symbol')
-            ->join('s_stock_daily_price_data', 's_stock_daily_price_data.symbol', '=', 's_stock_symbols.symbol')
             ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
+            ->join('s_stock_daily_price_data', 's_stock_daily_price_data.symbol', '=', 's_stock_symbols.symbol')
             ->where('s_stock_daily_price_data.date', $today)
+            ->where('s_stock_symbols.is_active', true)
             ->where('s_watchlist_items.watchlist_id', $watchList->id)
             ->select('s_watchlist_items.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change', 's_stock_daily_price_data.previous_close', 's_stock_daily_price_data.open', 's_stock_daily_price_data.close', 's_stock_daily_price_data.lower_cp', 's_stock_daily_price_data.upper_cp', 's_stock_daily_price_data.intra_day_high_low_min', 's_stock_daily_price_data.intra_day_high_low_max', 's_stock_details.week_high_low_min', 's_stock_details.week_high_low_min_date', 's_stock_details.week_high_low_max', 's_stock_details.week_high_low_max_date')
             ->get();
             $watchListList[str_replace([' ', '-'], '_', $watchList->watchlist_name)]['name'] = $watchList->watchlist_name;
             $watchListList[str_replace([' ', '-'], '_', $watchList->watchlist_name)]['stock_list'] = $watchListItems;
         endforeach;
-        $stock_list = StockSymbol::with('details')->get();
+        $stock_list = StockSymbol::with('details')->where('is_active', true)->get();
         return view('my_watchlist', compact('watchListList','stock_list'));
     }
 }

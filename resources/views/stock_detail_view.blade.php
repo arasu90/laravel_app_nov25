@@ -23,7 +23,7 @@
             <select class="form-control select2" name="stock_name">
               <option value="">Select Stock</option>
               @foreach($stock_list as $stock)
-                <option value="{{ $stock->symbol }}" {{ $stock->symbol == $stock_name ? 'selected' : '' }}>{{ $stock->symbol }} - {{ $stock->details->company_name }}</option>
+                <option value="{{ $stock->symbol }}" {{ $stock->symbol == $stock_name ? 'selected' : '' }}>{{ $stock->symbol }} - {{ $stock->details->company_name ?? 'N/A' }}</option>
               @endforeach
             </select>
           </div>
