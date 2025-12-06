@@ -456,7 +456,6 @@ class HomeController extends Controller
 
     public function appUrl()
     {
-        $stock_list = StockSymbol::where('is_active', true)->get();
-        return view('app_url', compact('stock_list'));
+        return view('app_url');
     }
 }

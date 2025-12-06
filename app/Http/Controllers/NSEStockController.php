@@ -115,4 +115,28 @@ class NSEStockController extends Controller
         $finalDateTime = $date->format('Y-m-d H:i:s');
         return $finalDateTime;
     }
+
+    public function getEquityMaster()
+    {
+        $data = $this->nse->getEquityMaster();
+        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+    }
+
+    public function getCircular($isLatest=false)
+    {
+        $data = $this->nse->getCircular($isLatest);
+        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+    }
+
+    public function getHistoricalData($symbol)
+    {
+        $data = $this->nse->getHistoricalData($symbol);
+        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+    }
+    
+    public function getHistoricalDataIndex($symbol)
+    {
+        $data = $this->nse->getHistoricalDataIndex($symbol);
+        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+    }
 }

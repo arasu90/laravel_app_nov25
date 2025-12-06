@@ -1,0 +1,152 @@
+@extends('include.app_layout')
+@section('content')
+<div class="app-title">
+  <div>
+    <h1><i class="fa fa-th-list"></i> Basic Tables</h1>
+    <p>Basic bootstrap tables</p>
+  </div>
+  <ul class="app-breadcrumb breadcrumb">
+    <li class="breadcrumb-item"><i class="fa fa-home fa-lg"></i></li>
+    <li class="breadcrumb-item">Tables</li>
+    <li class="breadcrumb-item active"><a href="#">Simple Tables</a></li>
+  </ul>
+</div>
+<div class="col-md-12">
+  <div class="tile">
+    <h3 class="tile-title">App URL</h3>
+    <div class="table-responsive table-hover table-striped">
+      <table class="table table-striped table-bordered">
+        <tbody>
+          <tr>
+            <td>
+              Get Insert all Stock Day Records
+            </td>
+            <td>
+              <a href="/trigger-stock-update" target="_blank">http://localhost:8095/trigger-stock-update</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Get Insert single stock day records
+            </td>
+            <td>
+              <a href="/update-stock-data/TNTELE" target="_blank">http://localhost:8095/update-stock-data/{symbol}</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Insert all stock day json records
+            </td>
+            <td>
+              <a href="/insert-stock-daily-data" target="_blank">http://localhost:8095/insert-stock-daily-data</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Generate Insert Query all Stocks
+            </td>
+            <td>
+              <a href="/db-query" target="_blank">http://localhost:8095/db-query</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-responsive table-hover table-striped">
+      <h3 class="tile-title">API URL</h3>
+      <table class="table table-striped table-bordered">
+        <tbody>
+          <tr>
+            <td>
+              Get Stock Day Data
+            </td>
+            <td>
+              <a href="/api/stock/TNTELE" target="_blank">http://localhost:8095/api/stock/{stock}</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Market Status
+            </td>
+            <td>
+              <a href="/api/market-status" target="_blank">http://localhost:8095/api/market-status</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Stock Historical Data
+            </td>
+            <td>
+              <a href="/api/stock/TNTELE/historical" target="_blank">http://localhost:8095/api/stock/{symbol}/historical</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Get All Indices
+            </td>
+            <td>
+              <a href="/api/indices" target="_blank">http://localhost:8095/api/indices</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Get All Stocks & Insert
+            </td>
+            <td>
+              <a href="/api/all-stocks" target="_blank">http://localhost:8095/api/all-stocks</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Get Holidays
+            </td>
+            <td>
+              <a href="/api/holidays" target="_blank">http://localhost:8095/api/holidays</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Get Stock Corporate Information
+            </td>
+            <td>
+              <a href="/api/corporate-info/TNTELE" target="_blank">http://localhost:8095/api/corporate-info/{symbol}</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Get all-index-names List
+            </td>
+            <td>
+              <a href="/api/all-index-names" target="_blank">http://localhost:8095/api/all-index-names</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Get equity-master
+            </td>
+            <td>
+              <a href="/api/equity-master" target="_blank">http://localhost:8095/api/equity-master</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Get circular
+            </td>
+            <td>
+              <a href="/api/circulars" target="_blank">http://localhost:8095/api/circular</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Get historical-data/{symbol}
+            </td>
+            <td>
+              <a href="/api/historical-data/TNTELE" target="_blank">http://localhost:8095/api/historical-data/{symbol}</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+@endsection

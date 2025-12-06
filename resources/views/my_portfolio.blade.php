@@ -50,94 +50,95 @@
     <div class="tile">
       <h3 class="tile-title">My Portfolio</h3>
       <div class="table-responsive table-hover table-striped">
-      <table class="table table-striped table-bordered">
-        <thead>
-          <tr class="text-bold text-center">
-            <th>Overall Profit/Loss</th>
-          </tr>
-        </thead>
-        <tbody>
-          @php
-          $overall_profit_loss = 0;
-          $overall_profit_loss_per = 0;
-          $overall_invested_amount = 0;
-          $overall_live_amount = 0;
-          @endphp
-          @foreach($myPortfolioStocks as $myPortfolio)
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr class="text-bold text-center">
+              <th>Overall Profit/Loss</th>
+            </tr>
+          </thead>
+          <tbody>
             @php
-            $overall_invested_amount += $myPortfolio->buy_price * $myPortfolio->buy_qty;
-            $overall_live_amount += $myPortfolio->last_price * $myPortfolio->buy_qty;
-            $overall_profit_loss += ($myPortfolio->last_price * $myPortfolio->buy_qty) - ($myPortfolio->buy_price * $myPortfolio->buy_qty);
-            $overall_profit_loss_per = round(($overall_profit_loss / $overall_invested_amount) * 100, 2);
+            $overall_profit_loss = 0;
+            $overall_profit_loss_per = 0;
+            $overall_invested_amount = 0;
+            $overall_live_amount = 0;
             @endphp
-          @endforeach
-          <tr>
-            <td>
-              <span class="{{ $overall_profit_loss_per > 0 ? 'text-success' : ($overall_profit_loss_per < 0 ? 'text-danger' : 'text-info') }}">
-                Rs. {{ $overall_live_amount }}
-              </span>
-              <br />
-              <span class="{{ $overall_profit_loss_per > 0 ? 'text-success' : ($overall_profit_loss_per < 0 ? 'text-danger' : 'text-info') }}">
-                {{ $overall_profit_loss }} ({{ $overall_profit_loss_per }} %)
-              </span>
-              <br />
-              Rs. {{ $overall_invested_amount }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Stocks</th>
-            <th>Invested Amount</th>
-            <th>Profit/Loss</th>
-            <th>Today Profit/Loss</th>
-          </tr>
-        </thead>
-        <tbody>
-          @foreach($myPortfolioStocks as $myPortfolio)
-            @php
-            $p_change = $myPortfolio->p_change;
-            $change = $myPortfolio->change;
-            $last_price = $myPortfolio->last_price;
-            $profit_loss_per = round(($last_price-$myPortfolio->buy_price)/$myPortfolio->buy_price * 100, 2);
-            @endphp
-          <tr>
-            <td>
-              <h4>{{ $myPortfolio->company_name }}</h4>
-              <h6 class="text-muted">{{ $myPortfolio->symbol }}</h6>
-            </td>
-            <td>
-              Rs. {{ $myPortfolio->last_price * $myPortfolio->buy_qty }} <span class="badge {{ $profit_loss_per > 0 ? 'badge-success' : ($profit_loss_per < 0 ? 'badge-danger' : 'badge-info') }}">Rs. {{ $myPortfolio->buy_price * $myPortfolio->buy_qty }}</span>
-              <span class="{{ $p_change > 0 ? 'text-success' : ($p_change < 0 ? 'text-danger' : 'text-info') }} float-right">
-                <span class="float-right">Rs.{{ $myPortfolio->last_price }}</span>
-                <br />
-                <span>
-                {{ $myPortfolio->change }} ({{ $myPortfolio->p_change }} %)
+            @foreach($myPortfolioStocks as $myPortfolio)
+              @php
+              $overall_invested_amount += $myPortfolio->buy_price * $myPortfolio->buy_qty;
+              $overall_live_amount += $myPortfolio->last_price * $myPortfolio->buy_qty;
+              $overall_profit_loss += ($myPortfolio->last_price * $myPortfolio->buy_qty) - ($myPortfolio->buy_price * $myPortfolio->buy_qty);
+              $overall_profit_loss_per = round(($overall_profit_loss / $overall_invested_amount) * 100, 2);
+              @endphp
+            @endforeach
+            <tr>
+              <td>
+                <span class="{{ $overall_profit_loss_per > 0 ? 'text-success' : ($overall_profit_loss_per < 0 ? 'text-danger' : 'text-info') }}">
+                  Rs. {{ $overall_live_amount }}
                 </span>
-              </span>
-              <h6 class="text-muted">(Qty:{{ $myPortfolio->buy_qty }} x Rs.{{ $myPortfolio->buy_price }})</h6>
-            </td>
-            <td>
-              <span class="{{ $profit_loss_per > 0 ? 'text-success' : ($profit_loss_per < 0 ? 'text-danger' : 'text-info') }}">
-                Rs. {{ abs(($myPortfolio->buy_price * $myPortfolio->buy_qty) - ($last_price * $myPortfolio->buy_qty)) }}
                 <br />
-                ({{ $profit_loss_per }} %)
-              </span>
-            </td>
-            <td>
-              <span class="{{ $p_change > 0 ? 'text-success' : ($p_change < 0 ? 'text-danger' : 'text-info') }}">
-                Rs. {{ abs($change * $myPortfolio->buy_qty) }}
+                <span class="{{ $overall_profit_loss_per > 0 ? 'text-success' : ($overall_profit_loss_per < 0 ? 'text-danger' : 'text-info') }}">
+                  {{ $overall_profit_loss }} ({{ $overall_profit_loss_per }} %)
+                </span>
                 <br />
-                ({{ $p_change }} %)
-              </span>
-            </td>
-          </tr>
-          @endforeach
-        </tbody>
-      </table>
-      </div></div>
+                Rs. {{ $overall_invested_amount }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Stocks</th>
+              <th>Invested Amount</th>
+              <th>Profit/Loss</th>
+              <th>Today Profit/Loss</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($myPortfolioStocks as $myPortfolio)
+              @php
+              $p_change = $myPortfolio->p_change;
+              $change = $myPortfolio->change;
+              $last_price = $myPortfolio->last_price;
+              $profit_loss_per = round(($last_price-$myPortfolio->buy_price)/$myPortfolio->buy_price * 100, 2);
+              @endphp
+            <tr>
+              <td>
+                <h4>{{ $myPortfolio->company_name }}</h4>
+                <h6 class="text-muted">{{ $myPortfolio->symbol }}</h6>
+              </td>
+              <td>
+                Rs. {{ $myPortfolio->last_price * $myPortfolio->buy_qty }} <span class="badge {{ $profit_loss_per > 0 ? 'badge-success' : ($profit_loss_per < 0 ? 'badge-danger' : 'badge-info') }}">Rs. {{ $myPortfolio->buy_price * $myPortfolio->buy_qty }}</span>
+                <span class="{{ $p_change > 0 ? 'text-success' : ($p_change < 0 ? 'text-danger' : 'text-info') }} float-right">
+                  <span class="float-right">Rs.{{ $myPortfolio->last_price }}</span>
+                  <br />
+                  <span>
+                  {{ $myPortfolio->change }} ({{ $myPortfolio->p_change }} %)
+                  </span>
+                </span>
+                <h6 class="text-muted">(Qty:{{ $myPortfolio->buy_qty }} x Rs.{{ $myPortfolio->buy_price }})</h6>
+              </td>
+              <td>
+                <span class="{{ $profit_loss_per > 0 ? 'text-success' : ($profit_loss_per < 0 ? 'text-danger' : 'text-info') }}">
+                  Rs. {{ abs(($myPortfolio->buy_price * $myPortfolio->buy_qty) - ($last_price * $myPortfolio->buy_qty)) }}
+                  <br />
+                  ({{ $profit_loss_per }} %)
+                </span>
+              </td>
+              <td>
+                <span class="{{ $p_change > 0 ? 'text-success' : ($p_change < 0 ? 'text-danger' : 'text-info') }}">
+                  Rs. {{ abs($change * $myPortfolio->buy_qty) }}
+                  <br />
+                  ({{ $p_change }} %)
+                </span>
+              </td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 @endsection

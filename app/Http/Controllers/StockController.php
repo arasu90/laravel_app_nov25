@@ -195,6 +195,7 @@ class StockController extends Controller
             $infoStockName = $infoData['companyName'];
             $infoIsin = $infoData['isin'];
             $infoListingDate = $infoData['listingDate'];
+            $metaDataSeries = $metadata['series'] ?? 'N/A';
             $metaDataStatus = $metadata['status'] ?? 'N/A';
             $metaDataLastUpdateTime = $metadata['lastUpdateTime'] ?? 'N/A';
             $metaDataPDSEctorInd = $metadata['pdSectorInd'] ?? 'N/A';
@@ -202,6 +203,8 @@ class StockController extends Controller
             $securityInfoTradingStatus = $securityInfo['tradingStatus'] ?? 'N/A';
             $securityInfoTradingSegment = $securityInfo['tradingSegment'] ?? 'N/A';
             $securityInfoFaceValue = $securityInfo['faceValue'] ?? 0;
+            $securityInfoSurveillanceSurv = $securityInfo['surveillance']['surv'] ?? 'N/A';
+            $securityInfoSurveillanceDesc = $securityInfo['surveillance']['desc'] ?? "N/A";
             $priceInfoLastPrice = $priceInfo['lastPrice'] ?? 0;
             $priceInfoChange = $priceInfo['change'] ?? 0;
             $priceInfoPChange = $priceInfo['pChange'] ?? 0;
@@ -231,10 +234,13 @@ class StockController extends Controller
                 'isin' => $infoIsin,
                 'listing_date' => $infoListingDate,
                 'status' => $metaDataStatus,
+                'series' => $metaDataSeries,
                 'last_update_time' => date('Y-m-d H:i:s', strtotime($metaDataLastUpdateTime)),
                 'pdsectorind' => $metaDataPDSEctorInd,
                 'trading_status' => $securityInfoTradingStatus,
                 'trading_segment' => $securityInfoTradingSegment,
+                'surveillance_surv' => securityInfoSurveillanceSurv,
+                'surveillance_desc' => securityInfoSurveillanceDesc,
                 'face_value' => $securityInfoFaceValue,
                 'week_high_low_min' => round($priceInfoWeekHighLowMin, 2),
                 'week_high_low_min_date' => date('Y-m-d', strtotime($priceInfoWeekHighLowMinDate)),

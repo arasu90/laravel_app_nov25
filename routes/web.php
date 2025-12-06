@@ -23,7 +23,7 @@ Route::get('/all-stocks', [StockController::class, 'allStocks'])->name('allStock
 Route::get('/get-holiday-list', [StockController::class, 'getHolidayList'])->name('getHolidayList');
 
 // monthly view
-Route::get('/stocks/monthly', [StockController::class, 'monthlyView']);
+// Route::get('/stocks/monthly', [StockController::class, 'monthlyView']);
 
 // get daily data for all stocks from nse api
 Route::get('/trigger-stock-update', function () {
@@ -64,3 +64,4 @@ Route::get('/average-stock', [HomeController::class, 'averageStock'])->name('ave
 Route::get('/my-portfolio', [HomeController::class, 'myPortfolio'])->name('myPortfolio');
 Route::post('/add-my-portfolio', [HomeController::class, 'addMyPortfolio'])->name('addMyPortfolio');
 Route::get('/my-watchlist', [HomeController::class, 'myWatchlist'])->name('myWatchlist');
+Route::get('/available-url', [HomeController::class, 'appUrl'])->name('appUrl');

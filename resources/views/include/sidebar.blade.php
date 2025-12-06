@@ -7,48 +7,59 @@
     </div>
     </div>
     <ul class="app-menu">
-        <li><a class="app-menu__item active" href="/"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Dashboard</span></a></li>
-        <li><a class="app-menu__item" href="/stock-table"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Stock Table</span></a></li>
-        <li><a class="app-menu__item" href="/one-day-view"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">One Day View</span></a></li>
-        <li><a class="app-menu__item" href="/stock-detail-view"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Stock Detail View</span></a></li>
-        <li><a class="app-menu__item" href="/holiday-list"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Holiday List</span></a></li>
-        <li><a class="app-menu__item" href="/average-stock"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">Average Stock</span></a></li>
-        <li><a class="app-menu__item" href="/my-portfolio"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">My Portfolio</span></a></li>
-        <li><a class="app-menu__item" href="/my-watchlist"><i class="app-menu__icon fa fa-dashboard"></i><span class="app-menu__label">My Watchlist</span></a></li>
-        <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-laptop"></i><span class="app-menu__label">UI Elements</span><i class="treeview-indicator fa fa-angle-right"></i></a>
-            <ul class="treeview-menu">
-            <li><a class="treeview-item" href="bootstrap-components.html"><i class="icon fa fa-circle-o"></i> Bootstrap Elements</a></li>
-            <li><a class="treeview-item" href="https://fontawesome.com/v4.7.0/icons/" target="_blank" rel="noopener"><i class="icon fa fa-circle-o"></i> Font Icons</a></li>
-            <li><a class="treeview-item" href="ui-cards.html"><i class="icon fa fa-circle-o"></i> Cards</a></li>
-            <li><a class="treeview-item" href="widgets.html"><i class="icon fa fa-circle-o"></i> Widgets</a></li>
-            </ul>
+        <li>
+            <a class="app-menu__item {{ Route::is('dashboard') ? 'active' : '' }} " href="/">
+                <i class="app-menu__icon fa fa-dashboard"></i>
+                <span class="app-menu__label">Dashboard</span>
+            </a>
         </li>
-        <li><a class="app-menu__item" href="charts.html"><i class="app-menu__icon fa fa-pie-chart"></i><span class="app-menu__label">Charts</span></a></li>
-        <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-edit"></i><span class="app-menu__label">Forms</span><i class="treeview-indicator fa fa-angle-right"></i></a>
-            <ul class="treeview-menu">
-            <li><a class="treeview-item" href="form-components.html"><i class="icon fa fa-circle-o"></i> Form Components</a></li>
-            <li><a class="treeview-item" href="form-custom.html"><i class="icon fa fa-circle-o"></i> Custom Components</a></li>
-            <li><a class="treeview-item" href="form-samples.html"><i class="icon fa fa-circle-o"></i> Form Samples</a></li>
-            <li><a class="treeview-item" href="form-notifications.html"><i class="icon fa fa-circle-o"></i> Form Notifications</a></li>
-            </ul>
+        <li>
+            <a class="app-menu__item {{ Route::is('stockListTableView') ? 'active' : '' }} " href="/stock-table">
+                <i class="app-menu__icon fa fa-home"></i>
+                <span class="app-menu__label">Stock Table</span>
+            </a>
         </li>
-        <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-th-list"></i><span class="app-menu__label">Tables</span><i class="treeview-indicator fa fa-angle-right"></i></a>
-            <ul class="treeview-menu">
-            <li><a class="treeview-item" href="table-basic.html"><i class="icon fa fa-circle-o"></i> Basic Tables</a></li>
-            <li><a class="treeview-item" href="table-data-table.html"><i class="icon fa fa-circle-o"></i> Data Tables</a></li>
-            </ul>
+        <li>
+            <a class="app-menu__item {{ Route::is('oneDayView') ? 'active' : '' }} " href="/one-day-view">
+                <i class="app-menu__icon fa fa-inbox"></i>
+                <span class="app-menu__label">One Day View</span>
+            </a>
         </li>
-        <li class="treeview"><a class="app-menu__item" href="#" data-toggle="treeview"><i class="app-menu__icon fa fa-file-text"></i><span class="app-menu__label">Pages</span><i class="treeview-indicator fa fa-angle-right"></i></a>
-            <ul class="treeview-menu">
-            <li><a class="treeview-item" href="blank-page.html"><i class="icon fa fa-circle-o"></i> Blank Page</a></li>
-            <li><a class="treeview-item" href="page-login.html"><i class="icon fa fa-circle-o"></i> Login Page</a></li>
-            <li><a class="treeview-item" href="page-lockscreen.html"><i class="icon fa fa-circle-o"></i> Lockscreen Page</a></li>
-            <li><a class="treeview-item" href="page-user.html"><i class="icon fa fa-circle-o"></i> User Page</a></li>
-            <li><a class="treeview-item" href="page-invoice.html"><i class="icon fa fa-circle-o"></i> Invoice Page</a></li>
-            <li><a class="treeview-item" href="page-calendar.html"><i class="icon fa fa-circle-o"></i> Calendar Page</a></li>
-            <li><a class="treeview-item" href="page-mailbox.html"><i class="icon fa fa-circle-o"></i> Mailbox</a></li>
-            <li><a class="treeview-item" href="page-error.html"><i class="icon fa fa-circle-o"></i> Error Page</a></li>
-            </ul>
+        <li>
+            <a class="app-menu__item {{ Route::is('stockDetailView') ? 'active' : '' }} " href="/stock-detail-view">
+                <i class="app-menu__icon fa fa-file-text-o"></i>
+                <span class="app-menu__label">Stock Detail View</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('holidayList') ? 'active' : '' }} " href="/holiday-list">
+                <i class="app-menu__icon fa fa-filter"></i>
+                <span class="app-menu__label">Holiday List</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('averageStock') ? 'active' : '' }} " href="/average-stock">
+                <i class="app-menu__icon fa fa-comment-o"></i>
+                <span class="app-menu__label">Average Stock</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('myPortfolio') ? 'active' : '' }} " href="/my-portfolio">
+                <i class="app-menu__icon fa fa-check-circle"></i>
+                <span class="app-menu__label">My Portfolio</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('myWatchlist') ? 'active' : '' }} " href="/my-watchlist">
+                <i class="app-menu__icon fa fa-plus"></i>
+                <span class="app-menu__label">My Watchlist</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('appUrl') ? 'active' : '' }} " href="/available-url">
+                <i class="app-menu__icon fa fa-circle-o"></i>
+                <span class="app-menu__label">App Url</span>
+            </a>
         </li>
     </ul>
 </aside>

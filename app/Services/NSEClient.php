@@ -163,4 +163,57 @@ class NSEClient
     {
         return $this->request($this->baseUrl . "/index-names");
     }
+
+    public function getEquityMaster()
+    {
+        return $this->request($this->baseUrl . "/equity-master");
+    }
+
+    public function getCircular($isLatest)
+    {
+        $url = "circulars";
+        if($isLatest){
+            $url = 'latest-circular';
+        }
+        return $this->request($this->baseUrl . "/". $url);
+    }
+
+    public function getHistoricalData($symbol, $dateFrom='2025-12-02', $dateTo='2025-12-05', $activeSeries='EQ')
+    {
+        $symbol = urlencode(strtoupper($symbol));
+
+        $dateFrom = Carbon::parse($dateFrom)->format('d-m-Y');
+        $dateTo   = Carbon::parse($dateTo)->format('d-m-Y');
+
+        $url = "historical/cm/equity"
+            . "?symbol={$symbol}"
+            . "&series={$activeSeries}"
+            . "&from={$dateFrom}"
+            . "&to={$dateTo}";
+
+        // dd($this->baseUrl . "/" . $url);
+
+        return $this->request($this->baseUrl . "/" . $url);
+    }
+
+    public function getHistoricalDataIndex($symbol, $dateFrom='2025-12-02', $dateTo='2025-12-05', $activeSeries='EQ')
+    {
+        $symbol = urlencode(strtoupper($symbol));
+
+        $dateFrom = Carbon::parse($dateFrom)->format('d-m-Y');
+        $dateTo   = Carbon::parse($dateTo)->format('d-m-Y');
+
+        $indexType = urlencode(strtoupper($symbol));
+        // $dateFrom = $dateRange['start']; // e.g., '02-12-2025'
+        // $dateTo   = $dateRange['end'];
+
+        $url = 'historical/indicesHistory'
+            . '?indexType=' . $indexType
+            . '&from=' . $dateFrom
+            . '&to=' . $dateTo;
+
+        // dd($this->baseUrl . "/" . $url);
+
+        return $this->request($this->baseUrl . "/" . $url);
+    }
 }
