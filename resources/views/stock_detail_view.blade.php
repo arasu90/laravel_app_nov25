@@ -49,9 +49,9 @@
         <tbody>
           <tr>
             <td>
-              <strong>{{ $stock_details->symbol ?? 'N/A' }}</strong>
+              <strong>{{ $stock_details->company_name ?? 'N/A' }}</strong>
               <br>
-              <span class="badge badge-primary">{{ $stock_details->company_name ?? 'N/A' }}</span>
+              <span class="badge badge-primary">{{ $stock_details->symbol ?? 'N/A' }}</span>
               <br>
               <small>Sector: {{ $stock_details->sector ?? 'N/A' }}</small>
               <br>

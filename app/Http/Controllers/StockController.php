@@ -239,8 +239,8 @@ class StockController extends Controller
                 'pdsectorind' => $metaDataPDSEctorInd,
                 'trading_status' => $securityInfoTradingStatus,
                 'trading_segment' => $securityInfoTradingSegment,
-                'surveillance_surv' => securityInfoSurveillanceSurv,
-                'surveillance_desc' => securityInfoSurveillanceDesc,
+                'surveillance_surv' => $securityInfoSurveillanceSurv,
+                'surveillance_desc' => $securityInfoSurveillanceDesc,
                 'face_value' => $securityInfoFaceValue,
                 'week_high_low_min' => round($priceInfoWeekHighLowMin, 2),
                 'week_high_low_min_date' => date('Y-m-d', strtotime($priceInfoWeekHighLowMinDate)),
@@ -353,5 +353,96 @@ class StockController extends Controller
         DailyStockJsonData::insert($insertData);
         Log::info("Stock {$symbol} Daily Json Data Inserted Successfully");
         return $symbol;
+    }
+
+    public function updateCorporateInfo($symbol)
+    {
+        try {
+            Log::info("updateCorporateInfo: {$symbol} :: ");
+            $data = (new NSEStockController())->corporateInfo($symbol)->getData(true);
+            Log::info("Data returned for stock: {$symbol} :: ");
+
+            if (!$data) {
+                Log::warning("No data returned for stock: {$symbol}");
+                return null;
+            }
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::error("Connection error for stock {$symbol}: " . $e->getMessage());
+            throw $e; // Re-throw to be caught by the command handler
+        } catch (\Exception $e) {
+            Log::error("Error fetching data for stock {$symbol}: " . $e->getMessage());
+            throw $e;
+        }
+
+        try {
+            // echo '<pre>';
+            
+            $corporateActions = $data['corporate_actions']['data'];
+            foreach($corporateActions as $action){
+                // print_r($data);
+                // die();
+                $corporateInfoData = [
+                    'actions_type' => 'corporate_actions',
+                    'symbol' => $action['symbol'],
+                    'actions_date' => date("Y-m-d", strtotime($action['exdate'])),
+                    'actions_purpose' => $action['purpose'],
+                ];
+
+                DB::table('s_stock_corporate_info')->insertOrIgnore($corporateInfoData);
+
+                // DB::statement(
+                //     "INSERT IGNORE INTO s_stock_corporate_info (symbol, actions_type, actions_date, actions_purpose)
+                //       VALUES (:symbol, :actions_type, :actions_date, actions_purpose)"
+                //     , $corporateInfoData
+                // );
+
+                    //                 DB::statement(DB::raw("
+                    //     INSERT IGNORE INTO s_stock_corporate_info (col1, col2)
+                    //     VALUES ('value1', 'value2')
+                    // "));
+
+                    // DB::statement(DB::raw("
+                    //     INSERT INTO s_stock_corporate_info (col1, col2)
+                    //     VALUES ('value1', 'value2')
+                    //     ON DUPLICATE KEY UPDATE 
+                    //         col1 = VALUES(col1),
+                    //         col2 = VALUES(col2)
+                    // "));
+
+            }
+
+            $boradMeeting = $data['borad_meeting']['data'];
+            foreach($boradMeeting as $action){
+                // print_r($data);
+                // die();
+                $boradMeetingInfoData = [
+                    'actions_type' => 'borad_meeting',
+                    'symbol' => $action['symbol'],
+                    'actions_date' => date("Y-m-d", strtotime($action['meetingdate'])),
+                    'actions_purpose' => $action['purpose'],
+                ];
+
+                DB::table('s_stock_corporate_info')->insertOrIgnore($boradMeetingInfoData);
+            }
+
+            $latestAnnouncements = $data['latest_announcements']['data'];
+            foreach($latestAnnouncements as $action){
+                $latestAnnouncementsInfoData = [
+                    'actions_type' => 'latest_announcements',
+                    'symbol' => $action['symbol'],
+                    'actions_date' => date("Y-m-d", strtotime($action['broadcastdate'])),
+                    'actions_purpose' => $action['subject'],
+                ];
+
+                DB::table('s_stock_corporate_info')->insertOrIgnore($latestAnnouncementsInfoData);
+            }
+
+            Log::info("Corporate info updated: {$symbol} ");
+
+        } catch (\Exception $e) {
+            Log::error('Error corporate info stock data: ' . $e->getMessage());
+            throw new \Exception('Error corporate info stock data: ' . $e->getMessage());
+        }
+
     }
 }

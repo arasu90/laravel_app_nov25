@@ -15,130 +15,194 @@
     <div class="widget-small primary coloured-icon"><i class="icon fa fa-users fa-3x"></i>
       <div class="info">
         <h4>Total Stocks</h4>
-        <p><b>5</b></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-lg-3">
-    <div class="widget-small warning coloured-icon"><i class="icon fa fa-users fa-3x"></i>
-      <div class="info">
-        <h4>Processed Stocks</h4>
-        <p><b>5</b> / <b>5</b></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-lg-3">
-    <div class="widget-small info coloured-icon"><i class="icon fa fa-users fa-3x"></i>
-      <div class="info">
-        <h4>Nifty 50</h4>
-        <p><b>5</b></p>
+        <p><b>{{ $totalStocks }}</b></p>
       </div>
     </div>
   </div>
 </div>
 <div class="row">
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
+  <div class="col-md-6">
+    <div class="tile">
+      <h3 class="tile-title">Top Gainer %</h3>
+      <table class="table table-striped">
+        <tbody>
+          @foreach($topGainerPer as $stockList)
+          <tr>
+            <td>
+              <span class="float-right">
+                <span class="text-success float-right">{{ $stockList->last_price }} </span>
+                <br />
+                <span class="badge badge-success">{{ $stockList->change }} ({{ $stockList->p_change }} %) </span>
+              </span>
+              {{ $stockList->company_name }}
+              <br />
+              <small class="text-muted">{{ $stockList->symbol }}</small>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
     </div>
   </div>
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
+  <div class="col-md-6">
+    <div class="tile">
+      <h3 class="tile-title">Top Looser %</h3>
+      <table class="table table-striped">
+        <tbody>
+          @foreach($topLooserPer as $stockList)
+          <tr>
+            <td>
+              <span class="float-right">
+                <span class="text-danger float-right">{{ $stockList->last_price }} </span>
+                <br />
+                <span class="badge badge-danger">{{ $stockList->change }} ({{ $stockList->p_change }} %) </span>
+              </span>
+              {{ $stockList->company_name }}
+              <br />
+              <small class="text-muted">{{ $stockList->symbol }}</small>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
     </div>
   </div>
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
+  <div class="col-md-6">
+    <div class="tile">
+      <h3 class="tile-title">Top Gainer</h3>
+      <table class="table table-striped">
+        <tbody>
+          @foreach($topGainerChange as $stockList)
+          <tr>
+            <td>
+              <span class="float-right">
+                <span class="text-success float-right">{{ $stockList->last_price }} </span>
+                <br />
+                <span class="badge badge-success">{{ $stockList->change }} ({{ $stockList->p_change }} %) </span>
+              </span>
+              {{ $stockList->company_name }}
+              <br />
+              <small class="text-muted">{{ $stockList->symbol }}</small>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
     </div>
   </div>
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
+  <div class="col-md-6">
+    <div class="tile">
+      <h3 class="tile-title">Top Looser</h3>
+      <table class="table table-striped">
+        <tbody>
+          @foreach($topLooserChange as $stockList)
+          <tr>
+            <td>
+              <span class="float-right">
+                <span class="text-danger float-right">{{ $stockList->last_price }} </span>
+                <br />
+                <span class="badge badge-danger">{{ $stockList->change }} ({{ $stockList->p_change }} %) </span>
+              </span>
+              {{ $stockList->company_name }}
+              <br />
+              <small class="text-muted">{{ $stockList->symbol }}</small>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
     </div>
   </div>
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
+  <div class="col-md-6">
+    <div class="tile">
+      <h3 class="tile-title">52 Week High</h3>
+      <table class="table table-striped">
+        <tbody>
+          @foreach($Week52High as $stockList)
+          @php
+            $color_1 = match (true) {
+                $stockList->p_change === null => 'text-warning',
+                $stockList->p_change > 0 => 'text-success',
+                $stockList->p_change < 0 => 'text-danger',
+                $stockList->p_change == 0 => 'text-info',
+            };
+
+            $color_2 = match (true) {
+                $stockList->p_change === null => 'badge-warning',
+                $stockList->p_change > 0 => 'badge-success',
+                $stockList->p_change < 0 => 'badge-danger',
+                $stockList->p_change == 0 => 'badge-info',
+            };
+
+          @endphp
+          <tr>
+            <td>
+              <span class="float-right">
+                <span class="{{ $color_1 }} float-right">{{ $stockList->week_high_low_max }} </span>
+                <br />
+                <span class="badge {{ $color_2 }}">
+                  {{ $stockList->week_high_low_max_date }} </span>
+              </span>
+              {{ $stockList->company_name }}
+              <br />
+              <small class="text-muted">{{ $stockList->symbol }}</small>
+              <br />
+              <span class="float-left">
+                <span class="{{ $color_1 }} float-left">{{ $stockList->last_price }} </span>
+                <br />
+                <span class="badge {{ $color_2 }}">{{ $stockList->change }} ({{ $stockList->p_change }} %) </span>
+              </span>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
     </div>
   </div>
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-6 col-lg-1">
-    <div class="widget-small primary coloured-icon p-2">
-      <div class="info">
-        <h4 class="text-center">Users</h4>
-        <p class="text-center"><b>5</b></p>
-      </div>
+  <div class="col-md-6">
+    <div class="tile">
+      <h3 class="tile-title">52 Week Low</h3>
+      <table class="table table-striped">
+        <tbody>
+          @foreach($Week52Low as $stockList)
+            @php
+              $color_1 = match (true) {
+                  $stockList->p_change === null => 'text-warning',
+                  $stockList->p_change > 0 => 'text-success',
+                  $stockList->p_change < 0 => 'text-danger',
+                  $stockList->p_change == 0 => 'text-info',
+              };
+
+              $color_2 = match (true) {
+                  $stockList->p_change === null => 'badge-warning',
+                  $stockList->p_change > 0 => 'badge-success',
+                  $stockList->p_change < 0 => 'badge-danger',
+                  $stockList->p_change == 0 => 'badge-info',
+              };
+
+            @endphp
+            <tr>
+              <td>
+                <span class="float-right">
+                  <span class="{{ $color_1 }} float-right">{{ $stockList->week_high_low_min }} </span>
+                  <br />
+                  <span class="badge {{ $color_2 }}">
+                    {{ $stockList->week_high_low_min_date }} </span>
+                </span>
+                {{ $stockList->company_name }}
+                <br />
+                <small class="text-muted">{{ $stockList->symbol }}</small>
+                <br />
+                <span class="float-left">
+                  <span class="{{ $color_1 }} float-left">{{ $stockList->last_price }} </span>
+                  <br />
+                  <span class="badge {{ $color_2 }}">{{ $stockList->change }} ({{ $stockList->p_change }} %) </span>
+                </span>
+              </td>
+            </tr>
+          @endforeach
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

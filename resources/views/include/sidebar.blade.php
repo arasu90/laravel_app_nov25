@@ -61,5 +61,11 @@
                 <span class="app-menu__label">App Url</span>
             </a>
         </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('corporateInfo') ? 'active' : '' }} " href="/corporate-info">
+                <i class="app-menu__icon fa fa-th-list"></i>
+                <span class="app-menu__label">Corporate Info</span>
+            </a>
+        </li>
     </ul>
 </aside>

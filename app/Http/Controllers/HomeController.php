@@ -17,7 +17,132 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('home');
+        $today = (new NSEStockController())->today();
+        $totalStocks = StockSymbol::where('is_active', true)->count();
+        $topGainerPer =  $this->topGainerList('percentage');
+        $topGainerChange =  $this->topGainerList('price');
+        $topLooserPer =  $this->topLooserList('percentage');
+        $topLooserChange =  $this->topLooserList('price');
+        $Week52High = $this->week52HighLow('high');
+        $Week52Low = $this->week52HighLow('low');
+        return view('home',
+            compact(
+                'totalStocks',
+                'topGainerPer',
+                'topGainerChange',
+                'topLooserPer',
+                'topLooserChange',
+                'Week52High',
+                'Week52Low'
+            )
+        );
+    }
+
+    public function topGainerList(string $type)
+    {
+        $today = (new NSEStockController())->today();
+        $topGainerList = DB::table('s_stock_daily_price_data')
+            ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
+            ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
+            ->where('s_stock_daily_price_data.date', $today)
+            ->where('s_stock_symbols.is_active', true)
+            ->select(
+                's_stock_daily_price_data.symbol',
+                's_stock_details.company_name',
+                's_stock_daily_price_data.date',
+                's_stock_daily_price_data.last_price',
+                's_stock_daily_price_data.change',
+                's_stock_daily_price_data.p_change'
+            )
+            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date');
+            if($type == 'price')
+            {
+                $topGainerList = $topGainerList->orderBy('s_stock_daily_price_data.change', 'desc');
+            } else {
+                $topGainerList = $topGainerList->orderBy('s_stock_daily_price_data.p_change', 'desc');
+            }
+            
+            $topGainerList = $topGainerList->limit(10)
+            ->get();
+        return $topGainerList;
+    }
+
+    public function topLooserList(string $type)
+    {
+        $today = (new NSEStockController())->today();
+        $topGainerList = DB::table('s_stock_daily_price_data')
+            ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
+            ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
+            ->where('s_stock_daily_price_data.date', $today)
+            ->where('s_stock_symbols.is_active', true)
+            ->select(
+                's_stock_daily_price_data.symbol',
+                's_stock_details.company_name',
+                's_stock_daily_price_data.date',
+                's_stock_daily_price_data.last_price',
+                's_stock_daily_price_data.change',
+                's_stock_daily_price_data.p_change'
+            )
+            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date');
+            if($type == 'price')
+            {
+                $topGainerList = $topGainerList->orderBy('s_stock_daily_price_data.change', 'asc');
+            } else {
+                $topGainerList = $topGainerList->orderBy('s_stock_daily_price_data.p_change', 'asc');
+            }
+            
+            $topGainerList = $topGainerList->limit(10)
+            ->get();
+        return $topGainerList;
+    }
+
+    public function week52HighLow(string $type)
+    {
+        $orderColumn = $type === 'low'
+            ? 'week_high_low_min_date'
+            : 'week_high_low_max_date';
+        
+        $weekColumn = $type === 'low'
+            ? 'week_high_low_min'
+            : 'week_high_low_max';
+
+        $query = DB::table(DB::raw("
+            (
+                SELECT 
+                    s_stock_daily_price_data.symbol,
+                    s_stock_details.company_name,
+                    s_stock_daily_price_data.last_price,
+                    s_stock_daily_price_data.change,
+                    s_stock_daily_price_data.p_change,
+                    s_stock_details.week_high_low_min,
+                    s_stock_details.week_high_low_min_date,
+                    s_stock_details.week_high_low_max,
+                    s_stock_details.week_high_low_max_date,
+                    CASE 
+                        WHEN s_stock_daily_price_data.last_price = s_stock_details.$weekColumn 
+                        THEN 1 ELSE 0 
+                    END AS is_at_52week,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY s_stock_daily_price_data.symbol
+                        ORDER BY " . ($type === 'low'
+                            ? 's_stock_details.week_high_low_min_date'
+                            : 's_stock_details.week_high_low_max_date') . " DESC
+                    ) AS rn
+                FROM s_stock_symbols
+                INNER JOIN s_stock_details 
+                    ON s_stock_details.symbol = s_stock_symbols.symbol
+                INNER JOIN s_stock_daily_price_data 
+                    ON s_stock_symbols.symbol = s_stock_daily_price_data.symbol
+                WHERE s_stock_symbols.is_active = 1
+            ) AS t
+        "))
+        ->where('t.rn', 1)
+        ->orderBy("t.$orderColumn", "desc")
+        ->orderBy('t.is_at_52week', 'desc') 
+        ->limit(5)
+        ->get();
+
+        return $query;
     }
 
     public function stockListTableView()
@@ -458,5 +583,23 @@ class HomeController extends Controller
     {
         $stock_list = StockSymbol::where('is_active', true)->get();
         return view('app_url', compact('stock_list'));
+    }
+
+    public function corporateInfo()
+    {
+        $stock_list = StockSymbol::where('is_active', true)->get();
+        $corporateInfo = DB::table('s_stock_symbols')
+            ->join('s_stock_corporate_info', 's_stock_corporate_info.symbol', '=', 's_stock_symbols.symbol')
+            ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
+            ->where('s_stock_corporate_info.actions_type', 'corporate_actions')
+            ->select(
+                's_stock_symbols.symbol',
+                's_stock_details.company_name',
+                's_stock_corporate_info.actions_date',
+                's_stock_corporate_info.actions_purpose'
+            )
+            ->orderBy('s_stock_corporate_info.actions_date', 'desc')
+            ->get();
+        return view('corporate_info', compact('stock_list', 'corporateInfo'));
     }
 }

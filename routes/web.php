@@ -65,3 +65,5 @@ Route::get('/my-portfolio', [HomeController::class, 'myPortfolio'])->name('myPor
 Route::post('/add-my-portfolio', [HomeController::class, 'addMyPortfolio'])->name('addMyPortfolio');
 Route::get('/my-watchlist', [HomeController::class, 'myWatchlist'])->name('myWatchlist');
 Route::get('/available-url', [HomeController::class, 'appUrl'])->name('appUrl');
+Route::get('/corporate-info', [HomeController::class, 'corporateInfo'])->name('corporateInfo');
+Route::get('/update-corporate-info/{symbol}', [StockController::class, 'updateCorporateInfo'])->name('updateCorporateInfo');
