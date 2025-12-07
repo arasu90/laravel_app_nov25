@@ -49,6 +49,14 @@
               <a href="/db-query" target="_blank">http://localhost:8095/db-query</a>
             </td>
           </tr>
+          <tr>
+            <td>
+              Generate Insert Corporate Info
+            </td>
+            <td>
+              <a href="/get-corporate-info" target="_blank">http://localhost:8095/get-corporate-info</a>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

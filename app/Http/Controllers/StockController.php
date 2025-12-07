@@ -440,8 +440,8 @@ class StockController extends Controller
             Log::info("Corporate info updated: {$symbol} ");
 
         } catch (\Exception $e) {
-            Log::error('Error corporate info stock data: ' . $e->getMessage());
-            throw new \Exception('Error corporate info stock data: ' . $e->getMessage());
+            Log::error('Error corporate info stock data: ' .  $symbol . $e->getMessage());
+            throw new \Exception('Error corporate info stock data: ' .  $symbol . $e->getMessage());
         }
 
     }

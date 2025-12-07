@@ -15,7 +15,7 @@
   <div class="col-md-12">
     <div class="tile">
       <h3 class="tile-title">Corporate Action List</h3>
-      <table class="table table-striped">
+      <table class="table table-striped" id="sampleTable">
         <thead>
           <tr>
             <th>Symbol</th>

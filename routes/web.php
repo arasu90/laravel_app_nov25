@@ -57,6 +57,20 @@ Route::get('/insert-stock-daily-data', function () {
 });
 
 
+// get records insert into database for all stocks from nse api
+// Route::get('/insert-corporate-info', function () {
+//     exec('php /var/www/artisan app:start-processing-command > /dev/null 2>&1 &');
+//     return "Running in background Corporate Info";
+// });
+
+
+Route::get('/get-corporate-info', function () {
+    Artisan::call('app:start-get-corporate-info');
+    return "Corporate Info Processing Triggered!";
+});
+
+
+
 Route::get('/db-query', [HomeController::class, 'dbQuery'])->name('dbQuery');
 
 Route::get('/average-stock', [HomeController::class, 'averageStock'])->name('averageStock');
