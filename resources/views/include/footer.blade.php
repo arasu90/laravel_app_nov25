@@ -21,6 +21,23 @@
 <script type="text/javascript" src="js/plugins/dataTables.bootstrap.min.js"></script>
 <script type="text/javascript">$('#sampleTable').DataTable();</script>
 <script type="text/javascript">
+    $(document).ready(function () {
+        $('#corporateInfo').DataTable({
+            ordering: false,
+            pageLength: 25,
+        });
+        $('.watchlistDatatable').DataTable({
+            ordering: true,
+            order: [[ 1, "asc" ]]
+            // columnDefs: [
+            // { 
+            //     orderable: true, 
+            //     targets: [1] 
+            // } // Disable sorting on column index 1 (Price)
+        //]
+        });
+    });
+
     var data = {
     labels: ["January", "February", "March", "April", "May"],
     datasets: [

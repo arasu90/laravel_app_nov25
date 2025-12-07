@@ -12,6 +12,7 @@ use App\Models\StockSymbol;
 use App\Models\MyPortfolioStock;
 use App\Models\MyWatchList as MyWatchListMaster;
 use App\Models\MyWatchlistItem;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -149,6 +150,32 @@ class HomeController extends Controller
     {
         $end = now()->format('Y-m-d');              // today
         $start = now()->subDays(5)->format('Y-m-d'); // 5 days back
+
+        $now = now();
+
+        // Determine the "end date" based on your rules
+        if ($now->isSaturday() || $now->isSunday() || $now->isMonday()) {
+            $endDate = $now->previous(Carbon::FRIDAY);
+        } elseif ($now->hour < 10) {
+            $endDate = $now->previousWeekday();
+        } else {
+            $endDate = $now;
+        }
+
+        // Determine the "start date" going back 50 weekdays from endDate
+        $startDate = clone $endDate;
+        $weekdaysCounted = 0;
+
+        while ($weekdaysCounted < 50) {
+            $startDate->subDay();
+            if (!$startDate->isWeekend()) {
+                $weekdaysCounted++;
+            }
+        }
+
+        $end = $endDate;
+        $start = $startDate;
+        
         DB::enableQueryLog();
         $prices = DB::table('s_stock_daily_price_data')
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
@@ -601,5 +628,14 @@ class HomeController extends Controller
             ->orderBy('s_stock_corporate_info.actions_date', 'desc')
             ->get();
         return view('corporate_info', compact('stock_list', 'corporateInfo'));
+    }
+
+    public static function sameMonthYear($passDate)
+    {
+        $date = Carbon::parse($passDate);
+
+        $isValid = $date->isSameMonth(now()) && $date->isSameYear(now());
+
+        return $isValid;
     }
 }

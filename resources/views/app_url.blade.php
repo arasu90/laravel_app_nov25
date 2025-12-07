@@ -22,7 +22,7 @@
               Get Insert all Stock Day Records
             </td>
             <td>
-              <a href="/trigger-stock-update" target="_blank">http://localhost:8095/trigger-stock-update</a>
+              <a href="/trigger-stock-update" target="_blank">{{ url('/') }}/trigger-stock-update</a>
             </td>
           </tr>
           <tr>
@@ -30,7 +30,7 @@
               Get Insert single stock day records
             </td>
             <td>
-              <a href="/update-stock-data/TNTELE" target="_blank">http://localhost:8095/update-stock-data/{symbol}</a>
+              <a href="/update-stock-data/TNTELE" target="_blank">{{ url('/') }}/update-stock-data/{symbol}</a>
             </td>
           </tr>
           <tr>
@@ -38,7 +38,7 @@
               Insert all stock day json records
             </td>
             <td>
-              <a href="/insert-stock-daily-data" target="_blank">http://localhost:8095/insert-stock-daily-data</a>
+              <a href="/insert-stock-daily-data" target="_blank">{{ url('/') }}/insert-stock-daily-data</a>
             </td>
           </tr>
           <tr>
@@ -46,7 +46,7 @@
               Generate Insert Query all Stocks
             </td>
             <td>
-              <a href="/db-query" target="_blank">http://localhost:8095/db-query</a>
+              <a href="/db-query" target="_blank">{{ url('/') }}/db-query</a>
             </td>
           </tr>
           <tr>
@@ -54,7 +54,7 @@
               Generate Insert Corporate Info
             </td>
             <td>
-              <a href="/get-corporate-info" target="_blank">http://localhost:8095/get-corporate-info</a>
+              <a href="/get-corporate-info" target="_blank">{{ url('/') }}/get-corporate-info</a>
             </td>
           </tr>
         </tbody>
@@ -69,7 +69,7 @@
               Get Stock Day Data
             </td>
             <td>
-              <a href="/api/stock/TNTELE" target="_blank">http://localhost:8095/api/stock/{stock}</a>
+              <a href="/api/stock/TNTELE" target="_blank">{{ url('/') }}/api/stock/{stock}</a>
             </td>
           </tr>
           <tr>
@@ -77,7 +77,7 @@
               Market Status
             </td>
             <td>
-              <a href="/api/market-status" target="_blank">http://localhost:8095/api/market-status</a>
+              <a href="/api/market-status" target="_blank">{{ url('/') }}/api/market-status</a>
             </td>
           </tr>
           <tr>
@@ -85,7 +85,7 @@
               Stock Historical Data
             </td>
             <td>
-              <a href="/api/stock/TNTELE/historical" target="_blank">http://localhost:8095/api/stock/{symbol}/historical</a>
+              <a href="/api/stock/TNTELE/historical" target="_blank">{{ url('/') }}/api/stock/{symbol}/historical</a>
             </td>
           </tr>
           <tr>
@@ -93,7 +93,7 @@
               Get All Indices
             </td>
             <td>
-              <a href="/api/indices" target="_blank">http://localhost:8095/api/indices</a>
+              <a href="/api/indices" target="_blank">{{ url('/') }}/api/indices</a>
             </td>
           </tr>
           <tr>
@@ -101,7 +101,7 @@
               Get All Stocks & Insert
             </td>
             <td>
-              <a href="/api/all-stocks" target="_blank">http://localhost:8095/api/all-stocks</a>
+              <a href="/api/all-stocks" target="_blank">{{ url('/') }}/api/all-stocks</a>
             </td>
           </tr>
           <tr>
@@ -109,7 +109,7 @@
               Get Holidays
             </td>
             <td>
-              <a href="/api/holidays" target="_blank">http://localhost:8095/api/holidays</a>
+              <a href="/api/holidays" target="_blank">{{ url('/') }}/api/holidays</a>
             </td>
           </tr>
           <tr>
@@ -117,7 +117,7 @@
               Get Stock Corporate Information
             </td>
             <td>
-              <a href="/api/corporate-info/TNTELE" target="_blank">http://localhost:8095/api/corporate-info/{symbol}</a>
+              <a href="/api/corporate-info/TNTELE" target="_blank">{{ url('/') }}/api/corporate-info/{symbol}</a>
             </td>
           </tr>
           <tr>
@@ -125,7 +125,7 @@
               Get all-index-names List
             </td>
             <td>
-              <a href="/api/all-index-names" target="_blank">http://localhost:8095/api/all-index-names</a>
+              <a href="/api/all-index-names" target="_blank">{{ url('/') }}/api/all-index-names</a>
             </td>
           </tr>
           <tr>
@@ -133,7 +133,7 @@
               Get equity-master
             </td>
             <td>
-              <a href="/api/equity-master" target="_blank">http://localhost:8095/api/equity-master</a>
+              <a href="/api/equity-master" target="_blank">{{ url('/') }}/api/equity-master</a>
             </td>
           </tr>
           <tr>
@@ -141,7 +141,7 @@
               Get circular
             </td>
             <td>
-              <a href="/api/circulars" target="_blank">http://localhost:8095/api/circular</a>
+              <a href="/api/circulars" target="_blank">{{ url('/') }}/api/circular</a>
             </td>
           </tr>
           <tr>
@@ -149,7 +149,7 @@
               Get historical-data/{symbol}
             </td>
             <td>
-              <a href="/api/historical-data/TNTELE" target="_blank">http://localhost:8095/api/historical-data/{symbol}</a>
+              <a href="/api/historical-data/TNTELE" target="_blank">{{ url('/') }}/api/historical-data/{symbol}</a>
             </td>
           </tr>
         </tbody>

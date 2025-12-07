@@ -1,9 +1,9 @@
 <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
 <aside class="app-sidebar">
-    <div class="app-sidebar__user"><img class="app-sidebar__user-avatar" src="https://s3.amazonaws.com/uifaces/faces/twitter/jsa/48.jpg" alt="User Image">
+    <div class="app-sidebar__user"><img style="width:30%" class="app-sidebar__user-avatar" src="https://fastly.picsum.photos/id/132/200/200.jpg?hmac=meVrCoOURNB7iKK3Mv-yuRrvxvXgv4h2vIRLM4sKwK4" alt="User Image">
     <div>
-        <p class="app-sidebar__user-name">John Doe</p>
-        <p class="app-sidebar__user-designation">Frontend Developer</p>
+        <p class="app-sidebar__user-name">Kalaiarasu</p>
+        <p class="app-sidebar__user-designation">Software Developer</p>
     </div>
     </div>
     <ul class="app-menu">
@@ -56,15 +56,15 @@
             </a>
         </li>
         <li>
-            <a class="app-menu__item {{ Route::is('appUrl') ? 'active' : '' }} " href="/available-url">
-                <i class="app-menu__icon fa fa-circle-o"></i>
-                <span class="app-menu__label">App Url</span>
-            </a>
-        </li>
-        <li>
             <a class="app-menu__item {{ Route::is('corporateInfo') ? 'active' : '' }} " href="/corporate-info">
                 <i class="app-menu__icon fa fa-th-list"></i>
                 <span class="app-menu__label">Corporate Info</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('appUrl') ? 'active' : '' }} " href="/available-url">
+                <i class="app-menu__icon fa fa-circle-o"></i>
+                <span class="app-menu__label">App Url</span>
             </a>
         </li>
     </ul>

@@ -1,3 +1,6 @@
+@php
+use App\Http\Controllers\HomeController;
+@endphp
 @extends('include.app_layout')
 @section('content')
 <div class="app-title">
@@ -50,7 +53,7 @@
           <div class="tile">
             <h3 class="tile-title">{{ $watchListItems['name'] }}</h3>
             <div class="table-responsive table-hover table-striped">
-              <table class="table table-striped">
+              <table class="table table-striped watchlistDatatable">
                 <thead>
                   <tr>
                     <th>Stock</th>
@@ -62,6 +65,10 @@
                 </thead>
                 <tbody>
                   @foreach($watchListItems['stock_list'] as $watchListItem)
+                    @php
+                    $sameMonthYearHigh = HomeController::sameMonthYear($watchListItem->week_high_low_max_date);
+                    $sameMonthYearLow = HomeController::sameMonthYear($watchListItem->week_high_low_min_date);
+                    @endphp
                     <tr>
                       <td>
                         {{ $watchListItem->symbol }}
@@ -93,11 +100,11 @@
                         <br>
                         Low: {{ $watchListItem->week_high_low_min }}
                         <br>
-                        Date: {{ $watchListItem->week_high_low_min_date }}
+                        <span class="{{ $sameMonthYearLow ? 'text-danger' : '' }}"> Date: {{ $watchListItem->week_high_low_min_date }} </span>
                         <br>
                         High: {{ $watchListItem->week_high_low_max }}
                         <br>
-                        Date: {{ $watchListItem->week_high_low_max_date }}
+                        <span class="{{ $sameMonthYearHigh ? 'text-success' : '' }}"> Date: {{ $watchListItem->week_high_low_max_date }} </span>
                       </td>
                     </tr>
                   @endforeach
