@@ -77,10 +77,10 @@ class InsertStockDailyData extends Command
 
     public function handle()
     {
-        $this->totalStocks = \App\Models\StockSymbol::count();
+        $this->totalStocks = \App\Models\StockSymbol::where('is_active', 'true')->count();
         $this->info("Starting stock data dispatch for {$this->totalStocks} stocks...");
 
-        \App\Models\StockSymbol::chunk($this->batchSize, function ($stocks) {
+        \App\Models\StockSymbol::where('is_active', 'true')->chunk($this->batchSize, function ($stocks) {
             $this->batchCount++;
             $batchStockCount = 0;
             foreach ($stocks as $stock) {
