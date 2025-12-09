@@ -10,6 +10,7 @@ use App\Models\StockDailyPriceData;
 use App\Models\StockHoliday;
 use App\Models\StockIndexName;
 use App\Models\DailyStockJsonData;
+use App\Models\NesIndexDayRecord;
 use Illuminate\Support\Facades\Log;
 use DB;
 
@@ -444,5 +445,38 @@ class StockController extends Controller
             throw new \Exception('Error corporate info stock data: ' .  $symbol . $e->getMessage());
         }
 
+    }
+
+    public function updateAllIndex()
+    {
+        $trade_date = (new NSEStockController())->today();
+        $dayIndexData = (new NSEStockController())->indices()->getData(true);
+        // echo "<pre>";
+        foreach($dayIndexData['data'] as $indexData){
+            // print_r($indexData);
+            $insertindexData = [
+                'index_symbol' => $indexData['indexSymbol'],
+                'last_value' => $indexData['last'],
+                'value_change' => $indexData['variation'],
+                'value_p_change' => $indexData['percentChange'],
+                'value_open' => $indexData['open'],
+                'day_high' => $indexData['high'],
+                'day_low' => $indexData['low'],
+                'previous_close' => $indexData['previousClose'],
+                'year_high' => $indexData['yearHigh'],
+                'year_low' => $indexData['yearLow'],
+                'declines' => $indexData['declines'] ?? 0,
+                'advances' => $indexData['advances'] ?? 0,
+                'unchanged' => $indexData['unchanged'] ?? 0,
+                'trade_date' => $trade_date,
+            ];
+
+            NesIndexDayRecord::updateOrCreate([
+                'index_symbol' => $indexData['indexSymbol'],
+                'trade_date' => $trade_date,
+            ],$insertindexData);
+            echo 'NSE Index Data Insert ::'.$indexData['indexSymbol'];
+            Log::info('NSE Index Data Insert ::'.$indexData['indexSymbol']);
+        }
     }
 }

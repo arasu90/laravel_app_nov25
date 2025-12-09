@@ -32,6 +32,12 @@
             </a>
         </li>
         <li>
+            <a class="app-menu__item {{ Route::is('viewAllIndex') ? 'active' : '' }} " href="/view-all-index">
+                <i class="app-menu__icon fa fa-filter"></i>
+                <span class="app-menu__label">View All Index</span>
+            </a>
+        </li>
+        <li>
             <a class="app-menu__item {{ Route::is('holidayList') ? 'active' : '' }} " href="/holiday-list">
                 <i class="app-menu__icon fa fa-filter"></i>
                 <span class="app-menu__label">Holiday List</span>

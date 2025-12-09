@@ -12,6 +12,7 @@ use App\Models\StockSymbol;
 use App\Models\MyPortfolioStock;
 use App\Models\MyWatchList as MyWatchListMaster;
 use App\Models\MyWatchlistItem;
+use App\Models\NesIndexDayRecord;
 use Carbon\Carbon;
 
 class HomeController extends Controller
@@ -26,6 +27,8 @@ class HomeController extends Controller
         $topLooserChange =  $this->topLooserList('price');
         $Week52High = $this->week52HighLow('high');
         $Week52Low = $this->week52HighLow('low');
+        $nifty50_index = NesIndexDayRecord::where('trade_date', $today)->where('index_symbol', 'NIFTY 50')->first();
+        $index_vix = NesIndexDayRecord::where('trade_date', $today)->where('index_symbol', 'INDIA VIX')->first();
         return view('home',
             compact(
                 'totalStocks',
@@ -34,7 +37,9 @@ class HomeController extends Controller
                 'topLooserPer',
                 'topLooserChange',
                 'Week52High',
-                'Week52Low'
+                'Week52Low',
+                'nifty50_index',
+                'index_vix',
             )
         );
     }
@@ -154,7 +159,7 @@ class HomeController extends Controller
         $now = now();
 
         // Determine the "end date" based on your rules
-        if ($now->isSaturday() || $now->isSunday() || $now->isMonday()) {
+        if ($now->isSaturday() || $now->isSunday() || ($now->isMonday() && $now->hour < 10)) {
             $endDate = $now->previous(Carbon::FRIDAY);
         } elseif ($now->hour < 10) {
             $endDate = $now->previousWeekday();
@@ -383,7 +388,7 @@ class HomeController extends Controller
         ->orderBy('date', 'desc')
         ->get();
         $stock_details = StockDetails::where('symbol', $stock_name)->first();
-        $stock_list = StockSymbol::with('details')->where('is_active', true)->get();
+        $stock_list = StockSymbol::with('details')->where('is_active', true)->orderBy('symbol')->get();
         return view('stock_detail_view', compact('stock_daily_price_data', 'stock_details', 'stock_list', 'stock_name'));
     }
 
@@ -452,7 +457,7 @@ class HomeController extends Controller
 
     public function myPortfolio()
     {
-        $stock_list = StockSymbol::with('details')->where('is_active', true)->get();
+        $stock_list = StockSymbol::with('details')->where('is_active', true)->orderBy('symbol')->get();
         // $myPortfolioStocks = MyPortfolioStock::with('stockSymbol')->with('stockDailyPriceData')
         //     ->whereHas('stockSymbol.stockDailyPriceData', function($q) {
         //         $q->where('date', now()->format('Y-m-d'));
@@ -608,13 +613,13 @@ class HomeController extends Controller
 
     public function appUrl()
     {
-        $stock_list = StockSymbol::where('is_active', true)->get();
+        $stock_list = StockSymbol::where('is_active', true)->orderBy('symbol')->get();
         return view('app_url', compact('stock_list'));
     }
 
     public function corporateInfo()
     {
-        $stock_list = StockSymbol::where('is_active', true)->get();
+        $stock_list = StockSymbol::where('is_active', true)->orderBy('symbol')->get();
         $corporateInfo = DB::table('s_stock_symbols')
             ->join('s_stock_corporate_info', 's_stock_corporate_info.symbol', '=', 's_stock_symbols.symbol')
             ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
@@ -634,8 +639,72 @@ class HomeController extends Controller
     {
         $date = Carbon::parse($passDate);
 
-        $isValid = $date->isSameMonth(now()) && $date->isSameYear(now());
+        return $date->isSameMonth(now()) && $date->isSameYear(now());
+    }
 
-        return $isValid;
+    public static function viewAllIndex()
+    {
+        $today = (new NSEStockController())->today();
+        $indexData = NesIndexDayRecord::where('trade_date', $today)->get();
+
+
+        $end = now()->format('Y-m-d');              // today
+        $start = now()->subDays(5)->format('Y-m-d'); // 5 days back
+
+        $now = now();
+
+        // Determine the "end date" based on your rules
+        if ($now->isSaturday() || $now->isSunday() || ($now->isMonday() && $now->hour < 10)) {
+            $endDate = $now->previous(Carbon::FRIDAY);
+        } elseif ($now->hour < 10) {
+            $endDate = $now->previousWeekday();
+        } else {
+            $endDate = $now;
+        }
+
+        // Determine the "start date" going back 50 weekdays from endDate
+       $startDate = clone $endDate;
+       $weekdaysCounted = 0;
+       
+       while ($weekdaysCounted < 10) {
+           $startDate->subDay();
+           if (!$startDate->isWeekend()) {
+               $weekdaysCounted++;
+            }
+            // echo $startDate;
+            // echo "<br>";
+        }
+        
+        $end = $endDate;
+        $start = $startDate;
+        // die();
+        
+        DB::enableQueryLog();
+        $prices = NesIndexDayRecord::whereBetween('trade_date', [$start, $end])->get();
+
+        // 3️⃣ Transform into pivot data
+        $grouped = $prices->groupBy('index_symbol');
+        $dates =  $prices->unique('trade_date')->pluck('trade_date')->toArray();
+
+        $indexData = [];
+        foreach ($grouped as $symbol => $records) {
+            $row = ['index_symbol' => $symbol];
+
+            foreach ($records as $rec) {
+                $rec->last_value = $rec->last_value ?? 0;
+                $rec->value_change = $rec->value_change ?? 0;
+                $rec->value_p_change = $rec->value_p_change ?? 0;
+                $rec->value_open = $rec->value_open ?? 0;
+
+                $row[$rec->trade_date]['last_value'] = round($rec->last_value, 2);
+                $row[$rec->trade_date]['value_change'] = round($rec->value_change, 2);
+                $row[$rec->trade_date]['value_p_change'] = round($rec->value_p_change, 2);
+                $row[$rec->trade_date]['value_open'] = round($rec->value_open, 2);
+            }
+
+            $indexData[] = $row;
+        }
+
+        return view('view_all_index', compact('dates', 'indexData'));
     }
 }

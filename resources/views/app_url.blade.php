@@ -90,7 +90,7 @@
           </tr>
           <tr>
             <td>
-              Get All Indices
+              Get All Indices Data
             </td>
             <td>
               <a href="/api/indices" target="_blank">{{ url('/') }}/api/indices</a>

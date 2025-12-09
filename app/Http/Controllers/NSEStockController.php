@@ -95,7 +95,7 @@ class NSEStockController extends Controller
         if ($now->isSaturday() || $now->isSunday()) {
             $date = $now->previous(Carbon::FRIDAY);
 
-        } elseif ($now->isMonday()) {
+        } elseif ($now->isMonday() && $now->hour < 10) {
             // Always Friday
             $date = $now->previous(Carbon::FRIDAY);
 

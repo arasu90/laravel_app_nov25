@@ -81,3 +81,9 @@ Route::get('/my-watchlist', [HomeController::class, 'myWatchlist'])->name('myWat
 Route::get('/available-url', [HomeController::class, 'appUrl'])->name('appUrl');
 Route::get('/corporate-info', [HomeController::class, 'corporateInfo'])->name('corporateInfo');
 Route::get('/update-corporate-info/{symbol}', [StockController::class, 'updateCorporateInfo'])->name('updateCorporateInfo');
+
+// update all index on day based
+Route::get('/update-all-index', [StockController::class, 'updateAllIndex'])->name('updateAllIndex');
+
+// get view all index day records
+Route::get('/view-all-index', [HomeController::class, 'viewAllIndex'])->name('viewAllIndex');

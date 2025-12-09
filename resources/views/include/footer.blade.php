@@ -36,6 +36,9 @@
             // } // Disable sorting on column index 1 (Price)
         //]
         });
+        $('#indexTable').DataTable({
+            ordering: false,
+        });
     });
 
     var data = {
