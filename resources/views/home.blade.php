@@ -23,7 +23,7 @@
     <div class="widget-small {{ optional($nifty50_index)->value_p_change > 0 ? 'primary' : 'danger' }} coloured-icon"><i class="icon fa fa-users fa-3x"></i>
       <div class="info">
         <h4>{{ optional($nifty50_index)->index_symbol }}</h4>
-        <p><b>{{ optional($nifty50_index)->last_value }}</b> <span class="{{ optional($nifty50_index)->value_p_change > 0 ? 'text-primary' : 'text-danger' }}">{{ optional($nifty50_index)->value_change }} ({{ optional($nifty50_index)->value_p_change }}%)</span> </p>
+        <p><b>{{ optional($nifty50_index)->value_last }}</b> <span class="{{ optional($nifty50_index)->value_p_change > 0 ? 'text-primary' : 'text-danger' }}">{{ optional($nifty50_index)->value_change }} ({{ optional($nifty50_index)->value_p_change }}%)</span> </p>
       </div>
     </div>
   </div>
@@ -31,7 +31,7 @@
     <div class="widget-small {{ optional($index_vix)->value_p_change > 0 ? 'primary' : 'danger' }} coloured-icon"><i class="icon fa fa-users fa-3x"></i>
       <div class="info">
         <h4>{{ optional($index_vix)->index_symbol }}</h4>
-        <p><b>{{ optional($index_vix)->last_value }}</b> <span class="{{ optional($index_vix)->value_p_change > 0 ? 'text-success' : 'text-danger' }}">{{ optional($index_vix)->value_change }} ({{ optional($index_vix)->value_p_change }}%)</span> </p>
+        <p><b>{{ optional($index_vix)->value_last }}</b> <span class="{{ optional($index_vix)->value_p_change > 0 ? 'text-success' : 'text-danger' }}">{{ optional($index_vix)->value_change }} ({{ optional($index_vix)->value_p_change }}%)</span> </p>
       </div>
     </div>
   </div>

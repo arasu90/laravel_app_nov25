@@ -34,7 +34,7 @@
 
                         @foreach ($dates as $date)
                             @php
-                                $last_value = $row[$date]['last_value'] ?? null;
+                                $value_last = $row[$date]['value_last'] ?? null;
                                 $value_change = $row[$date]['value_change'] ?? null;
                                 $value_p_change = $row[$date]['value_p_change'] ?? null;
                                 $color = match (true) {
@@ -46,7 +46,7 @@
                             @endphp
 
                             <td class="{{$color}}">
-                                <strong>{{ $last_value }}</strong>
+                                <strong>{{ $value_last }}</strong>
                                 <br />
                                 <small>{{ $value_change }} ({{ $value_p_change }}%)</small>
                             </td>

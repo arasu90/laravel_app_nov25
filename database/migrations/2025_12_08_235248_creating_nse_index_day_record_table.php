@@ -20,7 +20,7 @@ return new class extends Migration
             $table->id();
             $table->string('index_symbol');
             $table->date('trade_date');
-            $table->decimal('last_value', 10, 2);
+            $table->decimal('value_last', 10, 2);
             $table->decimal('value_change', 10, 2);
             $table->decimal('value_p_change', 10, 2);
             $table->decimal('value_open', 10, 2);

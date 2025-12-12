@@ -10,7 +10,7 @@ use App\Models\StockDailyPriceData;
 use App\Models\StockHoliday;
 use App\Models\StockIndexName;
 use App\Models\DailyStockJsonData;
-use App\Models\NesIndexDayRecord;
+use App\Models\NseIndexDayRecord;
 use Illuminate\Support\Facades\Log;
 use DB;
 
@@ -456,7 +456,7 @@ class StockController extends Controller
             // print_r($indexData);
             $insertindexData = [
                 'index_symbol' => $indexData['indexSymbol'],
-                'last_value' => $indexData['last'],
+                'value_last' => $indexData['last'],
                 'value_change' => $indexData['variation'],
                 'value_p_change' => $indexData['percentChange'],
                 'value_open' => $indexData['open'],
@@ -471,7 +471,7 @@ class StockController extends Controller
                 'trade_date' => $trade_date,
             ];
 
-            NesIndexDayRecord::updateOrCreate([
+            NseIndexDayRecord::updateOrCreate([
                 'index_symbol' => $indexData['indexSymbol'],
                 'trade_date' => $trade_date,
             ],$insertindexData);

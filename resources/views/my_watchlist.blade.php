@@ -88,23 +88,31 @@ use App\Http\Controllers\HomeController;
                         Close: {{ $watchListItem->close }}
                       </td>
                       <td>
+                        @if ($watchListItem->lower_cp)
                         Lower CP: {{ $watchListItem->lower_cp }}
                         <br>
+                        @endif
                         Low: {{ $watchListItem->intra_day_high_low_min }}
                         <br>
                         High: {{ $watchListItem->intra_day_high_low_max }}
+                        @if ($watchListItem->upper_cp)
                         <br>
                         Upper CP: {{ $watchListItem->upper_cp }}
+                        @endif
                       </td>
                       <td>
                         <br>
                         Low: {{ $watchListItem->week_high_low_min }}
                         <br>
+                        @if ($watchListItem->week_high_low_min_date)
                         <span class="{{ $sameMonthYearLow ? 'text-danger' : '' }}"> Date: {{ $watchListItem->week_high_low_min_date }} </span>
                         <br>
+                        @endif
                         High: {{ $watchListItem->week_high_low_max }}
+                        @if ($watchListItem->week_high_low_max_date)
                         <br>
                         <span class="{{ $sameMonthYearHigh ? 'text-success' : '' }}"> Date: {{ $watchListItem->week_high_low_max_date }} </span>
+                        @endif
                       </td>
                     </tr>
                   @endforeach

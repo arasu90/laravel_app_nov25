@@ -108,7 +108,8 @@ class NSEStockController extends Controller
             $date = $now;
         }
 
-        return $date->format('Y-m-d');
+        // return $date->format('Y-m-d');
+        return date("Y-m-11");
     }
 
     public function todayDateTime()

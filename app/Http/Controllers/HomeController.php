@@ -12,7 +12,7 @@ use App\Models\StockSymbol;
 use App\Models\MyPortfolioStock;
 use App\Models\MyWatchList as MyWatchListMaster;
 use App\Models\MyWatchlistItem;
-use App\Models\NesIndexDayRecord;
+use App\Models\NseIndexDayRecord;
 use Carbon\Carbon;
 
 class HomeController extends Controller
@@ -27,8 +27,8 @@ class HomeController extends Controller
         $topLooserChange =  $this->topLooserList('price');
         $Week52High = $this->week52HighLow('high');
         $Week52Low = $this->week52HighLow('low');
-        $nifty50_index = NesIndexDayRecord::where('trade_date', $today)->where('index_symbol', 'NIFTY 50')->first();
-        $index_vix = NesIndexDayRecord::where('trade_date', $today)->where('index_symbol', 'INDIA VIX')->first();
+        $nifty50_index = NseIndexDayRecord::where('trade_date', $today)->where('index_symbol', 'NIFTY 50')->first();
+        $index_vix = NseIndexDayRecord::where('trade_date', $today)->where('index_symbol', 'INDIA VIX')->first();
         return view('home',
             compact(
                 'totalStocks',
@@ -520,60 +520,82 @@ class HomeController extends Controller
             [
                 'key_name' => 'price_0_0_5',
                 'name' => 'Price 0-0.5',
-                'condition' => 's_stock_daily_price_data.last_price > 0 AND s_stock_daily_price_data.last_price < 0.5',
+                'condition' => 's_stock_daily_price_data.last_price > 0 AND s_stock_daily_price_data.last_price <= 0.5',
             ],
             [
                 'key_name' => 'price_0_5_1',
                 'name' => 'Price 0.5-1',
-                'condition' => 's_stock_daily_price_data.last_price >= 0.5 AND s_stock_daily_price_data.last_price < 1',
+                'condition' => 's_stock_daily_price_data.last_price >= 0.5 AND s_stock_daily_price_data.last_price <= 1',
             ],
             [
                 'key_name' => 'price_1_5',
                 'name' => 'Price 1-5',
-                'condition' => 's_stock_daily_price_data.last_price >= 1 AND s_stock_daily_price_data.last_price < 5',
+                'condition' => 's_stock_daily_price_data.last_price >= 1 AND s_stock_daily_price_data.last_price <= 5',
             ],
             [
                 'key_name' => 'price_5_10',
                 'name' => 'Price 5-10',
-                'condition' => 's_stock_daily_price_data.last_price >= 5 AND s_stock_daily_price_data.last_price < 10',
+                'condition' => 's_stock_daily_price_data.last_price >= 5 AND s_stock_daily_price_data.last_price <= 10',
             ],
             [
                 'key_name' => 'price_10_20',
                 'name' => 'Price 10-20',
-                'condition' => 's_stock_daily_price_data.last_price >= 10 AND s_stock_daily_price_data.last_price < 20',
+                'condition' => 's_stock_daily_price_data.last_price >= 10 AND s_stock_daily_price_data.last_price <= 20',
             ],
             [
                 'key_name' => 'price_20_50',
                 'name' => 'Price 20-50',
-                'condition' => 's_stock_daily_price_data.last_price >= 20 AND s_stock_daily_price_data.last_price < 50',
+                'condition' => 's_stock_daily_price_data.last_price >= 20 AND s_stock_daily_price_data.last_price <= 50',
             ],
             [
                 'key_name' => 'price_50_100',
                 'name' => 'Price 50-100',
-                'condition' => 's_stock_daily_price_data.last_price >= 50 AND s_stock_daily_price_data.last_price < 100',
+                'condition' => 's_stock_daily_price_data.last_price >= 50 AND s_stock_daily_price_data.last_price <= 100',
             ],
             [
                 'key_name' => 'price_100_200',
                 'name' => 'Price 100-200',
-                'condition' => 's_stock_daily_price_data.last_price >= 100 AND s_stock_daily_price_data.last_price < 200',
+                'condition' => 's_stock_daily_price_data.last_price >= 100 AND s_stock_daily_price_data.last_price <= 200',
             ],
             [
                 'key_name' => 'price_200_500',
                 'name' => 'Price 200-500',
-                'condition' => 's_stock_daily_price_data.last_price >= 200 AND s_stock_daily_price_data.last_price < 500',
+                'condition' => 's_stock_daily_price_data.last_price >= 200 AND s_stock_daily_price_data.last_price <= 500',
             ],
             [
                 'key_name' => 'price_500_1000',
                 'name' => 'Price 500-1000',
-                'condition' => 's_stock_daily_price_data.last_price >= 500 AND s_stock_daily_price_data.last_price < 1000',
+                'condition' => 's_stock_daily_price_data.last_price >= 500 AND s_stock_daily_price_data.last_price <= 1000',
             ],
             [
-                'key_name' => 'price_1000_plus',
-                'name' => 'Price >1000',
-                'condition' => 's_stock_daily_price_data.last_price >= 1000',
+                'key_name' => 'price_1k_1_5k',
+                'name' => 'Price 1000-1500',
+                'condition' => 's_stock_daily_price_data.last_price >= 1000 AND s_stock_daily_price_data.last_price <= 1500',
+            ],
+            [
+                'key_name' => 'price_1_5k_2k',
+                'name' => 'Price 1500-2000',
+                'condition' => 's_stock_daily_price_data.last_price >= 1500 AND s_stock_daily_price_data.last_price <= 2000',
+            ],
+            [
+                'key_name' => 'price_2k_5k',
+                'name' => 'Price 2000-5000',
+                'condition' => 's_stock_daily_price_data.last_price >= 2000 AND s_stock_daily_price_data.last_price <= 5000',
+            ],
+            [
+                'key_name' => 'price_5k_10k',
+                'name' => 'Price 5000-10000',
+                'condition' => 's_stock_daily_price_data.last_price >= 5000 AND s_stock_daily_price_data.last_price <= 10000',
+            ],
+            [
+                'key_name' => 'price_10000_more',
+                'name' => 'Price 1000 More',
+                'condition' => 's_stock_daily_price_data.last_price > 10000',
             ]
         ];
         $watchListList = [];
+        // echo "<pre>";
+
         foreach($defaultWatchListNames as $defaultWatchList):
             $stockList = DB::table('s_stock_symbols')
                 ->join('s_stock_daily_price_data', 's_stock_daily_price_data.symbol', '=', 's_stock_symbols.symbol')
@@ -587,12 +609,36 @@ class HomeController extends Controller
                 ->get();
             $watchListList[$defaultWatchList['key_name']]['name'] = $defaultWatchList['name'];
             $watchListList[$defaultWatchList['key_name']]['stock_list'] = $stockList;
-            // echo "<pre>";
             // print_r($watchListList);
             // echo "</pre>";
             // break;
         endforeach;
-
+        $nsestockList = NseIndexDayRecord::
+            selectRaw('
+                index_symbol as symbol,
+                index_symbol as company_name,
+                value_last as last_price,
+                value_change as `change`,
+                value_p_change as p_change,
+                previous_close as previous_close,
+                value_open as open,
+                value_last as close,
+                "" as lower_cp,
+                "" as upper_cp,
+                day_low as intra_day_high_low_min,
+                day_high as intra_day_high_low_max,
+                year_low as week_high_low_min,
+                "" as week_high_low_min_date,
+                year_high as week_high_low_max,
+                "" as week_high_low_max_date
+            ')
+            ->where('trade_date', $today)
+            ->get();
+            // print_r($nsestockList);
+            // die();
+        $watchListList['nse_index_list']['name'] = 'NSE Index List';
+        $watchListList['nse_index_list']['stock_list'] = $nsestockList;
+        
         $watchListMaster = MyWatchListMaster::get();
         foreach($watchListMaster as $watchList):
             $watchListItems = DB::table('s_watchlist_items')
@@ -607,6 +653,8 @@ class HomeController extends Controller
             $watchListList[str_replace([' ', '-'], '_', $watchList->watchlist_name)]['name'] = $watchList->watchlist_name;
             $watchListList[str_replace([' ', '-'], '_', $watchList->watchlist_name)]['stock_list'] = $watchListItems;
         endforeach;
+
+
         $stock_list = StockSymbol::with('details')->where('is_active', true)->get();
         return view('my_watchlist', compact('watchListList','stock_list'));
     }
@@ -645,7 +693,7 @@ class HomeController extends Controller
     public static function viewAllIndex()
     {
         $today = (new NSEStockController())->today();
-        $indexData = NesIndexDayRecord::where('trade_date', $today)->get();
+        $indexData = NseIndexDayRecord::where('trade_date', $today)->get();
 
 
         $end = now()->format('Y-m-d');              // today
@@ -680,7 +728,7 @@ class HomeController extends Controller
         // die();
         
         DB::enableQueryLog();
-        $prices = NesIndexDayRecord::whereBetween('trade_date', [$start, $end])->get();
+        $prices = NseIndexDayRecord::whereBetween('trade_date', [$start, $end])->get();
 
         // 3️⃣ Transform into pivot data
         $grouped = $prices->groupBy('index_symbol');
@@ -691,12 +739,12 @@ class HomeController extends Controller
             $row = ['index_symbol' => $symbol];
 
             foreach ($records as $rec) {
-                $rec->last_value = $rec->last_value ?? 0;
+                $rec->value_last = $rec->value_last ?? 0;
                 $rec->value_change = $rec->value_change ?? 0;
                 $rec->value_p_change = $rec->value_p_change ?? 0;
                 $rec->value_open = $rec->value_open ?? 0;
 
-                $row[$rec->trade_date]['last_value'] = round($rec->last_value, 2);
+                $row[$rec->trade_date]['value_last'] = round($rec->value_last, 2);
                 $row[$rec->trade_date]['value_change'] = round($rec->value_change, 2);
                 $row[$rec->trade_date]['value_p_change'] = round($rec->value_p_change, 2);
                 $row[$rec->trade_date]['value_open'] = round($rec->value_open, 2);

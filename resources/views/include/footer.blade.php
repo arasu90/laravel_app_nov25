@@ -28,7 +28,8 @@
         });
         $('.watchlistDatatable').DataTable({
             ordering: true,
-            order: [[ 1, "asc" ]]
+            // order: [[ 1, "asc" ]]
+            order: [],  
             // columnDefs: [
             // { 
             //     orderable: true, 
