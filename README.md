@@ -73,3 +73,12 @@ GROUP BY table_schema;
 
 # NSE Package Configurations add if need
 composer require guzzlehttp/guzzle
+
+
+fa-level-up
+
+fa-signal
+
+fa-flag
+
+fa-bookmark
