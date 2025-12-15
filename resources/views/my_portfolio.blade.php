@@ -23,7 +23,7 @@
             <select class="form-control select2" name="stock_name">
               <option value="">Select Stock</option>
               @foreach($stock_list as $stock)
-                <option value="{{ $stock->symbol }}">{{ $stock->symbol }} - {{ $stock->details->company_name }}</option>
+                <option value="{{ $stock->symbol }}">{{ $stock->symbol }} - {{ $stock->details->company_name ?? '' }}</option>
               @endforeach
             </select>
           </div>
@@ -105,7 +105,7 @@
               @endphp
             <tr>
               <td>
-                <h4>{{ $myPortfolio->company_name }}</h4>
+                <h4>{{ $myPortfolio->company_name ?? '' }}</h4>
                 <h6 class="text-muted">{{ $myPortfolio->symbol }}</h6>
               </td>
               <td>

@@ -583,7 +583,7 @@ class HomeController extends Controller
             ],
             [
                 'key_name' => 'price_10000_more',
-                'name' => 'Price 1000 More',
+                'name' => 'Price 10000 More',
                 'condition' => 's_stock_daily_price_data.last_price > 10000',
             ]
         ];

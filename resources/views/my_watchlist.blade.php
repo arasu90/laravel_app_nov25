@@ -26,7 +26,7 @@ use App\Http\Controllers\HomeController;
             <select class="form-control select2" name="stock_name">
               <option value="">Select Stock</option>
               @foreach($stock_list as $stock)
-                <option value="{{ $stock->symbol }}">{{ $stock->symbol }} - {{ $stock->details->company_name }}</option>
+                <option value="{{ $stock->symbol }}">{{ $stock->symbol }} - {{ $stock->details->company_name ?? '' }}</option>
               @endforeach
             </select>
           </div>
@@ -73,7 +73,7 @@ use App\Http\Controllers\HomeController;
                       <td>
                         {{ $watchListItem->symbol }}
                         <br>
-                        {{ $watchListItem->company_name }}
+                        {{ $watchListItem->company_name ?? '' }}
                       </td>
                       <td>
                         {{ $watchListItem->last_price }}
