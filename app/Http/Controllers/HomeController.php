@@ -329,11 +329,7 @@ class HomeController extends Controller
 
         
         $today = (new NSEStockController())->today();
-        $stockCount = StockDailyPriceData::where('date', $today)->count();
-        if($stockCount == 0):
-            $today = (new NSEStockController())->today();
-            $stockCount = StockDailyPriceData::where('date', $today)->count();
-        endif;
+        $stockCount = StockSymbol::where('is_active', true)->count();
         $record_date = $today;
         $day_records = DB::table('s_stock_daily_price_data')
             ->where('date', $today)
@@ -361,9 +357,7 @@ class HomeController extends Controller
         endif;
         $day_records = $day_records->get();
 
-        $fullStockRecords = StockDailyPriceData::where('date', $today)->with('details')->get();
-
-        return view('one_day_view', compact('day_records', 'record_date', 'fullStockRecords'));
+        return view('one_day_view', compact('day_records', 'record_date', 'stockCount'));
     }
 
     public function holidayList()
