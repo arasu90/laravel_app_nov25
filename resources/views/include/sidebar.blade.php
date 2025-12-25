@@ -39,8 +39,14 @@
         </li>
         <li>
             <a class="app-menu__item {{ Route::is('holidayList') ? 'active' : '' }} " href="/holiday-list">
-                <i class="app-menu__icon fa fa-filter"></i>
+                <i class="app-menu__icon fa fa-film"></i>
                 <span class="app-menu__label">Holiday List</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('todayStock') ? 'active' : '' }} " href="/today-stock">
+                <i class="app-menu__icon fa fa-plus"></i>
+                <span class="app-menu__label">Today Stocks</span>
             </a>
         </li>
         <li>

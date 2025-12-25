@@ -15,6 +15,8 @@ use App\Models\MyWatchlistItem;
 use App\Models\NseIndexDayRecord;
 use Carbon\Carbon;
 
+use function Termwind\render;
+
 class HomeController extends Controller
 {
     public function index()
@@ -748,5 +750,59 @@ class HomeController extends Controller
         }
 
         return view('view_all_index', compact('dates', 'indexData'));
+    }
+
+    public function todayStock(){
+        // DB::enableQueryLog();
+        $today = (new NSEStockController())->today();
+        
+        $todayAddedStock = StockSymbol::whereDate('created_at', $today)->orderby('symbol', 'asc')->get();
+
+        $todayMissedStock = DB::table('s_stock_symbols as sss')
+            ->whereNotIn('sss.symbol', function ($query) {
+                $today = (new NSEStockController())->today();
+                $query->select('symbol')
+                    ->from('s_stock_daily_price_data')
+                    ->where('date', $today);
+            })
+            ->where('is_active', true)
+            ->get();
+
+        $end = now()->format('Y-m-d');              // today
+        $start = now()->subDays(5)->format('Y-m-d'); // 5 days back
+
+        $now = now();
+
+        // Determine the "end date" based on your rules
+        if ($now->isSaturday() || $now->isSunday() || ($now->isMonday() && $now->hour < 10)) {
+            $endDate = $now->previous(Carbon::FRIDAY);
+        } elseif ($now->hour < 10) {
+            $endDate = $now->previousWeekday();
+        } else {
+            $endDate = $now;
+        }
+
+        // Determine the "start date" going back 50 weekdays from endDate
+        $startDate = clone $endDate;
+        $weekdaysCounted = 0;
+
+        while ($weekdaysCounted < 5) {
+            $startDate->subDay();
+            if (!$startDate->isWeekend()) {
+                $weekdaysCounted++;
+            }
+        }
+
+        $end = $endDate;
+        $start = $startDate;
+
+        $recentAddedStock = StockSymbol::where('is_active', true)
+            ->whereBetween('created_at', [$start, $end])
+            ->orderby('created_at', 'desc')
+            ->orderby('symbol', 'asc')
+            ->get();
+
+        // dd(DB::getQueryLog());
+        return view('today-stock', compact('todayAddedStock', 'todayMissedStock', 'recentAddedStock'));
     }
 }
