@@ -155,33 +155,8 @@ class HomeController extends Controller
 
     public function stockListTableView()
     {
-        $end = now()->format('Y-m-d');              // today
-        $start = now()->subDays(5)->format('Y-m-d'); // 5 days back
-
-        $now = now();
-
-        // Determine the "end date" based on your rules
-        if ($now->isSaturday() || $now->isSunday() || ($now->isMonday() && $now->hour < 10)) {
-            $endDate = $now->previous(Carbon::FRIDAY);
-        } elseif ($now->hour < 10) {
-            $endDate = $now->previousWeekday();
-        } else {
-            $endDate = $now;
-        }
-
-        // Determine the "start date" going back 50 weekdays from endDate
-        $startDate = clone $endDate;
-        $weekdaysCounted = 0;
-
-        while ($weekdaysCounted < 50) {
-            $startDate->subDay();
-            if (!$startDate->isWeekend()) {
-                $weekdaysCounted++;
-            }
-        }
-
-        $end = $endDate;
-        $start = $startDate;
+        list($start, $end) = (new NSEStockController)->getDateRange(15);
+        // die($start . $end);
         
         DB::enableQueryLog();
         $prices = DB::table('s_stock_daily_price_data')
@@ -454,19 +429,6 @@ class HomeController extends Controller
     public function myPortfolio()
     {
         $stock_list = StockSymbol::with('details')->where('is_active', true)->orderBy('symbol')->get();
-        // $myPortfolioStocks = MyPortfolioStock::with('stockSymbol')->with('stockDailyPriceData')
-        //     ->whereHas('stockSymbol.stockDailyPriceData', function($q) {
-        //         $q->where('date', now()->format('Y-m-d'));
-        //     })
-        //     ->orderBy('buy_date', 'asc')
-        //     ->get()
-        //     ->groupBy(function($item){
-        //         return $item->stockSymbol->symbol; // group by symbol name
-        //     });
-        // echo "<pre>";
-        // print_r($myPortfolioStocks);
-        // echo "</pre>";
-        // // exit;
 
         $today = (new NSEStockController())->today();
         // $today = now()->format('Y-m-03');
@@ -490,10 +452,6 @@ class HomeController extends Controller
         $buy_price = $request->input('buy_price');
         $buy_date = $request->input('buy_date');
         $stock_name = $request->input('stock_name');
-        // $stock_daily_price_data = StockDailyPriceData::where('symbol', $stock_name)->orderBy('date', 'desc')->get();
-        // $stock_details = StockDetails::where('symbol', $stock_name)->first();
-        // $stock_list = StockSymbol::with('details')->get();
-
 
         $myPortfolioStock = new MyPortfolioStock();
         $myPortfolioStock->symbol = $stock_name;
@@ -501,7 +459,6 @@ class HomeController extends Controller
         $myPortfolioStock->buy_qty = $buy_qty;
         $myPortfolioStock->buy_date = date('Y-m-d', strtotime($buy_date));
         $myPortfolioStock->save();
-        // return view('my_portfolio', compact('stock_list', 'stock_daily_price_data', 'stock_details'));
         return redirect()->route('myPortfolio')->with('success', 'Stock added to portfolio successfully');
     }
 
@@ -590,7 +547,6 @@ class HomeController extends Controller
             ]
         ];
         $watchListList = [];
-        // echo "<pre>";
 
         foreach($defaultWatchListNames as $defaultWatchList):
             $stockList = DB::table('s_stock_symbols')
@@ -605,9 +561,7 @@ class HomeController extends Controller
                 ->get();
             $watchListList[$defaultWatchList['key_name']]['name'] = $defaultWatchList['name'];
             $watchListList[$defaultWatchList['key_name']]['stock_list'] = $stockList;
-            // print_r($watchListList);
-            // echo "</pre>";
-            // break;
+        
         endforeach;
         $nsestockList = NseIndexDayRecord::
             selectRaw('
@@ -630,8 +584,6 @@ class HomeController extends Controller
             ')
             ->where('trade_date', $today)
             ->get();
-            // print_r($nsestockList);
-            // die();
         $watchListList['nse_index_list']['name'] = 'NSE Index List';
         $watchListList['nse_index_list']['stock_list'] = $nsestockList;
         
@@ -691,44 +643,13 @@ class HomeController extends Controller
         $today = (new NSEStockController())->today();
         $indexData = NseIndexDayRecord::where('trade_date', $today)->get();
 
-
-        $end = now()->format('Y-m-d');              // today
-        $start = now()->subDays(5)->format('Y-m-d'); // 5 days back
-
-        $now = now();
-
-        // Determine the "end date" based on your rules
-        if ($now->isSaturday() || $now->isSunday() || ($now->isMonday() && $now->hour < 10)) {
-            $endDate = $now->previous(Carbon::FRIDAY);
-        } elseif ($now->hour < 10) {
-            $endDate = $now->previousWeekday();
-        } else {
-            $endDate = $now;
-        }
-
-        // Determine the "start date" going back 50 weekdays from endDate
-       $startDate = clone $endDate;
-       $weekdaysCounted = 0;
-       
-       while ($weekdaysCounted < 10) {
-           $startDate->subDay();
-           if (!$startDate->isWeekend()) {
-               $weekdaysCounted++;
-            }
-            // echo $startDate;
-            // echo "<br>";
-        }
-        
-        $end = $endDate;
-        $start = $startDate;
-        // die();
-        
+        list($start, $end) = (new NSEStockController)->getDateRange(15);
         DB::enableQueryLog();
         $prices = NseIndexDayRecord::whereBetween('trade_date', [$start, $end])->get();
 
         // 3️⃣ Transform into pivot data
         $grouped = $prices->groupBy('index_symbol');
-        $dates =  $prices->unique('trade_date')->pluck('trade_date')->toArray();
+        $dates = $prices->unique('trade_date')->pluck('trade_date')->toArray();
 
         $indexData = [];
         foreach ($grouped as $symbol => $records) {
@@ -745,7 +666,6 @@ class HomeController extends Controller
                 $row[$rec->trade_date]['value_p_change'] = round($rec->value_p_change, 2);
                 $row[$rec->trade_date]['value_open'] = round($rec->value_open, 2);
             }
-
             $indexData[] = $row;
         }
 
@@ -755,7 +675,7 @@ class HomeController extends Controller
     public function todayStock(){
         // DB::enableQueryLog();
         $today = (new NSEStockController())->today();
-        
+        // die($today);
         $todayAddedStock = StockSymbol::whereDate('created_at', $today)->orderby('symbol', 'asc')->get();
 
         $todayMissedStock = DB::table('s_stock_symbols as sss')
@@ -767,34 +687,9 @@ class HomeController extends Controller
             })
             ->where('is_active', true)
             ->get();
-
-        $end = now()->format('Y-m-d');              // today
-        $start = now()->subDays(5)->format('Y-m-d'); // 5 days back
-
-        $now = now();
-
-        // Determine the "end date" based on your rules
-        if ($now->isSaturday() || $now->isSunday() || ($now->isMonday() && $now->hour < 10)) {
-            $endDate = $now->previous(Carbon::FRIDAY);
-        } elseif ($now->hour < 10) {
-            $endDate = $now->previousWeekday();
-        } else {
-            $endDate = $now;
-        }
-
-        // Determine the "start date" going back 50 weekdays from endDate
-        $startDate = clone $endDate;
-        $weekdaysCounted = 0;
-
-        while ($weekdaysCounted < 5) {
-            $startDate->subDay();
-            if (!$startDate->isWeekend()) {
-                $weekdaysCounted++;
-            }
-        }
-
-        $end = $endDate;
-        $start = $startDate;
+        
+        list($start, $end) = (new NSEStockController)->getDateRange(5);
+        // die($start . $end);
 
         $recentAddedStock = StockSymbol::where('is_active', true)
             ->whereBetween('created_at', [$start, $end])
@@ -803,6 +698,6 @@ class HomeController extends Controller
             ->get();
 
         // dd(DB::getQueryLog());
-        return view('today-stock', compact('todayAddedStock', 'todayMissedStock', 'recentAddedStock'));
+        return view('today-stock', compact('todayAddedStock', 'todayMissedStock', 'recentAddedStock', 'today'));
     }
 }

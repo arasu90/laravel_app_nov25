@@ -476,6 +476,7 @@ class StockController extends Controller
                 'trade_date' => $trade_date,
             ],$insertindexData);
             echo 'NSE Index Data Insert ::'.$indexData['indexSymbol'];
+            echo '<br />';
             Log::info('NSE Index Data Insert ::'.$indexData['indexSymbol']);
         }
     }

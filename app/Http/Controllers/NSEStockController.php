@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\NSEClient;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Models\StockHoliday;
 
 class NSEStockController extends Controller
 {
@@ -108,9 +109,23 @@ class NSEStockController extends Controller
             $date = $now;
         }
 
+        while ($this->isHolidayOrWeekend($date)) {
+            $date->subDay();
+        }
+
         return $date->format('Y-m-d');
         // return date("Y-m-11");
     }
+
+    private function isHolidayOrWeekend(Carbon $date): bool
+    {
+        if ($date->isSaturday() || $date->isSunday()) {
+            return true;
+        }
+
+        return StockHoliday::whereDate('date', $date->format('Y-m-d'))->exists();
+    }
+
 
     public function todayDateTime()
     {
@@ -144,5 +159,38 @@ class NSEStockController extends Controller
     {
         $data = $this->nse->getHistoricalDataIndex($symbol);
         return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+    }
+
+    public function getDateRange($numDays=5)
+    {
+
+        $end = now()->format('Y-m-d');              // today
+        $start = now()->subDays(5)->format('Y-m-d'); // 5 days back
+
+        $now = now();
+
+        // Determine the "end date" based on your rules
+        if ($now->isSaturday() || $now->isSunday() || ($now->isMonday() && $now->hour < 10)) {
+            $endDate = $now->previous(Carbon::FRIDAY);
+        } elseif ($now->hour < 10) {
+            $endDate = $now->previousWeekday();
+        } else {
+            $endDate = $now;
+        }
+
+        // Determine the "start date" going back 50 weekdays from endDate
+        $startDate = clone $endDate;
+        $weekdaysCounted = 1;
+
+        while ($weekdaysCounted < $numDays) {
+            $startDate->subDay();
+            if (!$startDate->isWeekend() && !$this->isHolidayOrWeekend($startDate)) {
+                $weekdaysCounted++;
+            }
+        }
+
+        $end = $endDate;
+        $start = $startDate;
+        return [$start, $end];
     }
 }

@@ -102,7 +102,10 @@
             <td>{{ $stock_daily_price_data->lower_cp }}</td>
             <td>{{ $stock_daily_price_data->upper_cp }}</td>
             <td>{{ $stock_daily_price_data->intra_day_high_low_min }}</td>
-            <td>{{ $stock_daily_price_data->intra_day_high_low_max }}</td>
+            <td>
+              {{ $stock_daily_price_data->intra_day_high_low_max }}
+              <i class="fa fa-home"></i>
+            </td>
           </tr>
           @endforeach
         </tbody>

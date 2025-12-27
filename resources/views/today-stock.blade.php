@@ -14,7 +14,7 @@
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Today Added Stock</h3>
+      <h3 class="tile-title">Today Added Stock ({{ date("d M Y", strtotime($today)) }})</h3>
       <table class="table table-striped">
         <thead>
           <tr>
