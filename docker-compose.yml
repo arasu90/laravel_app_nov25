@@ -47,6 +47,21 @@ services:
       - db
     restart: always   # always restart queue workers
 
+  # ✅ Add Scheduler service
+  scheduler:
+    user: "www-data"
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: laravel_scheduler
+    volumes:
+      - ./:/var/www
+    depends_on:
+      - app
+      - db
+    restart: always
+    # This keeps the scheduler running and checking for tasks every minute
+    command: php artisan schedule:work
   db:
     image: mysql:8
     environment:
