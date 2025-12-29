@@ -82,3 +82,7 @@ fa-signal
 fa-flag
 
 fa-bookmark
+
+
+# add particular service container newly to existing container
+docker compose up -d scheduler

@@ -88,3 +88,6 @@ Route::get('/update-all-index', [StockController::class, 'updateAllIndex'])->nam
 // get view all index day records
 Route::get('/view-all-index', [HomeController::class, 'viewAllIndex'])->name('viewAllIndex');
 Route::get('/today-stock', [HomeController::class, 'todayStock'])->name('todayStock');
+
+// one day view all index changes
+Route::get('/one-day-index', [HomeController::class, 'oneDayIndex'])->name('oneDayIndex');

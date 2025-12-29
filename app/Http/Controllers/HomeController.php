@@ -700,4 +700,77 @@ class HomeController extends Controller
         // dd(DB::getQueryLog());
         return view('today-stock', compact('todayAddedStock', 'todayMissedStock', 'recentAddedStock', 'today'));
     }
+
+    public function oneDayIndex(Request $request)
+    {
+        $indexName = $request->input('index_name');
+        $sort_by = $request->input('sort_by');
+        $today = (new NSEStockController())->today();
+        $record_date = $today;
+
+        $sort_by_column = match($sort_by) {
+            'top_gain_asc' => [
+                'column' => 'value_p_change',
+                'order' => 'asc',
+                'where' => 'value_p_change > 0',
+            ],
+            'top_gain_desc' => [
+                'column' => 'value_p_change',
+                'order' => 'desc',
+                'where' => 'value_p_change > 0',
+            ],
+            'top_lose_asc' => [
+                'column' => 'value_p_change',
+                'order' => 'asc',
+                'where' => 'value_p_change < 0',
+            ],
+            'top_lose_desc' => [
+                'column' => 'value_p_change',
+                'order' => 'desc',
+                'where' => 'value_p_change < 0',
+            ],
+            'top_gain_price_asc' => [
+                'column' => 'value_change',
+                'order' => 'asc',
+                'where' => 'value_p_change > 0',
+            ],
+            'top_gain_price_desc' => [
+                'column' => 'value_change',
+                'order' => 'desc',
+                'where' => 'value_p_change > 0',
+            ],
+            'top_lose_price_asc' => [
+                'column' => 'value_change',
+                'order' => 'asc',
+                'where' => 'value_p_change < 0',
+            ],
+            'top_lose_price_desc' => [
+                'column' => 'value_change',
+                'order' => 'desc',
+                'where' => 'value_p_change < 0',
+            ],
+            default => [
+                'column' => 'id',
+                'order' => 'asc',
+                'where' => null,
+            ],
+        };
+
+        $day_records = NseIndexDayRecord::where('trade_date', $today)
+        ->whereRaw($sort_by_column['where'] ?? '1=1')
+            // ->groupBy('index_symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date')
+            // ->orderBy('s_stock_daily_price_data.symbol')
+            // ->orderBy('s_stock_daily_price_data.date')
+            // ->orderBy('s_stock_daily_price_data.p_change', 'desc')
+            ->orderBy($sort_by_column['column'], $sort_by_column['order']);
+        if(!empty($indexName)):
+            $day_records = $day_records->where('index_symbol', 'like', '%'.$indexName.'%');
+        endif;
+
+        $day_records = $day_records->get();
+        // echo '<pre>';
+        // print_r($day_records);
+        // dd('test');
+        return view('one_day_index', compact('day_records', 'record_date'));
+    }
 }

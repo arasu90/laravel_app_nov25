@@ -32,6 +32,12 @@
             </a>
         </li>
         <li>
+            <a class="app-menu__item {{ Route::is('oneDayIndex') ? 'active' : '' }} " href="/one-day-index">
+                <i class="app-menu__icon fa fa-filter"></i>
+                <span class="app-menu__label">One Day Index</span>
+            </a>
+        </li>
+        <li>
             <a class="app-menu__item {{ Route::is('viewAllIndex') ? 'active' : '' }} " href="/view-all-index">
                 <i class="app-menu__icon fa fa-filter"></i>
                 <span class="app-menu__label">View All Index</span>
