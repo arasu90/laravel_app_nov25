@@ -21,11 +21,15 @@ class StockDailyPriceData extends Model
         'intra_day_high_low_min',
         'intra_day_high_low_max',
         'day_reocrds',
+        'is_52_week_high',
+        'is_52_week_low',
+        'is_52_week_high_value',
+        'is_52_week_low_value',
     ];
     public $timestamps = true;
     public function symbol()
     {
-        return $this->belongsTo(StockSymmbol::class, 'symbol', 'symbol');
+        return $this->belongsTo(StockSymbol::class, 'symbol', 'symbol');
     }
     public function details()
     {

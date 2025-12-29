@@ -254,6 +254,11 @@ class StockController extends Controller
                 $insertData
             );
 
+            $is52WeekHigh = date('Y-m-d', strtotime($priceInfoWeekHighLowMaxDate)) == $today ? 1 : 0;
+            $is52WeekHighValue = date('Y-m-d', strtotime($priceInfoWeekHighLowMaxDate)) == $today ? round($priceInfoWeekHighLowMax, 2) : 0;
+            $is52WeekLow = date('Y-m-d', strtotime($priceInfoWeekHighLowMinDate)) == $today ? 1 : 0;
+            $is52WeekLowValue = date('Y-m-d', strtotime($priceInfoWeekHighLowMinDate)) == $today ? round($priceInfoWeekHighLowMin, 2) : 0;
+
             $insertPriceDataValues = [
                 'symbol' => $infoStockSymbol,
                 'date' => $today,
@@ -267,7 +272,12 @@ class StockController extends Controller
                 'upper_cp' => round($priceInfoUpperCp, 2),
                 'intra_day_high_low_min' => round($priceInfoIntraDayHighLowMin, 2),
                 'intra_day_high_low_max' => round($priceInfoIntraDayHighLowMax, 2),
+                'is_52_week_high' => $is52WeekHigh,
+                'is_52_week_high_value' => $is52WeekHighValue,
+                'is_52_week_low' => $is52WeekLow,
+                'is_52_week_low_value' => $is52WeekLowValue,
             ];
+            // dd($insertPriceDataValues);
 
             $insertDailyData = [
                 'symbol' => $infoStockSymbol,

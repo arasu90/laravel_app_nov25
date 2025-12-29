@@ -106,50 +106,83 @@ class HomeController extends Controller
 
     public function week52HighLow(string $type)
     {
+
+        /* WITH latest_price AS (
+    SELECT dp.symbol, dp.last_price, dp.change, dp.p_change, dp.date
+    FROM s_stock_daily_price_data dp
+    INNER JOIN (
+        -- Get the latest date per symbol
+        SELECT symbol, MAX(`date`) AS latest_date
+        FROM s_stock_daily_price_data
+        GROUP BY symbol
+    ) AS ld
+    ON dp.symbol = ld.symbol AND dp.date = ld.latest_date
+)
+
+SELECT 
+    lp.symbol,
+    sd.company_name,
+    lp.last_price,
+    lp.change,
+    lp.p_change,
+    sd.week_high_low_min,
+    sd.week_high_low_min_date,
+    sd.week_high_low_max,
+    sd.week_high_low_max_date,
+    CASE 
+        WHEN lp.last_price = sd.week_high_low_max THEN 1 ELSE 0
+    END AS is_at_52week
+FROM latest_price lp
+INNER JOIN s_stock_symbols ss
+    ON ss.symbol = lp.symbol
+INNER JOIN s_stock_details sd
+    ON sd.symbol = lp.symbol
+WHERE ss.is_active = 1
+ORDER BY sd.week_high_low_max_date DESC, is_at_52week DESC 
+*/
         $orderColumn = $type === 'low'
             ? 'week_high_low_min_date'
             : 'week_high_low_max_date';
-        
+
         $weekColumn = $type === 'low'
             ? 'week_high_low_min'
             : 'week_high_low_max';
 
-        $query = DB::table(DB::raw("
-            (
-                SELECT 
-                    s_stock_daily_price_data.symbol,
-                    s_stock_details.company_name,
-                    s_stock_daily_price_data.last_price,
-                    s_stock_daily_price_data.change,
-                    s_stock_daily_price_data.p_change,
-                    s_stock_details.week_high_low_min,
-                    s_stock_details.week_high_low_min_date,
-                    s_stock_details.week_high_low_max,
-                    s_stock_details.week_high_low_max_date,
-                    CASE 
-                        WHEN s_stock_daily_price_data.last_price = s_stock_details.$weekColumn 
-                        THEN 1 ELSE 0 
-                    END AS is_at_52week,
-                    ROW_NUMBER() OVER (
-                        PARTITION BY s_stock_daily_price_data.symbol
-                        ORDER BY " . ($type === 'low'
-                            ? 's_stock_details.week_high_low_min_date'
-                            : 's_stock_details.week_high_low_max_date') . " DESC
-                    ) AS rn
-                FROM s_stock_symbols
-                INNER JOIN s_stock_details 
-                    ON s_stock_details.symbol = s_stock_symbols.symbol
-                INNER JOIN s_stock_daily_price_data 
-                    ON s_stock_symbols.symbol = s_stock_daily_price_data.symbol
-                WHERE s_stock_symbols.is_active = 1
-            ) AS t
-        "))
-        ->where('t.rn', 1)
-        ->orderBy("t.$orderColumn", "desc")
-        ->orderBy('t.is_at_52week', 'desc') 
-        ->limit(5)
-        ->get();
+        // Step 1: Get the latest daily price per symbol
+        $latestPrices = DB::table('s_stock_daily_price_data as dp')
+            ->select('dp.symbol', 'dp.last_price', 'dp.change', 'dp.p_change', 'dp.date')
+            ->join(DB::raw('(SELECT symbol, MAX(`date`) as latest_date 
+                            FROM s_stock_daily_price_data 
+                            GROUP BY symbol) as ld'), 
+                function($join) {
+                    $join->on('dp.symbol', '=', 'ld.symbol')
+                            ->on('dp.date', '=', 'ld.latest_date');
+                });
 
+        // Step 2: Join with symbols and stock details
+        $query = DB::table(DB::raw('(' . $latestPrices->toSql() . ') as lp'))
+            ->mergeBindings($latestPrices)
+            ->join('s_stock_symbols as ss', 'ss.symbol', '=', 'lp.symbol')
+            ->join('s_stock_details as sd', 'sd.symbol', '=', 'lp.symbol')
+            ->select(
+                'lp.symbol',
+                'sd.company_name',
+                'lp.last_price',
+                'lp.change',
+                'lp.p_change',
+                'sd.week_high_low_min',
+                'sd.week_high_low_min_date',
+                'sd.week_high_low_max',
+                'sd.week_high_low_max_date',
+                DB::raw("CASE WHEN lp.last_price = sd.$weekColumn THEN 1 ELSE 0 END AS is_at_52week")
+            )
+            ->where('ss.is_active', 1)
+            ->orderBy("sd.$orderColumn", 'desc')
+            ->orderBy('is_at_52week', 'desc')
+            ->limit(10)
+            ->get();
+
+        // dd(DB::getQueryLog());
         return $query;
     }
 
@@ -627,6 +660,7 @@ class HomeController extends Controller
                 's_stock_corporate_info.actions_purpose'
             )
             ->orderBy('s_stock_corporate_info.actions_date', 'desc')
+            ->limit(25)
             ->get();
         return view('corporate_info', compact('stock_list', 'corporateInfo'));
     }

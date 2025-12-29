@@ -88,9 +88,16 @@
                 </span>
                 <br>
                 <span>
-                  <span>Day52WeekLow: <i class="fa fa-bookmark-o"></i></span>
+                  <span>CurrentDay52WeekLow: <i class="fa fa-bookmark-o"></i></span>
                   <span style="float: inline-end;">
-                    Day52WeekHigh: <i class="fa fa-bookmark"></i>
+                    CurrentDay52WeekHigh: <i class="fa fa-bookmark"></i>
+                  </span>
+                </span>
+                <br>
+                <span>
+                  <span>Day52WeekLow: <i class="fa fa-toggle-down"></i></span>
+                  <span style="float: inline-end;">
+                    Day52WeekHigh: <i class="fa fa-toggle-up"></i>
                   </span>
                 </span>
               </td>
@@ -135,7 +142,15 @@
                   ? 'text-danger'
                   : 'text-info')
                 }}">
-              <td>{{ $stock_daily_price_data->date }}</td>
+              <td>
+                {{ $stock_daily_price_data->date }}
+                @if ($stock_daily_price_data->is_52_week_low)
+                <i class="fa fa-toggle-down"></i>
+                @endif
+                @if ($stock_daily_price_data->is_52_week_high)
+                <i class="fa fa-toggle-up"></i>
+                @endif
+              </td>
               <td>
                 {{ $stock_daily_price_data->last_price }}
                 @if ($stock_daily_price_data->date == $stock_details->week_high_low_min_date )
