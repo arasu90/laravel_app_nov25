@@ -191,6 +191,7 @@ class NSEStockController extends Controller
 
         $end = $endDate;
         $start = $startDate;
+        // dd($start.$end);
         return [$start, $end];
     }
 }

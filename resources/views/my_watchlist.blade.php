@@ -19,19 +19,30 @@ use App\Http\Controllers\HomeController;
 <div class="col-md-12">
     <div class="tile">
       <div class="tile-body">
-        <form class="row" action="{{ route('stockDetailView') }}" method="get">
+        <form class="row" action="{{ url()->current() }}" method="get">
           <!-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> -->
           <div class="form-group col-md-4">
             <label class="control-label">Stock List</label>
-            <select class="form-control select2" name="stock_name">
+            <select class="form-control select2" name="stock_name" required>
               <option value="">Select Stock</option>
               @foreach($stock_list as $stock)
-                <option value="{{ $stock->symbol }}">{{ $stock->symbol }} - {{ $stock->details->company_name ?? '' }}</option>
+                <option
+                  value="{{ $stock->symbol }}"
+                  {{ $stock->symbol == $stock_name ? 'selected' : '' }}
+                >
+                    {{ $stock->symbol }} - {{ $stock->details->company_name ?? '' }}
+                </option>
               @endforeach
             </select>
           </div>
           <div class="form-group col-md-4 align-self-end">
-            <button class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i>Submit</button>
+            <button class="btn btn-primary" type="submit">
+              <i class="fa fa-fw fa-lg fa-check-circle"></i>
+              Submit
+            </button>
+            <a href="{{ url()->current() }}" class="btn btn-secondary float-right">
+                Reset
+            </a>
           </div>
         </form>
       </div>
@@ -56,6 +67,7 @@ use App\Http\Controllers\HomeController;
               <table class="table table-striped watchlistDatatable">
                 <thead>
                   <tr>
+                    <th>S.No</th>
                     <th>Stock</th>
                     <th>Last Price</th>
                     <th>Today Price</th>
@@ -70,10 +82,10 @@ use App\Http\Controllers\HomeController;
                     $sameMonthYearLow = HomeController::sameMonthYear($watchListItem->week_high_low_min_date);
                     @endphp
                     <tr>
+                      <td>{{ $loop->iteration }}</td>
                       <td>
-                        {{ $watchListItem->symbol }}
-                        <br>
-                        {{ $watchListItem->company_name ?? '' }}
+                        <p>{{ $watchListItem->company_name ?? '' }}</p>
+                        <a target="_blank" href="stock-detail-view?stock_name={{ $watchListItem->symbol }}">{{ $watchListItem->symbol }}</a>
                       </td>
                       <td>
                         {{ $watchListItem->last_price }}

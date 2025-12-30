@@ -39,7 +39,7 @@
         </li>
         <li>
             <a class="app-menu__item {{ Route::is('viewAllIndex') ? 'active' : '' }} " href="/view-all-index">
-                <i class="app-menu__icon fa fa-filter"></i>
+                <i class="app-menu__icon fa fa-automobile"></i>
                 <span class="app-menu__label">View All Index</span>
             </a>
         </li>
@@ -56,6 +56,12 @@
             </a>
         </li>
         <li>
+            <a class="app-menu__item {{ Route::is('lastFewDays') ? 'active' : '' }} " href="/last-few-days-stock">
+                <i class="app-menu__icon fa fa-tablet"></i>
+                <span class="app-menu__label">Last Few Days Stocks</span>
+            </a>
+        </li>
+        <li>
             <a class="app-menu__item {{ Route::is('averageStock') ? 'active' : '' }} " href="/average-stock">
                 <i class="app-menu__icon fa fa-comment-o"></i>
                 <span class="app-menu__label">Average Stock</span>
@@ -68,9 +74,33 @@
             </a>
         </li>
         <li>
+            <a class="app-menu__item {{ Route::is('stockPriceList') ? 'active' : '' }} " href="/stock-price-list">
+                <i class="app-menu__icon fa fa-stethoscope"></i>
+                <span class="app-menu__label">StockPrice List</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('nseIndexStockList') ? 'active' : '' }} " href="/nse-index-stock-list">
+                <i class="app-menu__icon fa fa-exchange"></i>
+                <span class="app-menu__label">NSEIndex Stock List</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('sectorStockList') ? 'active' : '' }} " href="/sector-stock-list">
+                <i class="app-menu__icon fa fa-microphone"></i>
+                <span class="app-menu__label">Sector Stock List</span>
+            </a>
+        </li>
+        <li>
             <a class="app-menu__item {{ Route::is('myWatchlist') ? 'active' : '' }} " href="/my-watchlist">
-                <i class="app-menu__icon fa fa-plus"></i>
-                <span class="app-menu__label">My Watchlist</span>
+                <i class="app-menu__icon fa fa-clock-o"></i>
+                <span class="app-menu__label">WatchList</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('PaperTrade') ? 'active' : '' }} " href="/paper-trade">
+                <i class="app-menu__icon fa fa-paperclip"></i>
+                <span class="app-menu__label">Paper Trade</span>
             </a>
         </li>
         <li>

@@ -77,7 +77,7 @@ Route::get('/average-stock', [HomeController::class, 'averageStock'])->name('ave
 
 Route::get('/my-portfolio', [HomeController::class, 'myPortfolio'])->name('myPortfolio');
 Route::post('/add-my-portfolio', [HomeController::class, 'addMyPortfolio'])->name('addMyPortfolio');
-Route::get('/my-watchlist', [HomeController::class, 'myWatchlist'])->name('myWatchlist');
+Route::get('/my-watchlist', [HomeController::class, 'myWatchList'])->name('myWatchList');
 Route::get('/available-url', [HomeController::class, 'appUrl'])->name('appUrl');
 Route::get('/corporate-info', [HomeController::class, 'corporateInfo'])->name('corporateInfo');
 Route::get('/update-corporate-info/{symbol}', [StockController::class, 'updateCorporateInfo'])->name('updateCorporateInfo');
@@ -91,3 +91,12 @@ Route::get('/today-stock', [HomeController::class, 'todayStock'])->name('todaySt
 
 // one day view all index changes
 Route::get('/one-day-index', [HomeController::class, 'oneDayIndex'])->name('oneDayIndex');
+
+// last few days stock list
+Route::get('/last-few-days-stock', [HomeController::class, 'lastFewDays'])->name('lastFewDays');
+
+// paper trade for watching stocks
+Route::get('/paper-trade', [HomeController::class, 'PaperTrade'])->name('PaperTrade');
+Route::get('/stock-price-list', [HomeController::class, 'stockPriceList'])->name('stockPriceList');
+Route::get('/nse-index-stock-list', [HomeController::class, 'nseIndexStockList'])->name('nseIndexStockList');
+Route::get('/sector-stock-list', [HomeController::class, 'sectorStockList'])->name('sectorStockList');
