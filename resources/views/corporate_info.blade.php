@@ -1,9 +1,13 @@
 @extends('include.app_layout')
 @section('content')
+<div class="app-title">
+  <div>
+    <h1><i class="fa fa-th-list"></i> Corporate Action List</h1>
+  </div>
+</div>
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Corporate Action List</h3>
       <table class="table table-striped" id="corporateInfo">
         <thead>
           <tr>

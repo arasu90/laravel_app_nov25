@@ -11,7 +11,7 @@
     <meta property="og:url" content="http://pratikborsadiya.in/blog/vali-admin">
     <meta property="og:image" content="http://pratikborsadiya.in/blog/vali-admin/hero-social.png">
     <meta property="og:description" content="Vali is a responsive and free admin theme built with Bootstrap 4, SASS and PUG.js. It's fully customizable and modular.">
-    <title>Vali Admin - Free Bootstrap 4 Admin Template</title>
+    <title>NSE Stock</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -25,6 +25,14 @@
         }
         .app-menu__item:hover {
             background: #00635a;
+        }
+        .nav-link.active {
+            background-color: #009688 !important;
+            color: white !important;
+        }
+        .nav-link:hover {
+            background-color: #00635a !important;
+            color: white !important;
         }
     </style>
 </head>
