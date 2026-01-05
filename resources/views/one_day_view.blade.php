@@ -20,9 +20,8 @@ $stock_name = $request->input('stock_name');
     <div class="tile">
       <div class="tile-body">
         <form class="row" action="{{ route('oneDayView') }}" method="get">
-          <!-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> -->
           <div class="form-group col-md-3">
-            <label class="control-label">Stock Name</label>
+            <label for="" class="control-label">Stock Name</label>
             <input
               class="form-control"
               type="text"
@@ -31,7 +30,7 @@ $stock_name = $request->input('stock_name');
               value="{{ $stock_name }}">
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">Sort by</label>
+            <label for="" class="control-label">Sort by</label>
             <select class="form-control" name="sort_by">
               <option
                 {{ $sort_by == 'name_az' ? 'selected' : '' }}
@@ -150,12 +149,12 @@ $stock_name = $request->input('stock_name');
         <h4>
           {{ $record->symbol }}
           <i
-            class="btn btn-sm fa fa-fw fa-lg 
+            class="btn btn-sm fa fa-fw fa-lg
               {{ $record->p_change > 0
                ? 'fa-arrow-up'
                : ($record->p_change < 0
                 ? 'fa-arrow-down'
-                : 'fa-arrow-right') 
+                : 'fa-arrow-right')
               }}"></i>
         </h4>
         <span style="font-size: 0.6rem;">{{ $record->company_name }}</span>

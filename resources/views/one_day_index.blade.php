@@ -21,9 +21,8 @@ $index_name = $request->input('index_name');
     <div class="tile">
       <div class="tile-body">
         <form class="row" action="{{ route('oneDayIndex') }}" method="get">
-          <!-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> -->
           <div class="form-group col-md-3">
-            <label class="control-label">Index Name</label>
+            <label for="" class="control-label">Index Name</label>
             <input
               class="form-control"
               type="text"
@@ -32,7 +31,7 @@ $index_name = $request->input('index_name');
               value="{{ $index_name }}">
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">Sort by</label>
+            <label for="" class="control-label">Sort by</label>
             <select class="form-control" name="sort_by">
               <option
                 {{ $sort_by == 'default' ? 'selected' : '' }}
@@ -52,12 +51,12 @@ $index_name = $request->input('index_name');
               <option
                 {{ $sort_by == 'top_lose_asc' ? 'selected' : '' }}
                 value="top_lose_asc">
-                Top Losser(%) Asc
+                Top Loser(%) Asc
               </option>
               <option
                 {{ $sort_by == 'top_lose_desc' ? 'selected' : '' }}
                 value="top_lose_desc">
-                Top Losser(%) Desc
+                Top Loser(%) Desc
               </option>
               <option
                 {{ $sort_by == 'top_gain_price_asc' ? 'selected' : '' }}
@@ -72,12 +71,12 @@ $index_name = $request->input('index_name');
               <option
                 {{ $sort_by == 'top_lose_price_asc' ? 'selected' : '' }}
                 value="top_lose_price_asc">
-                Top Losser(Price) Asc
+                Top Loser(Price) Asc
               </option>
               <option
                 {{ $sort_by == 'top_lose_price_desc' ? 'selected' : '' }}
                 value="top_lose_price_desc">
-                Top Losser(Price) Desc
+                Top Loser(Price) Desc
               </option>
             </select>
           </div>
@@ -106,12 +105,12 @@ $index_name = $request->input('index_name');
         <h4>
           {{ $record->index_symbol }}
           <i
-            class="btn btn-sm fa fa-fw fa-lg 
+            class="btn btn-sm fa fa-fw fa-lg
               {{ $record->value_p_change > 0
                ? 'fa-arrow-up'
                : ($record->value_p_change < 0
                 ? 'fa-arrow-down'
-                : 'fa-arrow-right') 
+                : 'fa-arrow-right')
               }}"></i>
         </h4>
         <span style="font-size: 0.6rem;">P.Close: {{ $record->previous_close }}</span>

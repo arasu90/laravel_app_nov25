@@ -1,11 +1,11 @@
-<!-- Essential javascripts for application to work-->
+<!-- Essential javaScripts for application to work-->
 <script src="js/jquery-3.2.1.min.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/main.js"></script>
 <!-- The javascript plugin to display page loading on top-->
 <script src="js/plugins/pace.min.js"></script>
-<!-- Page specific javascripts-->
+<!-- Page specific javaScripts-->
 <script type="text/javascript" src="js/plugins/chart.js"></script>
 <!-- Select2 plugin-->
 <script type="text/javascript" src="js/plugins/select2.min.js"></script>
@@ -26,14 +26,14 @@
             ordering: false,
             pageLength: 25,
         });
-        $('.watchlistDatatable').DataTable({
+        $('.watchlistDataTable').DataTable({
             ordering: true,
             // order: [[ 1, "asc" ]]
-            order: [],  
+            order: [],
             // columnDefs: [
-            // { 
-            //     orderable: true, 
-            //     targets: [1] 
+            // {
+            //     orderable: true,
+            //     targets: [1]
             // } // Disable sorting on column index 1 (Price)
         //]
         });

@@ -216,13 +216,13 @@
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Last 5 days Losser</h3>
+      <h3 class="tile-title">Last 5 days Loser</h3>
       <table class="table table-striped table-hover">
         <thead>
           <tr class="table-danger">
             <th>#</th>
             <th>Symbol</th>
-            @foreach($lastFewLosserDates as $dates)
+            @foreach($lastFewLoserDates as $dates)
             <th> {{ $dates }} </th>
             @endforeach
           </tr>

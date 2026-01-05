@@ -11,192 +11,30 @@ use App\Models\StockDetails;
 use App\Models\StockSymbol;
 use App\Models\MyPortfolioStock;
 use App\Models\MyWatchList as MyWatchListMaster;
-use App\Models\MyWatchlistItem;
 use App\Models\NseIndexDayRecord;
 use Carbon\Carbon;
 
-use function Termwind\render;
+use App\Http\Controllers\Home\Traits\DashboardTrait;
+use App\Http\Controllers\Home\Traits\{
+    UtilityTrait
+};
 
 class HomeController extends Controller
 {
-    public function index()
-    {
-        $today = (new NSEStockController())->today();
-        $totalStocks = StockSymbol::where('is_active', true)->count();
-        $topGainerPer =  $this->topGainerList('percentage');
-        $topGainerChange =  $this->topGainerList('price');
-        $topLooserPer =  $this->topLooserList('percentage');
-        $topLooserChange =  $this->topLooserList('price');
-        $Week52High = $this->week52HighLow('high');
-        $Week52Low = $this->week52HighLow('low');
-        $nifty50_index = NseIndexDayRecord::where('trade_date', $today)->where('index_symbol', 'NIFTY 50')->first();
-        $index_vix = NseIndexDayRecord::where('trade_date', $today)->where('index_symbol', 'INDIA VIX')->first();
-        return view('home',
-            compact(
-                'totalStocks',
-                'topGainerPer',
-                'topGainerChange',
-                'topLooserPer',
-                'topLooserChange',
-                'Week52High',
-                'Week52Low',
-                'nifty50_index',
-                'index_vix',
-            )
-        );
-    }
-
-    public function topGainerList(string $type)
-    {
-        $today = (new NSEStockController())->today();
-        $topGainerList = DB::table('s_stock_daily_price_data')
-            ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
-            ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
-            ->where('s_stock_daily_price_data.date', $today)
-            ->where('s_stock_symbols.is_active', true)
-            ->select(
-                's_stock_daily_price_data.symbol',
-                's_stock_details.company_name',
-                's_stock_daily_price_data.date',
-                's_stock_daily_price_data.last_price',
-                's_stock_daily_price_data.change',
-                's_stock_daily_price_data.p_change'
-            )
-            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date');
-            if($type == 'price')
-            {
-                $topGainerList = $topGainerList->orderBy('s_stock_daily_price_data.change', 'desc');
-            } else {
-                $topGainerList = $topGainerList->orderBy('s_stock_daily_price_data.p_change', 'desc');
-            }
-            
-            $topGainerList = $topGainerList->limit(10)
-            ->get();
-        return $topGainerList;
-    }
-
-    public function topLooserList(string $type)
-    {
-        $today = (new NSEStockController())->today();
-        $topGainerList = DB::table('s_stock_daily_price_data')
-            ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
-            ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
-            ->where('s_stock_daily_price_data.date', $today)
-            ->where('s_stock_symbols.is_active', true)
-            ->select(
-                's_stock_daily_price_data.symbol',
-                's_stock_details.company_name',
-                's_stock_daily_price_data.date',
-                's_stock_daily_price_data.last_price',
-                's_stock_daily_price_data.change',
-                's_stock_daily_price_data.p_change'
-            )
-            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date');
-            if($type == 'price')
-            {
-                $topGainerList = $topGainerList->orderBy('s_stock_daily_price_data.change', 'asc');
-            } else {
-                $topGainerList = $topGainerList->orderBy('s_stock_daily_price_data.p_change', 'asc');
-            }
-            
-            $topGainerList = $topGainerList->limit(10)
-            ->get();
-        return $topGainerList;
-    }
-
-    public function week52HighLow(string $type)
-    {
-
-        /* WITH latest_price AS (
-            SELECT dp.symbol, dp.last_price, dp.change, dp.p_change, dp.date
-            FROM s_stock_daily_price_data dp
-            INNER JOIN (
-                -- Get the latest date per symbol
-                SELECT symbol, MAX(`date`) AS latest_date
-                FROM s_stock_daily_price_data
-                GROUP BY symbol
-            ) AS ld
-            ON dp.symbol = ld.symbol AND dp.date = ld.latest_date
-        )
-
-        SELECT 
-            lp.symbol,
-            sd.company_name,
-            lp.last_price,
-            lp.change,
-            lp.p_change,
-            sd.week_high_low_min,
-            sd.week_high_low_min_date,
-            sd.week_high_low_max,
-            sd.week_high_low_max_date,
-            CASE 
-                WHEN lp.last_price = sd.week_high_low_max THEN 1 ELSE 0
-            END AS is_at_52week
-        FROM latest_price lp
-        INNER JOIN s_stock_symbols ss
-            ON ss.symbol = lp.symbol
-        INNER JOIN s_stock_details sd
-            ON sd.symbol = lp.symbol
-        WHERE ss.is_active = 1
-        ORDER BY sd.week_high_low_max_date DESC, is_at_52week DESC 
-        */
-        $orderColumn = $type === 'low'
-            ? 'week_high_low_min_date'
-            : 'week_high_low_max_date';
-
-        $weekColumn = $type === 'low'
-            ? 'week_high_low_min'
-            : 'week_high_low_max';
-
-        // Step 1: Get the latest daily price per symbol
-        $latestPrices = DB::table('s_stock_daily_price_data as dp')
-            ->select('dp.symbol', 'dp.last_price', 'dp.change', 'dp.p_change', 'dp.date')
-            ->join(DB::raw('(SELECT symbol, MAX(`date`) as latest_date 
-                            FROM s_stock_daily_price_data 
-                            GROUP BY symbol) as ld'), 
-                function($join) {
-                    $join->on('dp.symbol', '=', 'ld.symbol')
-                            ->on('dp.date', '=', 'ld.latest_date');
-                });
-
-        // Step 2: Join with symbols and stock details
-        $query = DB::table(DB::raw('(' . $latestPrices->toSql() . ') as lp'))
-            ->mergeBindings($latestPrices)
-            ->join('s_stock_symbols as ss', 'ss.symbol', '=', 'lp.symbol')
-            ->join('s_stock_details as sd', 'sd.symbol', '=', 'lp.symbol')
-            ->select(
-                'lp.symbol',
-                'sd.company_name',
-                'lp.last_price',
-                'lp.change',
-                'lp.p_change',
-                'sd.week_high_low_min',
-                'sd.week_high_low_min_date',
-                'sd.week_high_low_max',
-                'sd.week_high_low_max_date',
-                DB::raw("CASE WHEN lp.last_price = sd.$weekColumn THEN 1 ELSE 0 END AS is_at_52week")
-            )
-            ->where('ss.is_active', 1)
-            ->orderBy("sd.$orderColumn", 'desc')
-            ->orderBy('is_at_52week', 'desc')
-            ->limit(10)
-            ->get();
-
-        // dd(DB::getQueryLog());
-        return $query;
-    }
+    public const VALUE_P_CHANGE_LESS_THAN = "value_p_change < 0";
+    
+    use DashboardTrait;
+    use UtilityTrait;
 
     public function stockListTableView()
     {
         list($start, $end) = (new NSEStockController)->getDateRange(15);
-        // die($start . $end);
         
-        DB::enableQueryLog();
         $prices = DB::table('s_stock_daily_price_data')
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
             ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
             ->whereBetween('s_stock_daily_price_data.date', [$start, $end])
-            // ->where('s_stock_symbols.symbol', '3MINDIA')
+            // ->where('s_stock_symbols.symbol', 'IDEA')
             ->where('s_stock_symbols.is_active', true)
             ->select(
                 's_stock_daily_price_data.symbol',
@@ -218,7 +56,6 @@ class HomeController extends Controller
         $result = [];
         foreach ($grouped as $symbol => $records) {
             $row = ['symbol' => $symbol, 'company_name' => $records->first()->company_name];
-            $prevClose = null;
 
             foreach ($records as $rec) {
                 $percent = $rec->last_price;
@@ -226,7 +63,6 @@ class HomeController extends Controller
                 $row[$rec->date]['last_price'] = round($percent, 2);
                 $row[$rec->date]['change'] = round($rec->change, 2);
                 $row[$rec->date]['p_change'] = round($rec->p_change, 2);
-                $prevClose = $rec->last_price;
             }
 
             $result[] = $row;
@@ -336,7 +172,6 @@ class HomeController extends Controller
                 'where' => null,
             ],
         };
-
         
         $today = (new NSEStockController())->today();
         $stockCount = StockSymbol::where('is_active', true)->count();
@@ -370,21 +205,6 @@ class HomeController extends Controller
         return view('one_day_view', compact('day_records', 'record_date', 'stockCount'));
     }
 
-    public function holidayList()
-    {
-        $today = (new NSEStockController())->today();
-        $currentMonth = date('m', strtotime($today));
-        $holidays = StockHoliday::where('year', date('Y'));
-            // ->where(DB::raw('MONTH(date)'), $currentMonth)
-        if($currentMonth > 6):
-            $holidays = $holidays->orderBy('date', 'desc');
-        else:
-            $holidays = $holidays->orderBy('date', 'asc');
-        endif;
-        $holidays = $holidays->get();
-        return view('holiday_list', compact('holidays'));
-    }
-
     public function stockDetailView(Request $request)
     {
         $stock_name = $request->input('stock_name') ?? 'TNTELE';
@@ -395,32 +215,7 @@ class HomeController extends Controller
         $stock_list = StockSymbol::with('details')->where('is_active', true)->orderBy('symbol')->get();
         return view('stock_detail_view', compact('stock_daily_price_data', 'stock_details', 'stock_list', 'stock_name'));
     }
-
-    public function dbQuery()
-    {
-        $data = StockDailyPriceData::get();
-        foreach($data as $item):
-            $symbol = $item->symbol;
-            $date = $item->date;
-            $last_price = $item->last_price;
-            $change = $item->change;
-            $p_change = $item->p_change;
-            $previous_close = $item->previous_close;
-            $open = $item->open;
-            $close = $item->close;
-            $lower_cp = $item->lower_cp;
-            $upper_cp = $item->upper_cp;
-            $intra_day_high_low_min = $item->intra_day_high_low_min;
-            $intra_day_high_low_max = $item->intra_day_high_low_max;
-
-            $logQuery = "INSERT INTO s_stock_daily_price_data (`symbol`, `date`, `last_price`, `change`, `p_change`, `previous_close`, `open`, `close`, `lower_cp`, `upper_cp`, `intra_day_high_low_min`, `intra_day_high_low_max`) VALUES ('$symbol', '$date', '$last_price', '$change', '$p_change', '$previous_close', '$open', '$close', '$lower_cp', '$upper_cp', '$intra_day_high_low_min', '$intra_day_high_low_max')";
-            // Log::info($logQuery);
-            Log::channel('stock_backup')->info($logQuery);
-            // break;
-        endforeach;
-        return "Data inserted successfully";
-    }
-
+    
     public function averageStock(Request $request)
     {
         $current_total_quantity = $request->input('current_total_quantity');
@@ -435,7 +230,6 @@ class HomeController extends Controller
         $avg_live_price = $request->input('avg_live_price');
         $new_buy_quantity_average = 0;
         $new_buy_price_average = 0;
-        $after_expected_average_price = $expected_average_price;
         $average_price_increment = $expected_average_price>0 ? 0.004 : 0;
         if($calculator_type == 'average_stock' && $expected_average_price > 0):
             $after_expected_average_price = $expected_average_price - $average_price_increment;
@@ -464,7 +258,6 @@ class HomeController extends Controller
         $stock_list = StockSymbol::with('details')->where('is_active', true)->orderBy('symbol')->get();
 
         $today = (new NSEStockController())->today();
-        // $today = now()->format('Y-m-03');
         $myPortfolioStocks = DB::table('s_portfolio_stocks')
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_portfolio_stocks.symbol')
             ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
@@ -502,24 +295,44 @@ class HomeController extends Controller
 
         $watchListMaster = MyWatchListMaster::get();
         $watchListList = [];
-        $stockConditions = '1=1';
-        if($stock_name != null){
-            $stockConditions = "s_stock_symbols.symbol = '".$stock_name."'";
-        }
         foreach($watchListMaster as $watchList):
-            $watchListItems = DB::table('s_watchlist_items')
+            $query = DB::table('s_watchlist_items')
                 ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_watchlist_items.symbol')
                 ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
                 ->join('s_stock_daily_price_data', 's_stock_daily_price_data.symbol', '=', 's_stock_symbols.symbol')
                 ->where('s_stock_daily_price_data.date', $today)
-                ->whereRaw($stockConditions)
                 ->where('s_stock_symbols.is_active', true)
-                ->where('s_watchlist_items.watchlist_id', $watchList->id)
-                ->select('s_watchlist_items.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change', 's_stock_daily_price_data.previous_close', 's_stock_daily_price_data.open', 's_stock_daily_price_data.close', 's_stock_daily_price_data.lower_cp', 's_stock_daily_price_data.upper_cp', 's_stock_daily_price_data.intra_day_high_low_min', 's_stock_daily_price_data.intra_day_high_low_max', 's_stock_details.week_high_low_min', 's_stock_details.week_high_low_min_date', 's_stock_details.week_high_low_max', 's_stock_details.week_high_low_max_date')
-                ->get();
-            if(count($watchListItems) > 0){
-                $watchListList[str_replace([' ', '-'], '_', $watchList->watchlist_name)]['name'] = $watchList->watchlist_name;
-                $watchListList[str_replace([' ', '-'], '_', $watchList->watchlist_name)]['stock_list'] = $watchListItems;
+                ->where('s_watchlist_items.watchlist_id', $watchList->id);
+
+            if (!empty($stock_name)) {
+                $query->where('s_stock_symbols.symbol', $stock_name);
+            }
+
+            $watchListItems = $query->select(
+                's_watchlist_items.symbol',
+                's_stock_details.company_name',
+                's_stock_daily_price_data.last_price',
+                's_stock_daily_price_data.change',
+                's_stock_daily_price_data.p_change',
+                's_stock_daily_price_data.previous_close',
+                's_stock_daily_price_data.open',
+                's_stock_daily_price_data.close',
+                's_stock_daily_price_data.lower_cp',
+                's_stock_daily_price_data.upper_cp',
+                's_stock_daily_price_data.intra_day_high_low_min',
+                's_stock_daily_price_data.intra_day_high_low_max',
+                's_stock_details.week_high_low_min',
+                's_stock_details.week_high_low_min_date',
+                's_stock_details.week_high_low_max',
+                's_stock_details.week_high_low_max_date'
+            )->get();
+
+            if ($watchListItems->isNotEmpty()) {
+                $key = str_replace([' ', '-'], '_', $watchList->watchlist_name);
+                $watchListList[$key] = [
+                    'name' => $watchList->watchlist_name,
+                    'stock_list' => $watchListItems,
+                ];
             }
         endforeach;
         
@@ -529,33 +342,7 @@ class HomeController extends Controller
             ->with('details')
             // ->limit(5)
             ->get();
-        // dd($stock_list);
         return view('my_watchlist', compact('watchListList','stock_list', 'stock_name'));
-    }
-
-    public function appUrl()
-    {
-        $stock_list = StockSymbol::where('is_active', true)->orderBy('symbol')->get();
-        return view('app_url', compact('stock_list'));
-    }
-
-    public function corporateInfo()
-    {
-        $stock_list = StockSymbol::where('is_active', true)->orderBy('symbol')->get();
-        $corporateInfo = DB::table('s_stock_symbols')
-            ->join('s_stock_corporate_info', 's_stock_corporate_info.symbol', '=', 's_stock_symbols.symbol')
-            ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
-            ->where('s_stock_corporate_info.actions_type', 'corporate_actions')
-            ->select(
-                's_stock_symbols.symbol',
-                's_stock_details.company_name',
-                's_stock_corporate_info.actions_date',
-                's_stock_corporate_info.actions_purpose'
-            )
-            ->orderBy('s_stock_corporate_info.actions_date', 'desc')
-            ->limit(25)
-            ->get();
-        return view('corporate_info', compact('stock_list', 'corporateInfo'));
     }
 
     public static function sameMonthYear($passDate)
@@ -567,15 +354,10 @@ class HomeController extends Controller
 
     public static function viewAllIndex()
     {
-        $today = (new NSEStockController())->today();
-        $indexData = NseIndexDayRecord::where('trade_date', $today)->get();
-
         list($start, $end) = (new NSEStockController)->getDateRange(15);
-        // die($start.' ' .$end);
         DB::enableQueryLog();
         $prices = NseIndexDayRecord::whereBetween('trade_date', [$start, $end])->get();
 
-        // 3️⃣ Transform into pivot data
         $grouped = $prices->groupBy('index_symbol');
         $dates = $prices->unique('trade_date')->pluck('trade_date')->toArray();
 
@@ -601,9 +383,7 @@ class HomeController extends Controller
     }
 
     public function todayStock(){
-        // DB::enableQueryLog();
         $today = (new NSEStockController())->today();
-        // die($today);
         $todayAddedStock = StockSymbol::whereDate('created_at', $today)->orderby('symbol', 'asc')->get();
 
         $todayMissedStock = DB::table('s_stock_symbols as sss')
@@ -617,16 +397,12 @@ class HomeController extends Controller
             ->get();
         
         list($start, $end) = (new NSEStockController)->getDateRange(5);
-        // die($start . $end);
 
         $recentAddedStock = StockSymbol::where('is_active', true)
             ->whereBetween('created_at', [$start, $end])
             ->orderby('created_at', 'desc')
             ->orderby('symbol', 'asc')
             ->get();
-
-        // // dd(DB::getQueryLog());
-
 
         return view('today-stock',
             compact(
@@ -659,12 +435,12 @@ class HomeController extends Controller
             'top_lose_asc' => [
                 'column' => 'value_p_change',
                 'order' => 'asc',
-                'where' => 'value_p_change < 0',
+                'where' => self::VALUE_P_CHANGE_LESS_THAN,
             ],
             'top_lose_desc' => [
                 'column' => 'value_p_change',
                 'order' => 'desc',
-                'where' => 'value_p_change < 0',
+                'where' => self::VALUE_P_CHANGE_LESS_THAN,
             ],
             'top_gain_price_asc' => [
                 'column' => 'value_change',
@@ -679,12 +455,12 @@ class HomeController extends Controller
             'top_lose_price_asc' => [
                 'column' => 'value_change',
                 'order' => 'asc',
-                'where' => 'value_p_change < 0',
+                'where' => self::VALUE_P_CHANGE_LESS_THAN,
             ],
             'top_lose_price_desc' => [
                 'column' => 'value_change',
                 'order' => 'desc',
-                'where' => 'value_p_change < 0',
+                'where' => self::VALUE_P_CHANGE_LESS_THAN,
             ],
             default => [
                 'column' => 'id',
@@ -705,9 +481,6 @@ class HomeController extends Controller
         endif;
 
         $day_records = $day_records->get();
-        // echo '<pre>';
-        // print_r($day_records);
-        // dd('test');
         return view('one_day_index', compact('day_records', 'record_date'));
     }
 
@@ -716,8 +489,6 @@ class HomeController extends Controller
         $days = 5; // number of consecutive days
         $today = (new NSEStockController())->today();
         list($startDate, $endDate) = (new NSEStockController)->getDateRange($days);
-        // $startDate = $startDate;
-        // $endDate = $endDate;
         DB::enableQueryLog();
         $gainerQuery = DB::table('s_stock_daily_price_data')
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
@@ -728,7 +499,6 @@ class HomeController extends Controller
             ->havingRaw("SUM(CASE WHEN s_stock_daily_price_data.last_price > s_stock_daily_price_data.previous_close THEN 1 ELSE 0 END) = ?", [$days])
             ->pluck('symbol');
             
-        // dd(DB::getQueryLog());
         $gainerData = StockDailyPriceData::whereIn('symbol',$gainerQuery)
             ->whereBetween('date', [$startDate, $endDate])
             ->orderby('symbol', 'asc')
@@ -758,11 +528,10 @@ class HomeController extends Controller
             ->orderby('symbol', 'asc')
             ->orderby('date', 'asc')
             ->get();
-        $allLosserData = $loserData->flatten(1); // flatten 1 level
+        $allLoserData = $loserData->flatten(1); // flatten 1 level
 
         // Get only the dates
-        $lastFewLosserDates = $allLosserData->pluck('date')->unique()->values();
-
+        $lastFewLoserDates = $allLoserData->pluck('date')->unique()->values();
 
         $lastFewDaysLoser = $loserData->groupBy('symbol')
             ->map(function ($symbolGroup) {
@@ -786,22 +555,10 @@ class HomeController extends Controller
             ->whereRaw('s_stock_daily_price_data.last_price = s_stock_daily_price_data.lower_cp')
             ->orderby('s_stock_symbols.symbol', 'asc')
             ->get();
-        // dd($todayHitUpperCP);
         
         $fewDays = 3; // number of consecutive days
         list($startDate, $endDate) = (new NSEStockController)->getDateRange($fewDays);
-        // $startDate = $startDate->format("Y-m-d");
-        // $endDate = $endDate->format("Y-m-d");
 
-        $lastFewDaysUpperCP = DB::table('s_stock_daily_price_data')
-            ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
-            ->join('s_stock_details', 's_stock_symbols.symbol', '=', 's_stock_details.symbol')
-            ->where('s_stock_daily_price_data.date', $today)
-            ->where('s_stock_symbols.is_active', true)
-            ->whereRaw('s_stock_daily_price_data.last_price = s_stock_daily_price_data.upper_cp')
-            ->orderby('s_stock_symbols.symbol', 'asc')
-            ->get();
-        
         $lastFewDaysUpperCPQuery = DB::table('s_stock_daily_price_data')
             ->select('s_stock_symbols.symbol')
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
@@ -853,15 +610,13 @@ class HomeController extends Controller
                 return $symbolGroup->keyBy('date');
             });
         
-        // dd(DB::getQueryLog());
-        // dd($lastFewDaysLowerCP);
         return view('last_few_days_stock',
             compact(
                 'today',
                 'lastFewDaysGainer',
-                'lastFewDaysLoser', 
                 'lastFewGainerDates',
-                'lastFewLosserDates',
+                'lastFewDaysLoser',
+                'lastFewLoserDates',
                 'todayHitUpperCP',
                 'todayHitLowerCP',
                 'lastFewDaysUpperCP',
@@ -870,21 +625,6 @@ class HomeController extends Controller
                 'lastFewDaysLowerCPDate',
             )
         );
-    }
-
-    public function PaperTrade()
-    {
-        $today = (new NSEStockController())->today();
-        $currentMonth = date('m', strtotime($today));
-        $holidays = StockHoliday::where('year', date('Y'));
-            // ->where(DB::raw('MONTH(date)'), $currentMonth)
-        if($currentMonth > 6):
-            $holidays = $holidays->orderBy('date', 'desc');
-        else:
-            $holidays = $holidays->orderBy('date', 'asc');
-        endif;
-        $holidays = $holidays->get();
-        return view('holiday_list', compact('holidays'));
     }
 
     public function stockPriceList(Request $request)
@@ -970,26 +710,47 @@ class HomeController extends Controller
             ]
         ];
         $watchListList = [];
-        $stockConditions = '1=1';
-        if($stock_name != null){
-            $stockConditions = "s_stock_symbols.symbol = '".$stock_name."'";
-        }
 
         foreach($defaultWatchListNames as $defaultWatchList):
-            $stockList = DB::table('s_stock_symbols')
+            $query = DB::table('s_stock_symbols')
                 ->join('s_stock_daily_price_data', 's_stock_daily_price_data.symbol', '=', 's_stock_symbols.symbol')
                 ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
                 ->where('s_stock_daily_price_data.date', $today)
                 ->where('s_stock_symbols.is_active', true)
-                ->whereRaw($defaultWatchList['condition'])
-                ->whereRaw($stockConditions)
-                ->select('s_stock_symbols.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change', 's_stock_daily_price_data.previous_close', 's_stock_daily_price_data.open', 's_stock_daily_price_data.close', 's_stock_daily_price_data.lower_cp', 's_stock_daily_price_data.upper_cp', 's_stock_daily_price_data.intra_day_high_low_min', 's_stock_daily_price_data.intra_day_high_low_max', 's_stock_details.week_high_low_min', 's_stock_details.week_high_low_min_date', 's_stock_details.week_high_low_max', 's_stock_details.week_high_low_max_date')
+                ->whereRaw($defaultWatchList['condition']); // keep this if it's dynamic
+
+            if (!empty($stock_name)) {
+                $query->where('s_stock_symbols.symbol', $stock_name);
+            }
+
+            $stockList = $query
+                ->select(
+                    's_stock_symbols.symbol',
+                    's_stock_details.company_name',
+                    's_stock_daily_price_data.last_price',
+                    's_stock_daily_price_data.change',
+                    's_stock_daily_price_data.p_change',
+                    's_stock_daily_price_data.previous_close',
+                    's_stock_daily_price_data.open',
+                    's_stock_daily_price_data.close',
+                    's_stock_daily_price_data.lower_cp',
+                    's_stock_daily_price_data.upper_cp',
+                    's_stock_daily_price_data.intra_day_high_low_min',
+                    's_stock_daily_price_data.intra_day_high_low_max',
+                    's_stock_details.week_high_low_min',
+                    's_stock_details.week_high_low_min_date',
+                    's_stock_details.week_high_low_max',
+                    's_stock_details.week_high_low_max_date'
+                )
                 ->orderBy('s_stock_daily_price_data.last_price')
                 ->orderBy('s_stock_daily_price_data.p_change')
                 ->get();
-            if(count($stockList)>0){
-                $watchListList[$defaultWatchList['key_name']]['name'] = $defaultWatchList['name'];
-                $watchListList[$defaultWatchList['key_name']]['stock_list'] = $stockList;
+
+            if ($stockList->isNotEmpty()) {
+                $watchListList[$defaultWatchList['key_name']] = [
+                    'name' => $defaultWatchList['name'],
+                    'stock_list' => $stockList,
+                ];
             }
         endforeach;
 
@@ -1041,8 +802,8 @@ class HomeController extends Controller
                 )
                 ->get();
             if(count($sectorIDstocks)>0){
-                $watchListList[str_replace([' ', '-'], '_', $sectorID->pdsectorind)]['name'] = $sectorID->pdsectorind;
-                $watchListList[str_replace([' ', '-'], '_', $sectorID->pdsectorind)]['stock_list'] = $sectorIDstocks;
+                $watchListList[str_replace([' ', '-','&'], '_', $sectorID->pdsectorind)]['name'] = $sectorID->pdsectorind;
+                $watchListList[str_replace([' ', '-','&'], '_', $sectorID->pdsectorind)]['stock_list'] = $sectorIDstocks;
             }
         }
 
@@ -1098,14 +859,9 @@ class HomeController extends Controller
                 $watchListList[str_replace([' ', '-', '&'], '_', $sector->sector)]['stock_list'] = $sectorStocks;
             }
         }
-        // dd($watchListList);
 
         $stock_list = StockSymbol::with('details')->where('is_active', true)->get();
         return view('my_watchlist', compact('watchListList','stock_list', 'stock_name'));
     }
 
-    public function icons()
-    {
-        return view('app_icons');
-    }
 }

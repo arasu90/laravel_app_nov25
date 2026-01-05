@@ -12,4 +12,4 @@ class StockSectorIndex extends Model
         'is_active',
     ];
     public $timestamps = true;
-}   
+}

@@ -10,6 +10,8 @@
     <h3 class="tile-title">App URL</h3>
     <div class="table-responsive table-hover table-striped">
       <table class="table table-striped table-bordered">
+        <th>Name</th>
+        <th>URL</th>
         <tbody>
           <tr>
             <td>
@@ -57,6 +59,8 @@
     <div class="table-responsive table-hover table-striped">
       <h3 class="tile-title">API URL</h3>
       <table class="table table-striped table-bordered">
+        <th>Name</th>
+        <th>URL</th>
         <tbody>
           <tr>
             <td>

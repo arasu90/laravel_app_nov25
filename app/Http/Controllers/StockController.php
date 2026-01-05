@@ -12,66 +12,10 @@ use App\Models\StockIndexName;
 use App\Models\DailyStockJsonData;
 use App\Models\NseIndexDayRecord;
 use Illuminate\Support\Facades\Log;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class StockController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
-
     public function allStocks()
     {
         $symbols = (new NSEStockController())->getAllStocksArray();
@@ -88,24 +32,17 @@ class StockController extends Controller
             'updated_at' => now()
         ], $symbols);
 
-        // StockSymbols::insertOrIgnore($insertData);
 
         $affected = DB::table('s_stock_symbols')->insertOrIgnore($insertData);
 
         return response()->json([
             'inserted_count' => $affected
         ]);
-
-        // return $symbols;
     }
 
     // no more used this function
     public function monthlyView(Request $request)
     {
-        // $month = $request->month ?? now()->format('Y-m');
-        // $start = date('Y-m-01', strtotime($month));
-        // $end   = date('Y-m-t', strtotime($month));
-
         $end = now()->format('Y-m-d');              // today
         $start = now()->subMonth()->format('Y-m-d'); // 1 month back
 
@@ -186,11 +123,8 @@ class StockController extends Controller
             $infoData = $data['info'];
             $metadata = $data['metadata'];
             $securityInfo = $data['securityInfo'];
-            // $sddDetails = $data['sddDetails'];
-            // $currentMarketType = $data['currentMarketType'];
             $priceInfo = $data['priceInfo'];
             $industryInfo = $data['industryInfo'];
-            // $preOpenMarket = $data['preOpenMarket'];
 
             $infoStockSymbol = $infoData['symbol'];
             $infoStockName = $infoData['companyName'];
@@ -200,7 +134,6 @@ class StockController extends Controller
             $metaDataStatus = $metadata['status'] ?? 'N/A';
             $metaDataLastUpdateTime = $metadata['lastUpdateTime'] ?? 'N/A';
             $metaDataPDSEctorInd = $metadata['pdSectorInd'] ?? 'N/A';
-            // $metaDataPDSEctorIndAll = $metadata['pdSectorIndAll'];
             $securityInfoTradingStatus = $securityInfo['tradingStatus'] ?? 'N/A';
             $securityInfoTradingSegment = $securityInfo['tradingSegment'] ?? 'N/A';
             $securityInfoFaceValue = $securityInfo['faceValue'] ?? 0;
@@ -277,7 +210,6 @@ class StockController extends Controller
                 'is_52_week_low' => $is52WeekLow,
                 'is_52_week_low_value' => $is52WeekLowValue,
             ];
-            // dd($insertPriceDataValues);
 
             $insertDailyData = [
                 'symbol' => $infoStockSymbol,
@@ -304,9 +236,9 @@ class StockController extends Controller
         }
     }
 
+
     public function getHolidayList(Request $request)
     {
-        // echo "getHolidayList: " . print_r($request->all(), true);
         $type = $request->query('type');
         $response = (new NSEStockController())->marketHolidays($type);
         $holidaysData = $response->getData(true);
@@ -328,17 +260,11 @@ class StockController extends Controller
     {
         $response = (new NSEStockController())->getIndexNames();
         $indexNames = $response->getData(true);
-        // if(empty($indexNames['stn'])) {
-        //     return response()->json(['error' => 'No data found']);
-        // }-
-        // $indexNamesData = $indexNames['stn'];
-        // echo "<pre>";
-        // print_r($indexNames['stn']);
+
         foreach($indexNames['stn'] as $indexName) {
             list($indexSymbol, $indexNameValue) = $indexName;
             StockIndexName::updateOrCreate(['index_symbol' => $indexSymbol], ['index_symbol' => $indexSymbol, 'index_name' => $indexNameValue]);
         }
-        // die();
         return response()->json(['success' => 'Inserted successfully']);
     }
 
@@ -386,12 +312,8 @@ class StockController extends Controller
         }
 
         try {
-            // echo '<pre>';
-            
             $corporateActions = $data['corporate_actions']['data'];
             foreach($corporateActions as $action){
-                // print_r($data);
-                // die();
                 $corporateInfoData = [
                     'actions_type' => 'corporate_actions',
                     'symbol' => $action['symbol'],
@@ -400,32 +322,10 @@ class StockController extends Controller
                 ];
 
                 DB::table('s_stock_corporate_info')->insertOrIgnore($corporateInfoData);
-
-                // DB::statement(
-                //     "INSERT IGNORE INTO s_stock_corporate_info (symbol, actions_type, actions_date, actions_purpose)
-                //       VALUES (:symbol, :actions_type, :actions_date, actions_purpose)"
-                //     , $corporateInfoData
-                // );
-
-                    //                 DB::statement(DB::raw("
-                    //     INSERT IGNORE INTO s_stock_corporate_info (col1, col2)
-                    //     VALUES ('value1', 'value2')
-                    // "));
-
-                    // DB::statement(DB::raw("
-                    //     INSERT INTO s_stock_corporate_info (col1, col2)
-                    //     VALUES ('value1', 'value2')
-                    //     ON DUPLICATE KEY UPDATE 
-                    //         col1 = VALUES(col1),
-                    //         col2 = VALUES(col2)
-                    // "));
-
             }
 
             $boradMeeting = $data['borad_meeting']['data'];
             foreach($boradMeeting as $action){
-                // print_r($data);
-                // die();
                 $boradMeetingInfoData = [
                     'actions_type' => 'borad_meeting',
                     'symbol' => $action['symbol'],
@@ -461,9 +361,7 @@ class StockController extends Controller
     {
         $trade_date = (new NSEStockController())->today();
         $dayIndexData = (new NSEStockController())->indices()->getData(true);
-        // echo "<pre>";
         foreach($dayIndexData['data'] as $indexData){
-            // print_r($indexData);
             $insertindexData = [
                 'index_symbol' => $indexData['indexSymbol'],
                 'value_last' => $indexData['last'],

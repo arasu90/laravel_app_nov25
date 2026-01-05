@@ -12,28 +12,51 @@
         <form class="row" action="{{ route('addMyPortfolio') }}" method="post">
           <input type="hidden" name="_token" value="{{ csrf_token() }}">
           <div class="form-group col-md-3">
-            <label class="control-label">Stock List</label>
-            <select class="form-control select2" name="stock_name">
+            <label for="stock_name" class="control-label">Stock List</label>
+            <select class="form-control select2" name="stock_name" id="stock_name">
               <option value="">Select Stock</option>
               @foreach($stock_list as $stock)
-                <option value="{{ $stock->symbol }}">{{ $stock->symbol }} - {{ $stock->details->company_name ?? '' }}</option>
+                <option value="{{ $stock->symbol }}">
+                  {{ $stock->symbol }} - {{ $stock->details->company_name ?? '' }}
+                </option>
               @endforeach
             </select>
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">Buy Price</label>
-            <input class="form-control" type="text" placeholder="Enter Buy Price" name="buy_price" value="{{ $buy_price ?? '' }}">
+            <label for="buy_price" class="control-label">Buy Price</label>
+            <input
+              class="form-control"
+              type="text"
+              placeholder="Enter Buy Price"
+              id="buy_price"
+              name="buy_price"
+              value="{{ $buy_price ?? '' }}">
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">Buy Qty</label>
-            <input class="form-control" type="text" placeholder="Enter Buy Qty" name="buy_qty" value="{{ $buy_qty ?? '' }}">
+            <label for="buy_qty" class="control-label">Buy Qty</label>
+            <input
+              class="form-control"
+              type="text"
+              placeholder="Enter Buy Qty"
+              id="buy_qty"
+              name="buy_qty"
+              value="{{ $buy_qty ?? '' }}">
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">Buy Date</label>
-            <input class="form-control" type="date" placeholder="Enter Buy Date" name="buy_date" value="{{ $buy_date ?? '' }}">
+            <label for="buy_date" class="control-label">Buy Date</label>
+            <input
+              class="form-control"
+              type="date"
+              placeholder="Enter Buy Date"
+              id="buy_date"
+              name="buy_date"
+              value="{{ $buy_date ?? '' }}">
           </div>
           <div class="form-group col-md-3 align-self-end">
-            <button class="btn btn-primary" type="submit"><i class="fa fa-fw fa-lg fa-check-circle"></i>Add to Portfolio</button>
+            <button class="btn btn-primary" type="submit">
+              <i class="fa fa-fw fa-lg fa-check-circle"></i>
+              Add to Portfolio
+            </button>
           </div>
         </form>
       </div>
@@ -41,7 +64,6 @@
   </div>
   <div class="col-md-12">
     <div class="tile">
-      <!-- <h3 class="tile-title">My Portfolio</h3> -->
       <div class="table-responsive table-hover table-striped">
         <table class="table table-striped table-bordered">
           <thead>
@@ -63,7 +85,7 @@
                 $overall_invested_amount += $myPortfolio->buy_price * $myPortfolio->buy_qty;
                 $overall_live_amount += $myPortfolio->last_price * $myPortfolio->buy_qty;
                 $overall_profit_loss += ($myPortfolio->last_price * $myPortfolio->buy_qty) - ($myPortfolio->buy_price * $myPortfolio->buy_qty);
-                $overall_profit_loss_per = round(($overall_profit_loss / $overall_invested_amount) * 100, 2);
+                $overall_profit_loss_per = $overall_invested_amount ? round(($overall_profit_loss / $overall_invested_amount) * 100, 2) : 0;
                 $todayProfitLoss += $myPortfolio->change * $myPortfolio->buy_qty;
               @endphp
             @endforeach
@@ -80,9 +102,15 @@
                   Invested: Rs. {{ $overall_invested_amount }}
               </td>
               <td class="{{ $todayProfitLoss > 0 ? 'text-success' : ($todayProfitLoss < 0 ? 'text-danger' : 'text-info') }}">
+                @if($overall_invested_amount == 0)
+                <span>
+                  Today Profit/Loss: Rs. 0 (0 %)
+                </span>
+                @else
                 <span>
                   Today Profit/Loss: Rs. {{ $todayProfitLoss }} ({{ round(($todayProfitLoss/$overall_invested_amount)*100,2) }} %)
                 </span>
+                @endif
               </td>
             </tr>
           </tbody>

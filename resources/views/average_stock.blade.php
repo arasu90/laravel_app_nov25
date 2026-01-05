@@ -19,26 +19,25 @@
       </div>
       <div class="tile-body">
         <form class="row" action="{{ route('averageStock') }}" method="get">
-          <!-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> -->
           <div class="form-group col-md-3">
-            <label class="control-label">Current Total Quantity</label>
+            <label for="current_total_quantity" class="control-label">Current Total Quantity</label>
             <input class="form-control" type="text" placeholder="Enter Current Total Quantity" name="current_total_quantity" value="{{ $current_total_quantity ?? '' }}">
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">Current Average Price</label>
+            <label for="current_average_price" class="control-label">Current Average Price</label>
             <input class="form-control" type="text" placeholder="Enter Current Average Price" name="current_average_price" value="{{ $current_average_price ?? '' }}">
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">New Buy Price</label>
+            <label for="new_buy_price" class="control-label">New Buy Price</label>
             <input class="form-control" type="text" placeholder="Enter New Buy Price" name="new_buy_price" value="{{ $new_buy_price ?? '' }}">
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">Expected Average Price</label>
+            <label for="expected_average_price" class="control-label">Expected Average Price</label>
             <input class="form-control" type="text" placeholder="Enter Expected Average Price" name="expected_average_price" value="{{ $expected_average_price ?? '' }}">
             <input class="form-control" type="hidden" name="calculator_type" value="average_stock">
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">Profit/Loss</label>
+            <label for="" class="control-label">Profit/Loss</label>
             <div class="toggle lg">
               <label>
                 <input type="checkbox" name="avg_profit_loss" value="1" {{ $avg_profit_loss == 1 ? 'checked' : '' }}><span class="button-indecator"></span>
@@ -46,7 +45,7 @@
             </div>
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">Live Price</label>
+            <label for="" class="control-label">Live Price</label>
             <input class="form-control" type="text" placeholder="Enter Live Price" name="avg_live_price" value="{{ $avg_live_price ?? '' }}">
           </div>
           <div class="form-group col-md-4 align-self-end">
@@ -86,24 +85,24 @@
       <div class="tile-body">
         <form class="row" action="{{ route('averageStock') }}" method="get">
           <div class="form-group col-md-3">
-            <label class="control-label">Current Total Quantity</label>
+            <label for="" class="control-label">Current Total Quantity</label>
             <input class="form-control" type="text" placeholder="Enter Current Total Quantity" name="current_total_quantity" value="{{ $current_total_quantity ?? '' }}">
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">Current Average Price</label>
+            <label for="" class="control-label">Current Average Price</label>
             <input class="form-control" type="text" placeholder="Enter Current Average Price" name="current_average_price" value="{{ $current_average_price ?? '' }}">
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">New Buy Price</label>
+            <label for="" class="control-label">New Buy Price</label>
             <input class="form-control" type="text" placeholder="Enter New Buy Price" name="new_buy_price" value="{{ $new_buy_price ?? '' }}">
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">New Buy Quantity</label>
+            <label for="" class="control-label">New Buy Quantity</label>
             <input class="form-control" type="text" placeholder="Enter New Buy Quantity" name="new_buy_quantity" value="{{ $new_buy_quantity ?? '' }}">
             <input class="form-control" type="hidden" name="calculator_type" value="buy_quantity_calculator">
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">Profit/Loss</label>
+            <label for="" class="control-label">Profit/Loss</label>
             <div class="toggle lg">
               <label>
                 <input type="checkbox" name="qty_profit_loss" value="1" {{ $qty_profit_loss == 1 ? 'checked' : '' }}><span class="button-indecator"></span>
@@ -111,7 +110,7 @@
             </div>
           </div>
           <div class="form-group col-md-3">
-            <label class="control-label">Live Price</label>
+            <label for="" class="control-label">Live Price</label>
             <input class="form-control" type="text" placeholder="Enter Live Price" name="qty_live_price" value="{{ $qty_live_price ?? '' }}">
           </div>
           <div class="form-group col-md-4 align-self-end">

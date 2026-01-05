@@ -3,10 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\StockController;
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+use Illuminate\Support\Facades\Artisan;
 
 // home
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -18,8 +15,6 @@ Route::get('/table/data-table', [HomeController::class, 'dataTableView'])->name(
 
 // insert all stocks into database
 Route::get('/all-stocks', [StockController::class, 'allStocks'])->name('allStocks');
-// Route::get('/get-holiday-list/{type}', [StockController::class, 'getHolidayList'])->name('getHolidayList');
-// Route::get('/get-holiday-list?type={type}', [StockController::class, 'getHolidayList'])->where('type', '.*')->name('getHolidayList');
 Route::get('/get-holiday-list', [StockController::class, 'getHolidayList'])->name('getHolidayList');
 
 // monthly view

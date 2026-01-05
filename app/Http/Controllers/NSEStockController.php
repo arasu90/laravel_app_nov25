@@ -12,6 +12,8 @@ class NSEStockController extends Controller
 {
     protected $nse;
 
+    protected const NO_DATA_FOUND = "Data not found";
+
     public function __construct()
     {
         $this->nse = new NSEClient();
@@ -37,7 +39,7 @@ class NSEStockController extends Controller
         $to = $request->query('to', $this->nse->today());
 
         $data = $this->nse->getEquityHistoricalData($symbol, $from, $to);
-        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+        return $data ? response()->json($data) : response()->json(['error' => self::NO_DATA_FOUND], 404);
     }
 
     // GET /api/indices
@@ -54,7 +56,6 @@ class NSEStockController extends Controller
     public function getAllStocksArray()
     {
         $data = $this->nse->getAllStockSymbol();
-        // Log::info($data);
 
         $symbols = array_map(function($item) {
             return $item['metadata']['symbol'];
@@ -62,31 +63,30 @@ class NSEStockController extends Controller
         sort($symbols);
         return $symbols;
     }
-
      // GET /api/all-stocks
 
     public function allStocks()
     {
         $symbols = $this->getAllStocksArray();
-        return $symbols ? response()->json($symbols) : response()->json(['error' => 'Data not found'], 404);
+        return $symbols ? response()->json($symbols) : response()->json(['error' => self::NO_DATA_FOUND], 404);
     }
 
     public function marketHolidays($type='trading')
     {
         $data = $this->nse->getMarketHolidays($type);
-        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+        return $data ? response()->json($data) : response()->json(['error' => self::NO_DATA_FOUND], 404);
     }
 
     public function corporateInfo($symbol)
     {
         $data = $this->nse->getCorporateInfo($symbol);
-        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+        return $data ? response()->json($data) : response()->json(['error' => self::NO_DATA_FOUND], 404);
     }
 
     public function getIndexNames()
     {
         $data = $this->nse->getIndexNames();
-        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+        return $data ? response()->json($data) : response()->json(['error' => self::NO_DATA_FOUND], 404);
     }
 
     public function today()
@@ -114,7 +114,6 @@ class NSEStockController extends Controller
         }
 
         return $date->format('Y-m-d');
-        // return date("Y-m-11");
     }
 
     private function isHolidayOrWeekend(Carbon $date): bool
@@ -126,46 +125,60 @@ class NSEStockController extends Controller
         return StockHoliday::whereDate('date', $date->format('Y-m-d'))->exists();
     }
 
-
     public function todayDateTime()
     {
         $date = now()->isWeekend()
             ? now()->previous(Carbon::FRIDAY)
             : now();
 
-        $finalDateTime = $date->format('Y-m-d H:i:s');
-        return $finalDateTime;
+        return $date->format('Y-m-d H:i:s');
     }
 
     public function getEquityMaster()
     {
         $data = $this->nse->getEquityMaster();
-        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+        return $data ? response()->json($data) : response()->json(['error' => self::NO_DATA_FOUND], 404);
     }
 
     public function getCircular($isLatest=false)
     {
         $data = $this->nse->getCircular($isLatest);
-        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+        return $data ? response()->json($data) : response()->json(['error' => self::NO_DATA_FOUND], 404);
     }
 
     public function getHistoricalData($symbol)
     {
         $data = $this->nse->getHistoricalData($symbol);
-        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+        return $data ? response()->json($data) : response()->json(['error' => self::NO_DATA_FOUND], 404);
     }
     
     public function getHistoricalDataIndex($symbol)
     {
         $data = $this->nse->getHistoricalDataIndex($symbol);
-        return $data ? response()->json($data) : response()->json(['error' => 'Data not found'], 404);
+        return $data ? response()->json($data) : response()->json(['error' => self::NO_DATA_FOUND], 404);
     }
 
     public function getDateRange($numDays=5)
     {
-        $startDate = now();
+        $now = now();
+        if ($now->isSaturday() || $now->isSunday()) {
+            $startDate = $now->previous(Carbon::FRIDAY);
+
+        } elseif ($now->isMonday() && $now->hour < 10) {
+            // Always Friday
+            $startDate = $now->previous(Carbon::FRIDAY);
+
+        } elseif ($now->hour < 10) {
+            // Weekday before 10 AM → previous working day
+            $startDate = $now->previousWeekday();
+
+        } else {
+            // Weekday after 10 AM → today
+            $startDate = $now;
+        }
+
         $endDate = $this->today();
-        $weekdaysCounted = 0;
+        $weekdaysCounted = 1;
         while ($weekdaysCounted < $numDays) {
             $startDate->subDay();
             if (!$startDate->isWeekend() && !$this->isHolidayOrWeekend($startDate)) {
@@ -174,7 +187,6 @@ class NSEStockController extends Controller
         }
         $end = $endDate;
         $start = $startDate->format("Y-m-d");
-        // dd($start.' - '.$end);
         return [$start, $end];
     }
 }

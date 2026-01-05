@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\NSEStockController;
 
 Route::get('/market-status', [NSEStockController::class, 'marketStatus']);

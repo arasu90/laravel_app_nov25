@@ -11,9 +11,8 @@
     <div class="tile">
       <div class="tile-body">
         <form class="row" action="{{ route('stockDetailView') }}" method="get">
-          <!-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> -->
           <div class="form-group col-md-4">
-            <label class="control-label">Stock List</label>
+            <label for="" class="control-label">Stock List</label>
             <select class="form-control select2" name="stock_name">
               <option value="">Select Stock</option>
               @foreach($stock_list as $stock)

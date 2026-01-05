@@ -11,17 +11,17 @@
       <table class="table table-striped" id="corporateInfo">
         <thead>
           <tr>
-            <th width="30%">Symbol</th>
-            <th width="10%">Date</th>
-            <th width="60%">Purpose</th>
+            <th class="col-symbol">Symbol</th>
+            <th class="col-date">Date</th>
+            <th class="col-purpose">Purpose</th>
           </tr>
         </thead>
         <tbody>
           @foreach($corporateInfo as $infoData)
           <tr>
-            <td>{{ $infoData->company_name }} 
+            <td>{{ $infoData->company_name }}
               <br />
-              <small>{{ $infoData->symbol }}</small>
+              <small><a href="stock-detail-view?stock_name={{ $infoData->symbol }}">{{ $infoData->symbol }}</a></small>
             </td>
             <td>{{ date("d-m-Y", strtotime($infoData->actions_date)) }}</td>
             <td>{{ $infoData->actions_purpose }}</td>

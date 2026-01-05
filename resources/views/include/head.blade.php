@@ -34,5 +34,9 @@
             background-color: #00635a !important;
             color: white !important;
         }
+
+        th.col-symbol { width: 30%; }
+        th.col-date   { width: 10%; }
+        th.col-purpose{ width: 60%; }
     </style>
 </head>

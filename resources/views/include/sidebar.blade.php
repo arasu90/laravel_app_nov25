@@ -1,6 +1,6 @@
 <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
 <aside class="app-sidebar">
-    <div class="app-sidebar__user"><img style="width:30%" class="app-sidebar__user-avatar" src="https://fastly.picsum.photos/id/132/200/200.jpg?hmac=meVrCoOURNB7iKK3Mv-yuRrvxvXgv4h2vIRLM4sKwK4" alt="User Image">
+    <div class="app-sidebar__user"><img style="width:30%" class="app-sidebar__user-avatar" src="https://fastly.picsum.photos/id/132/200/200.jpg?hmac=meVrCoOURNB7iKK3Mv-yuRrvxvXgv4h2vIRLM4sKwK4" alt="User logo">
     <div>
         <p class="app-sidebar__user-name">Kalaiarasu</p>
         <p class="app-sidebar__user-designation">Software Developer</p>

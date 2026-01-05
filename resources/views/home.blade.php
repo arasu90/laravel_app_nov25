@@ -133,7 +133,7 @@
       <h3 class="tile-title">52 Week High</h3>
       <table class="table table-striped">
         <tbody>
-          @foreach($Week52High as $stockList)
+          @foreach($week52High as $stockList)
           @php
             $color_1 = match (true) {
                 $stockList->p_change === null => 'text-warning',
@@ -179,7 +179,7 @@
       <h3 class="tile-title">52 Week Low</h3>
       <table class="table table-striped">
         <tbody>
-          @foreach($Week52Low as $stockList)
+          @foreach($week52Low as $stockList)
             @php
               $color_1 = match (true) {
                   $stockList->p_change === null => 'text-warning',

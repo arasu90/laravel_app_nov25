@@ -14,10 +14,9 @@ use App\Http\Controllers\HomeController;
     <div class="tile">
       <div class="tile-body">
         <form class="row" action="{{ url()->current() }}" method="get">
-          <!-- <input type="hidden" name="_token" value="{{ csrf_token() }}"> -->
           <div class="form-group col-md-4">
-            <label class="control-label">Stock List</label>
-            <select class="form-control select2" name="stock_name" required>
+            <label for="stock_name" class="control-label">Stock List</label>
+            <select class="form-control select2" id="stock_name" name="stock_name" required>
               <option value="">Select Stock</option>
               @foreach($stock_list as $stock)
                 <option
@@ -46,7 +45,33 @@ use App\Http\Controllers\HomeController;
     <div class="tile p-0">
       <ul class="nav flex-column nav-tabs user-tabs">
         @foreach($watchListList as $watchListName => $watchListItems)
-          <li class="nav-item"><a class="nav-link {{ $loop->first ? 'active' : '' }}" href="#{{ $watchListName }}" data-toggle="tab">{{ $watchListItems['name'] }}</a></li>
+          <li class="nav-item">
+            <a
+              class="nav-link {{ $loop->first ? 'active' : '' }}"
+              href="#{{ $watchListName }}"
+              data-toggle="tab">
+              {{ $watchListItems['name'] }}
+              <span class="badge badge-dark">{{ count($watchListItems['stock_list']) }}</span>
+              <span class="badge badge-success">{{
+                  $watchListItems['stock_list']->filter(function($item) {
+                    return $item->p_change > 0;
+                  })->count();
+                }}
+              </span>
+              <span class="badge badge-danger">{{
+                  $watchListItems['stock_list']->filter(function($item) {
+                    return $item->p_change < 0;
+                  })->count();
+                }}
+              </span>
+              <span class="badge badge-info">{{
+                  $watchListItems['stock_list']->filter(function($item) {
+                    return $item->p_change == 0;
+                  })->count();
+                }}
+              </span>
+            </a>
+          </li>
         @endforeach
       </ul>
     </div>
@@ -58,7 +83,7 @@ use App\Http\Controllers\HomeController;
           <div class="tile">
             <h3 class="tile-title">{{ $watchListItems['name'] }}</h3>
             <div class="table-responsive table-hover table-striped">
-              <table class="table table-striped watchlistDatatable">
+              <table class="table table-striped watchlistDataTable">
                 <thead>
                   <tr>
                     <th>S.No</th>
