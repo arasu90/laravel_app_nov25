@@ -100,3 +100,4 @@ Route::get('/paper-trade', [HomeController::class, 'PaperTrade'])->name('PaperTr
 Route::get('/stock-price-list', [HomeController::class, 'stockPriceList'])->name('stockPriceList');
 Route::get('/nse-index-stock-list', [HomeController::class, 'nseIndexStockList'])->name('nseIndexStockList');
 Route::get('/sector-stock-list', [HomeController::class, 'sectorStockList'])->name('sectorStockList');
+Route::get('/icons', [HomeController::class, 'icons'])->name('icons');

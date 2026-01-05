@@ -163,35 +163,18 @@ class NSEStockController extends Controller
 
     public function getDateRange($numDays=5)
     {
-
-        $end = now()->format('Y-m-d');              // today
-        $start = now()->subDays(5)->format('Y-m-d'); // 5 days back
-
-        $now = now();
-
-        // Determine the "end date" based on your rules
-        if ($now->isSaturday() || $now->isSunday() || ($now->isMonday() && $now->hour < 10)) {
-            $endDate = $now->previous(Carbon::FRIDAY);
-        } elseif ($now->hour < 10) {
-            $endDate = $now->previousWeekday();
-        } else {
-            $endDate = $now;
-        }
-
-        // Determine the "start date" going back 50 weekdays from endDate
-        $startDate = clone $endDate;
-        $weekdaysCounted = 1;
-
+        $startDate = now();
+        $endDate = $this->today();
+        $weekdaysCounted = 0;
         while ($weekdaysCounted < $numDays) {
             $startDate->subDay();
             if (!$startDate->isWeekend() && !$this->isHolidayOrWeekend($startDate)) {
                 $weekdaysCounted++;
             }
         }
-
         $end = $endDate;
-        $start = $startDate;
-        // dd($start.$end);
+        $start = $startDate->format("Y-m-d");
+        // dd($start.' - '.$end);
         return [$start, $end];
     }
 }

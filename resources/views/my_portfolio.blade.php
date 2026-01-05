@@ -46,35 +46,43 @@
         <table class="table table-striped table-bordered">
           <thead>
             <tr class="text-bold text-center">
-              <th>Overall Profit/Loss</th>
+              <th colspan="2">Overall Profit/Loss</th>
             </tr>
           </thead>
           <tbody>
             @php
-            $overall_profit_loss = 0;
-            $overall_profit_loss_per = 0;
-            $overall_invested_amount = 0;
-            $overall_live_amount = 0;
+              $overall_profit_loss = 0;
+              $overall_profit_loss_per = 0;
+              $overall_invested_amount = 0;
+              $overall_live_amount = 0;
+              $todayProfitLoss = 0;
+              $todayProfitLossPer = 0;
             @endphp
             @foreach($myPortfolioStocks as $myPortfolio)
               @php
-              $overall_invested_amount += $myPortfolio->buy_price * $myPortfolio->buy_qty;
-              $overall_live_amount += $myPortfolio->last_price * $myPortfolio->buy_qty;
-              $overall_profit_loss += ($myPortfolio->last_price * $myPortfolio->buy_qty) - ($myPortfolio->buy_price * $myPortfolio->buy_qty);
-              $overall_profit_loss_per = round(($overall_profit_loss / $overall_invested_amount) * 100, 2);
+                $overall_invested_amount += $myPortfolio->buy_price * $myPortfolio->buy_qty;
+                $overall_live_amount += $myPortfolio->last_price * $myPortfolio->buy_qty;
+                $overall_profit_loss += ($myPortfolio->last_price * $myPortfolio->buy_qty) - ($myPortfolio->buy_price * $myPortfolio->buy_qty);
+                $overall_profit_loss_per = round(($overall_profit_loss / $overall_invested_amount) * 100, 2);
+                $todayProfitLoss += $myPortfolio->change * $myPortfolio->buy_qty;
               @endphp
             @endforeach
             <tr>
               <td>
                 <span class="{{ $overall_profit_loss_per > 0 ? 'text-success' : ($overall_profit_loss_per < 0 ? 'text-danger' : 'text-info') }}">
-                  Rs. {{ $overall_live_amount }}
+                  Total: Rs. {{ $overall_live_amount }}
                 </span>
                 <br />
                 <span class="{{ $overall_profit_loss_per > 0 ? 'text-success' : ($overall_profit_loss_per < 0 ? 'text-danger' : 'text-info') }}">
-                  {{ $overall_profit_loss }} ({{ $overall_profit_loss_per }} %)
+                  Profit/Loss: Rs. {{ $overall_profit_loss }} ({{ $overall_profit_loss_per }} %)
                 </span>
                 <br />
-                Rs. {{ $overall_invested_amount }}
+                  Invested: Rs. {{ $overall_invested_amount }}
+              </td>
+              <td class="{{ $todayProfitLoss > 0 ? 'text-success' : ($todayProfitLoss < 0 ? 'text-danger' : 'text-info') }}">
+                <span>
+                  Today Profit/Loss: Rs. {{ $todayProfitLoss }} ({{ round(($todayProfitLoss/$overall_invested_amount)*100,2) }} %)
+                </span>
               </td>
             </tr>
           </tbody>
@@ -84,6 +92,7 @@
             <tr>
               <th>Stocks</th>
               <th>Invested Amount</th>
+              <th>Live Price</th>
               <th>Profit/Loss</th>
               <th>Today Profit/Loss</th>
             </tr>
@@ -95,6 +104,7 @@
               $change = $myPortfolio->change;
               $last_price = $myPortfolio->last_price;
               $profit_loss_per = round(($last_price-$myPortfolio->buy_price)/$myPortfolio->buy_price * 100, 2);
+              $today_profit_loss_per = round(($change*$myPortfolio->buy_qty)/($myPortfolio->buy_price * $myPortfolio->buy_qty) * 100, 2);
               @endphp
             <tr>
               <td>
@@ -102,15 +112,15 @@
                 <h6 class="text-muted">{{ $myPortfolio->symbol }}</h6>
               </td>
               <td>
-                Rs. {{ $myPortfolio->last_price * $myPortfolio->buy_qty }} <span class="badge {{ $profit_loss_per > 0 ? 'badge-success' : ($profit_loss_per < 0 ? 'badge-danger' : 'badge-info') }}">Rs. {{ $myPortfolio->buy_price * $myPortfolio->buy_qty }}</span>
-                <span class="{{ $p_change > 0 ? 'text-success' : ($p_change < 0 ? 'text-danger' : 'text-info') }} float-right">
-                  <span class="float-right">Rs.{{ $myPortfolio->last_price }}</span>
-                  <br />
-                  <span>
-                  {{ $myPortfolio->change }} ({{ $myPortfolio->p_change }} %)
-                  </span>
+                Rs. {{ $myPortfolio->last_price * $myPortfolio->buy_qty }}
+                <span class="badge {{ $profit_loss_per > 0 ? 'badge-success' : ($profit_loss_per < 0 ? 'badge-danger' : 'badge-info') }}">
+                  Rs. {{ $myPortfolio->buy_price * $myPortfolio->buy_qty }}
                 </span>
                 <h6 class="text-muted">(Qty:{{ $myPortfolio->buy_qty }} x Rs.{{ $myPortfolio->buy_price }})</h6>
+              </td>
+              <td class="{{ $p_change > 0 ? 'text-success' : ($p_change < 0 ? 'text-danger' : 'text-info') }}">
+                {{ $last_price }}
+                <p>{{ $myPortfolio->change }} ({{ $myPortfolio->p_change }} %)</p>
               </td>
               <td>
                 <span class="{{ $profit_loss_per > 0 ? 'text-success' : ($profit_loss_per < 0 ? 'text-danger' : 'text-info') }}">
@@ -123,7 +133,7 @@
                 <span class="{{ $p_change > 0 ? 'text-success' : ($p_change < 0 ? 'text-danger' : 'text-info') }}">
                   Rs. {{ abs($change * $myPortfolio->buy_qty) }}
                   <br />
-                  ({{ $p_change }} %)
+                  ({{ $today_profit_loss_per }} %)
                 </span>
               </td>
             </tr>

@@ -571,6 +571,7 @@ class HomeController extends Controller
         $indexData = NseIndexDayRecord::where('trade_date', $today)->get();
 
         list($start, $end) = (new NSEStockController)->getDateRange(15);
+        // die($start.' ' .$end);
         DB::enableQueryLog();
         $prices = NseIndexDayRecord::whereBetween('trade_date', [$start, $end])->get();
 
@@ -715,8 +716,8 @@ class HomeController extends Controller
         $days = 5; // number of consecutive days
         $today = (new NSEStockController())->today();
         list($startDate, $endDate) = (new NSEStockController)->getDateRange($days);
-        $startDate = $startDate->format("Y-m-d");
-        $endDate = $endDate->format("Y-m-d");
+        // $startDate = $startDate;
+        // $endDate = $endDate;
         DB::enableQueryLog();
         $gainerQuery = DB::table('s_stock_daily_price_data')
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
@@ -789,8 +790,8 @@ class HomeController extends Controller
         
         $fewDays = 3; // number of consecutive days
         list($startDate, $endDate) = (new NSEStockController)->getDateRange($fewDays);
-        $startDate = $startDate->format("Y-m-d");
-        $endDate = $endDate->format("Y-m-d");
+        // $startDate = $startDate->format("Y-m-d");
+        // $endDate = $endDate->format("Y-m-d");
 
         $lastFewDaysUpperCP = DB::table('s_stock_daily_price_data')
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
@@ -1101,5 +1102,10 @@ class HomeController extends Controller
 
         $stock_list = StockSymbol::with('details')->where('is_active', true)->get();
         return view('my_watchlist', compact('watchListList','stock_list', 'stock_name'));
+    }
+
+    public function icons()
+    {
+        return view('app_icons');
     }
 }
