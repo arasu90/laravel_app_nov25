@@ -92,7 +92,7 @@
             </a>
         </li>
         <li>
-            <a class="app-menu__item {{ Route::is('myWatchlist') ? 'active' : '' }} " href="/my-watchlist">
+            <a class="app-menu__item {{ Route::is('myWatchList') ? 'active' : '' }} " href="/my-watchlist">
                 <i class="app-menu__icon fa fa-clock-o"></i>
                 <span class="app-menu__label">WatchList</span>
             </a>

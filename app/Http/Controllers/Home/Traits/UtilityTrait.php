@@ -56,7 +56,39 @@ trait UtilityTrait
         return view('app_url', compact('stock_list'));
     }
 
-    public function paperTrade() { return 'paper trade'; }
+    public function paperTrade()
+    {
+        $stock_list = StockSymbol::with('details')
+            ->where('is_active', true)
+            ->orderBy('symbol')
+            ->get();
+
+        $today = (new NSEStockController())->today();
+
+        $myPortfolioStocks = DB::table('s_portfolio_stocks as p')
+            ->join('s_stock_symbols as s', 's.symbol', '=', 'p.symbol')
+            ->join('s_stock_details as d', 'd.symbol', '=', 's.symbol')
+            ->join('s_stock_daily_price_data as dp', function($join) use ($today) {
+                $join->on('dp.symbol', '=', 'p.symbol')
+                    ->where('dp.date', $today);
+            })
+            ->where('s.is_active', true)
+            ->where('p.portfolio_type',2)
+            ->select(
+                'p.symbol',
+                'd.company_name',
+                DB::raw('SUM(p.buy_qty) as total_qty'),
+                DB::raw('ROUND(SUM(p.buy_qty * p.buy_price)/SUM(p.buy_qty), 2) as avg_buy_price'),
+                'dp.last_price',
+                'dp.change',
+                'dp.p_change'
+            )
+            ->groupBy('p.symbol', 'd.company_name', 'dp.last_price', 'dp.change', 'dp.p_change')
+            ->orderBy('p.symbol', 'asc')
+            ->get();
+
+        return view('paper_trade', compact('stock_list', 'myPortfolioStocks'));
+    }
 
     public static function sameMonthYear($passDate)
     {

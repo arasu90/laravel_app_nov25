@@ -2,7 +2,7 @@
 @section('content')
 <div class="app-title">
   <div>
-    <h1><i class="fa fa-th-list"></i> My Portfolio</h1>
+    <h1><i class="fa fa-th-list"></i> Paper Trade</h1>
   </div>
 </div>
 
@@ -35,6 +35,7 @@
           <div class="form-group col-md-3">
             <label for="buy_date" class="control-label">Buy Date</label>
             <input class="form-control" type="date" id="buy_date" name="buy_date" value="{{ old('buy_date', date('Y-m-d')) }}">
+            <input type="hidden" value="2" name="portfolio_type">
           </div>
           <div class="form-group col-md-3 align-self-end">
             <button class="btn btn-primary" type="submit">
@@ -122,7 +123,7 @@
                 $live = $stock->last_price * $stock->total_qty;
                 $profit_loss = $live - $invested;
                 $profit_loss_per = round(($live - $invested)/$invested*100,2);
-                $today_profit_loss_stock = $stock->change * $stock->total_qty;
+                $today_profit_loss_stock = ($stock->change * $stock->total_qty);
                 $today_profit_loss_per = $invested ? round(($today_profit_loss_stock/$invested)*100,2) : 0;
               @endphp
               <tr>

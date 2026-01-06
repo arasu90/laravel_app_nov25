@@ -22,7 +22,7 @@
                 @foreach ($result as $row)
                     <tr>
                         <td>
-                          <strong>{{ $row['symbol'] }}</small>
+                          <strong><a target="_blank" href="stock-detail-view?stock_name={{ $row['symbol'] }}">{{ $row['symbol'] }}</a></strong>
                           <br>
                           <small>{{ $row['company_name'] }}</small>
                         </td>

@@ -209,11 +209,40 @@ class HomeController extends Controller
     {
         $stock_name = $request->input('stock_name') ?? 'TNTELE';
         $stock_daily_price_data = StockDailyPriceData::where('symbol', $stock_name)
-        ->orderBy('date', 'desc')
-        ->get();
+            ->orderBy('date', 'desc')
+            ->get();
         $stock_details = StockDetails::where('symbol', $stock_name)->first();
         $stock_list = StockSymbol::with('details')->where('is_active', true)->orderBy('symbol')->get();
-        return view('stock_detail_view', compact('stock_daily_price_data', 'stock_details', 'stock_list', 'stock_name'));
+
+        $lineLabel = $stock_daily_price_data->slice(0, 5)
+            ->pluck('date')
+            ->reverse()
+            ->values()
+            ->map(fn($d) => \Carbon\Carbon::parse($d)->format('d-M'));
+        // dd(gettype($lineLabel));
+        // $lineLabel = array_map(function($item) {
+        //     return date("d-M", strtotime($item));
+        // }, $lineLabel);
+        $lineData = $stock_daily_price_data->slice(0, 5)
+            ->pluck('last_price')
+            ->reverse()
+            ->values();
+        $lineData_1 = $stock_daily_price_data->slice(0, 5)
+            ->pluck('open')
+            ->reverse()
+            ->values();
+
+        $chartData['line']['label'] = $lineLabel;
+        $chartData['line']['data'] = $lineData;
+        $chartData['line']['data_1'] = $lineData_1;
+        return view('stock_detail_view',
+            compact('stock_daily_price_data',
+            'stock_details',
+            'stock_list',
+            'stock_name',
+            'chartData'
+            )
+        );
     }
     
     public function averageStock(Request $request)
@@ -255,37 +284,59 @@ class HomeController extends Controller
 
     public function myPortfolio()
     {
-        $stock_list = StockSymbol::with('details')->where('is_active', true)->orderBy('symbol')->get();
+        $stock_list = StockSymbol::with('details')
+            ->where('is_active', true)
+            ->orderBy('symbol')
+            ->get();
 
         $today = (new NSEStockController())->today();
-        $myPortfolioStocks = DB::table('s_portfolio_stocks')
-            ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_portfolio_stocks.symbol')
-            ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
-            ->join('s_stock_daily_price_data', 's_stock_daily_price_data.symbol', '=', 's_portfolio_stocks.symbol')
-            ->where('s_stock_daily_price_data.date', $today)
-            ->where('s_stock_symbols.is_active', true)
-            ->select('s_portfolio_stocks.symbol', 's_stock_details.company_name', 's_portfolio_stocks.buy_price', 's_portfolio_stocks.buy_qty', 's_portfolio_stocks.buy_date', 's_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change')
-            ->groupBy('s_portfolio_stocks.symbol', 's_stock_details.company_name', 's_portfolio_stocks.buy_price', 's_portfolio_stocks.buy_qty', 's_portfolio_stocks.buy_date', 's_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change')
-            ->orderBy('s_portfolio_stocks.symbol', 'asc')
+
+        $myPortfolioStocks = DB::table('s_portfolio_stocks as p')
+            ->join('s_stock_symbols as s', 's.symbol', '=', 'p.symbol')
+            ->join('s_stock_details as d', 'd.symbol', '=', 's.symbol')
+            ->join('s_stock_daily_price_data as dp', function($join) use ($today) {
+                $join->on('dp.symbol', '=', 'p.symbol')
+                    ->where('dp.date', $today);
+            })
+            ->where('s.is_active', true)
+            ->where('p.portfolio_type',1)
+            ->select(
+                'p.symbol',
+                'd.company_name',
+                DB::raw('SUM(p.buy_qty) as total_qty'),
+                DB::raw('ROUND(SUM(p.buy_qty * p.buy_price)/SUM(p.buy_qty), 2) as avg_buy_price'),
+                'dp.last_price',
+                'dp.change',
+                'dp.p_change'
+            )
+            ->groupBy('p.symbol', 'd.company_name', 'dp.last_price', 'dp.change', 'dp.p_change')
+            ->orderBy('p.symbol', 'asc')
             ->get();
 
         return view('my_portfolio', compact('stock_list', 'myPortfolioStocks'));
     }
 
+
     public function addMyPortfolio(Request $request)
     {
-        $buy_qty = $request->input('buy_qty');
-        $buy_price = $request->input('buy_price');
-        $buy_date = $request->input('buy_date');
-        $stock_name = $request->input('stock_name');
+        $portfolio_type = $request->input('portfolio_type') ?? 1;
+        $request->validate([
+            'stock_name' => 'required',
+            'buy_qty' => 'required|numeric|min:1',
+            'buy_price' => 'required|numeric|min:0',
+            'buy_date' => 'required|date'
+        ]);
 
-        $myPortfolioStock = new MyPortfolioStock();
-        $myPortfolioStock->symbol = $stock_name;
-        $myPortfolioStock->buy_price = $buy_price;
-        $myPortfolioStock->buy_qty = $buy_qty;
-        $myPortfolioStock->buy_date = date('Y-m-d', strtotime($buy_date));
-        $myPortfolioStock->save();
-        return redirect()->route('myPortfolio')->with('success', 'Stock added to portfolio successfully');
+        MyPortfolioStock::create([
+            'symbol' => $request->stock_name,
+            'buy_price' => $request->buy_price,
+            'buy_qty' => $request->buy_qty,
+            'buy_date' => date('Y-m-d', strtotime($request->buy_date)),
+            'portfolio_type' => $portfolio_type
+        ]);
+        
+        return redirect()->back()
+            ->with('success', 'Stock added to portfolio successfully');
     }
 
     public function myWatchList(Request $request)

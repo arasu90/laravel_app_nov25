@@ -12,6 +12,7 @@ class MyPortfolioStock extends Model
         'buy_price',
         'buy_qty',
         'buy_date',
+        'portfolio_type'
     ];
     public $timestamps = true;
     public function stockSymbol()

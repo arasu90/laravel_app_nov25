@@ -106,6 +106,13 @@
                 52 Week Low Date: {{ $stock_details->week_high_low_min_date ?? 'N/A' }} <br>
                 52 Week High: {{ $stock_details->week_high_low_max ?? 'N/A' }} <br>
                 52 Week High Date: {{ $stock_details->week_high_low_max_date ?? 'N/A' }} <br>
+                <div class="embed-responsive embed-responsive-16by9">
+                  <canvas class="embed-responsive-item" id="lineChartDemoDee"></canvas>
+                </div>
+                <span>Last 5 Days
+                  <span class="badge" style="background-color:#e756cfff;color:white">Open Price</span>
+                  <span class="badge" style="background-color:rgba(6, 62, 90, 1);color:white">Last Price</span>
+                </span>
               </td>
             </tr>
           </tbody>
@@ -276,4 +283,35 @@
     </div>
   </div>
 </div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    var data = {
+      labels: @json($chartData['line']['label']),
+      datasets: [{
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(27, 145, 204, 1)",
+          pointColor: "rgba(18, 106, 150, 1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(6, 62, 90, 1)",
+          data: @json($chartData['line']['data']),
+        },
+        {
+          label: "Last Price",
+          fillColor: "rgba(215, 150, 218, 0.2)",
+          strokeColor: "rgba(229, 132, 233, 1)",
+          pointColor: "rgba(238, 180, 228, 1)",
+          pointStrokeColor: "#ee7ddbff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(225, 166, 229, 1)",
+          label: "Previous Close",
+          data: @json($chartData['line']['data_1']),
+        }
+      ]
+    };
+
+    var ctxl = $("#lineChartDemoDee").get(0).getContext("2d");
+    var lineChart = new Chart(ctxl).Line(data);
+  });
+</script>
 @endsection

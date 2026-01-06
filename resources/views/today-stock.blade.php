@@ -21,7 +21,7 @@
           @foreach($todayAddedStock as $dataList)
           <tr>
             <td>{{ $loop->iteration }}</td>
-            <td>{{ $dataList->symbol }}</td>
+            <td><a target="_blank" href="stock-detail-view?stock_name={{ $dataList->symbol }}">{{ $dataList->symbol }}</a></td>
             <td>{{ $dataList->created_at }}</td>
           </tr>
           @endforeach
@@ -46,7 +46,7 @@
           @forelse($recentAddedStock as $dataList)
           <tr>
             <td>{{ $loop->iteration }}</td>
-            <td>{{ $dataList->symbol }}</td>
+            <td><a target="_blank" href="stock-detail-view?stock_name={{ $dataList->symbol }}">{{ $dataList->symbol }}</a></td>
             <td>{{ $dataList->created_at }}</td>
           </tr>
           @empty
@@ -76,7 +76,7 @@
           @forelse($todayMissedStock as $dataList)
           <tr>
             <td>{{ $loop->iteration }}</td>
-            <td>{{ $dataList->symbol }}</td>
+            <td><a target="_blank" href="stock-detail-view?stock_name={{ $dataList->symbol }}">{{ $dataList->symbol }}</a></td>
             <td>{{ $dataList->created_at }}</td>
             <td><a href="update-stock-data/{{$dataList->symbol}}" target="_blank">{{ $dataList->symbol }}</a></td>
           </tr>
