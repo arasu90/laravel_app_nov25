@@ -51,7 +51,7 @@
               </span>
               {{ $stockList->company_name }}
               <br />
-              <small class="text-muted">{{ $stockList->symbol }}</small>
+              <small class="text-muted"><a target="_blank" href="stock-detail-view?stock_name={{ $stockList->symbol }}">{{ $stockList->symbol }}</a></small>
             </td>
           </tr>
           @endforeach
@@ -74,7 +74,7 @@
               </span>
               {{ $stockList->company_name }}
               <br />
-              <small class="text-muted">{{ $stockList->symbol }}</small>
+              <small class="text-muted"><a target="_blank" href="stock-detail-view?stock_name={{ $stockList->symbol }}">{{ $stockList->symbol }}</a></small>
             </td>
           </tr>
           @endforeach
@@ -97,7 +97,7 @@
               </span>
               {{ $stockList->company_name }}
               <br />
-              <small class="text-muted">{{ $stockList->symbol }}</small>
+              <small class="text-muted"><a target="_blank" href="stock-detail-view?stock_name={{ $stockList->symbol }}">{{ $stockList->symbol }}</a></small>
             </td>
           </tr>
           @endforeach
@@ -120,7 +120,7 @@
               </span>
               {{ $stockList->company_name }}
               <br />
-              <small class="text-muted">{{ $stockList->symbol }}</small>
+              <small class="text-muted"><a target="_blank" href="stock-detail-view?stock_name={{ $stockList->symbol }}">{{ $stockList->symbol }}</a></small>
             </td>
           </tr>
           @endforeach
@@ -160,7 +160,7 @@
               </span>
               {{ $stockList->company_name }}
               <br />
-              <small class="text-muted">{{ $stockList->symbol }}</small>
+              <small class="text-muted"><a target="_blank" href="stock-detail-view?stock_name={{ $stockList->symbol }}">{{ $stockList->symbol }}</a></small>
               <br />
               <span class="float-left">
                 <span class="{{ $color_1 }} float-left">{{ $stockList->last_price }} </span>
@@ -206,7 +206,7 @@
                 </span>
                 {{ $stockList->company_name }}
                 <br />
-                <small class="text-muted">{{ $stockList->symbol }}</small>
+                <small class="text-muted"><a target="_blank" href="stock-detail-view?stock_name={{ $stockList->symbol }}">{{ $stockList->symbol }}</a></small>
                 <br />
                 <span class="float-left">
                   <span class="{{ $color_1 }} float-left">{{ $stockList->last_price }} </span>

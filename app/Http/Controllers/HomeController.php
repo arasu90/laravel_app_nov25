@@ -436,17 +436,27 @@ class HomeController extends Controller
     public function todayStock(){
         $today = (new NSEStockController())->today();
         $todayAddedStock = StockSymbol::whereDate('created_at', $today)->orderby('symbol', 'asc')->get();
+        $currentHour = now()->hour;
 
         $todayMissedStock = DB::table('s_stock_symbols as sss')
-            ->whereNotIn('sss.symbol', function ($query) {
-                $today = (new NSEStockController())->today();
+            ->whereNotIn('sss.symbol', function ($query) use ($today, $currentHour) {
                 $query->select('symbol')
                     ->from('s_stock_daily_price_data')
-                    ->where('date', $today);
+                    ->where(function ($q) use ($today, $currentHour) {
+
+                // main condition
+                        $q->whereDate('date', $today);
+
+                        // add OR condition only after 4 PM
+                        if ($currentHour > 15) {
+                            // $q->WhereColumn('updated_at', 'created_at');
+                            $q->WhereRaw('TIME(updated_at) != TIME(created_at)');
+                        }
+                    });
             })
             ->where('is_active', true)
             ->get();
-        
+
         list($start, $end) = (new NSEStockController)->getDateRange(5);
 
         $recentAddedStock = StockSymbol::where('is_active', true)

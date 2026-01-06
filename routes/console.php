@@ -11,15 +11,17 @@ Artisan::command('inspire', function () {
 
 Schedule::call(function () {
     Http::get('http://host.docker.internal:8095/all-stocks');
-})->weekdays()->twiceDaily(10, 15);
+})->weekdays()
+    // ->twiceDaily(10, 15);
+    ->at('10:05')
+    ->at('15:15');
 
 Schedule::call(function () {
     Http::get('http://host.docker.internal:8095/insert-stock-daily-data');
 })->weekdays()
-    ->twiceDaily(10, 16)
-    // ->at('11:00')
-    // ->at('16:30')
-;
+    // ->twiceDaily(10, 16)
+    ->at('10:15')
+    ->at('16:00');
 
 Schedule::call(function () {
     Http::get('http://host.docker.internal:8095/get-corporate-info');

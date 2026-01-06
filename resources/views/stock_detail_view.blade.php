@@ -42,8 +42,8 @@
           <thead>
             <tr class="text-bold text-center">
               <th>Company Name</th>
-              <th>Company Status</th>
-              <th>52 Week Data</th>
+              <th>Company Details</th>
+              <th>Last 5 Days Chart</th>
             </tr>
           </thead>
           <tbody>
@@ -100,12 +100,13 @@
                 Trading Status: {{ $stock_details->trading_status ?? 'N/A' }} <br>
                 Trading Segment: {{ $stock_details->trading_segment ?? 'N/A' }} <br>
                 Face Value: {{ $stock_details->face_value ?? 'N/A' }} <br>
-              </td>
-              <td>
+                <h4>52 Week Data</h4>
                 52 Week Low: {{ $stock_details->week_high_low_min ?? 'N/A' }} <br>
                 52 Week Low Date: {{ $stock_details->week_high_low_min_date ?? 'N/A' }} <br>
                 52 Week High: {{ $stock_details->week_high_low_max ?? 'N/A' }} <br>
                 52 Week High Date: {{ $stock_details->week_high_low_max_date ?? 'N/A' }} <br>
+              </td>
+              <td>
                 <div class="embed-responsive embed-responsive-16by9">
                   <canvas class="embed-responsive-item" id="lineChartDemoDee"></canvas>
                 </div>
