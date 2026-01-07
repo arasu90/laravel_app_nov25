@@ -41,8 +41,8 @@
 
                             <td class="{{$color}}">
                                 <strong>{{ $value_last }}</strong>
-                                <br />
-                                <small>{{ $value_change }} ({{ $value_p_change }}%)</small>
+                                <small>{{ $value_change }}</small><br/>
+                                <small>({{ $value_p_change }}%)</small>
                             </td>
                         @endforeach
                     </tr>

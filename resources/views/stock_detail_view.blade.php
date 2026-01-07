@@ -97,8 +97,8 @@
               <td>
                 Listing Status: {{ $stock_details->status ?? 'N/A' }} <br>
                 Listing Date: {{ $stock_details->listing_date ?? 'N/A' }} <br>
-                Trading Status: {{ $stock_details->trading_status ?? 'N/A' }} <br>
-                Trading Segment: {{ $stock_details->trading_segment ?? 'N/A' }} <br>
+                Trading Status: <span class="{{ $stock_details->trading_status=='Suspended' ? 'badge badge-danger' : '' }}">{{ $stock_details->trading_status ?? 'N/A' }} </span> <br>
+                Trading Segment:{{ $stock_details->trading_segment ?? 'N/A' }}<br>
                 Face Value: {{ $stock_details->face_value ?? 'N/A' }} <br>
                 <h4>52 Week Data</h4>
                 52 Week Low: {{ $stock_details->week_high_low_min ?? 'N/A' }} <br>
@@ -108,7 +108,13 @@
               </td>
               <td>
                 <div class="embed-responsive embed-responsive-16by9">
-                  <canvas class="embed-responsive-item" id="lineChartDemoDee"></canvas>
+                  <canvas
+                    class="embed-responsive-item"
+                    id="lineChartDemoDee"
+                    data-values_1='@json($chartData["line"]["data_1"])'
+                    data-values='@json($chartData["line"]["data"])'
+                    data-label='@json($chartData["line"]["label"])'
+                  ></canvas>
                 </div>
                 <span>Last 5 Days
                   <span class="badge" style="background-color:#e756cfff;color:white">Open Price</span>
@@ -286,8 +292,9 @@
 </div>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    const el = document.getElementById('lineChartDemoDee');
     var data = {
-      labels: @json($chartData['line']['label']),
+      labels: JSON.parse(el.dataset.label),
       datasets: [{
           fillColor: "rgba(151,187,205,0.2)",
           strokeColor: "rgba(27, 145, 204, 1)",
@@ -295,7 +302,7 @@
           pointStrokeColor: "#fff",
           pointHighlightFill: "#fff",
           pointHighlightStroke: "rgba(6, 62, 90, 1)",
-          data: @json($chartData['line']['data']),
+          data: JSON.parse(el.dataset.values),
         },
         {
           label: "Last Price",
@@ -306,13 +313,13 @@
           pointHighlightFill: "#fff",
           pointHighlightStroke: "rgba(225, 166, 229, 1)",
           label: "Previous Close",
-          data: @json($chartData['line']['data_1']),
+          data: JSON.parse(el.dataset.values_1),
         }
       ]
     };
 
-    var ctxl = $("#lineChartDemoDee").get(0).getContext("2d");
-    var lineChart = new Chart(ctxl).Line(data);
+    var ctx = $("#lineChartDemoDee").get(0).getContext("2d");
+    var lineChart = new Chart(ctx).Line(data);
   });
 </script>
 @endsection

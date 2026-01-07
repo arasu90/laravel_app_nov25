@@ -25,12 +25,12 @@
             </select>
           </div>
           <div class="form-group col-md-3">
-            <label for="buy_price" class="control-label">Buy Price</label>
-            <input class="form-control" type="text" id="buy_price" name="buy_price" placeholder="Enter Buy Price" value="{{ old('buy_price') }}">
-          </div>
-          <div class="form-group col-md-3">
             <label for="buy_qty" class="control-label">Buy Qty</label>
             <input class="form-control" type="text" id="buy_qty" name="buy_qty" placeholder="Enter Buy Qty" value="{{ old('buy_qty') }}">
+          </div>
+          <div class="form-group col-md-3">
+            <label for="buy_price" class="control-label">Buy Price</label>
+            <input class="form-control" type="text" id="buy_price" name="buy_price" placeholder="Enter Buy Price" value="{{ old('buy_price') }}">
           </div>
           <div class="form-group col-md-3">
             <label for="buy_date" class="control-label">Buy Date</label>

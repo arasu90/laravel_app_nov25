@@ -219,10 +219,7 @@ class HomeController extends Controller
             ->reverse()
             ->values()
             ->map(fn($d) => \Carbon\Carbon::parse($d)->format('d-M'));
-        // dd(gettype($lineLabel));
-        // $lineLabel = array_map(function($item) {
-        //     return date("d-M", strtotime($item));
-        // }, $lineLabel);
+        
         $lineData = $stock_daily_price_data->slice(0, 5)
             ->pluck('last_price')
             ->reverse()
@@ -343,6 +340,8 @@ class HomeController extends Controller
     {
         $stock_name = $request->get('stock_name') ?? null;
         $today = (new NSEStockController())->today();
+        $price_min = $request->get('price_min') ?? null;
+        $price_max = $request->get('price_max') ?? null;
 
         $watchListMaster = MyWatchListMaster::get();
         $watchListList = [];
@@ -357,6 +356,8 @@ class HomeController extends Controller
 
             if (!empty($stock_name)) {
                 $query->where('s_stock_symbols.symbol', $stock_name);
+            } elseif (!empty($price_min) && !empty($price_max)) {
+                $query->whereBetween('s_stock_daily_price_data.last_price', [$price_min, $price_max]);
             }
 
             $watchListItems = $query->select(
@@ -449,7 +450,6 @@ class HomeController extends Controller
 
                         // add OR condition only after 4 PM
                         if ($currentHour > 15) {
-                            // $q->WhereColumn('updated_at', 'created_at');
                             $q->WhereRaw('TIME(updated_at) != TIME(created_at)');
                         }
                     });
@@ -465,12 +465,18 @@ class HomeController extends Controller
             ->orderby('symbol', 'asc')
             ->get();
 
+        $recentSuspendedStock = StockDetails::where('trading_status', 'Suspended')
+            ->where('is_active', true)
+            ->orderby('last_update_time', 'asc')
+            ->get();
+        
         return view('today-stock',
             compact(
                 'todayAddedStock',
                 'todayMissedStock',
                 'recentAddedStock',
-                'today'
+                'today',
+                'recentSuspendedStock',
             )
         );
     }
@@ -547,7 +553,7 @@ class HomeController extends Controller
 
     public function lastFewDays()
     {
-        $days = 5; // number of consecutive days
+        $days = 13; // number of consecutive days
         $today = (new NSEStockController())->today();
         list($startDate, $endDate) = (new NSEStockController)->getDateRange($days);
         DB::enableQueryLog();
@@ -617,7 +623,7 @@ class HomeController extends Controller
             ->orderby('s_stock_symbols.symbol', 'asc')
             ->get();
         
-        $fewDays = 3; // number of consecutive days
+        $fewDays = 5; // number of consecutive days
         list($startDate, $endDate) = (new NSEStockController)->getDateRange($fewDays);
 
         $lastFewDaysUpperCPQuery = DB::table('s_stock_daily_price_data')
@@ -692,6 +698,8 @@ class HomeController extends Controller
     {
         $stock_name = $request->get('stock_name') ?? null;
         $today = (new NSEStockController())->today();
+        $price_min = $request->get('price_min') ?? null;
+        $price_max = $request->get('price_max') ?? null;
 
         $defaultWatchListNames = [
             [
@@ -782,6 +790,8 @@ class HomeController extends Controller
 
             if (!empty($stock_name)) {
                 $query->where('s_stock_symbols.symbol', $stock_name);
+            } elseif (!empty($price_min) && !empty($price_max)) {
+                $query->whereBetween('s_stock_daily_price_data.last_price', [$price_min, $price_max]);
             }
 
             $stockList = $query
@@ -823,6 +833,8 @@ class HomeController extends Controller
     {
         $stock_name = $request->get('stock_name') ?? null;
         $today = (new NSEStockController())->today();
+        $price_min = $request->get('price_min') ?? null;
+        $price_max = $request->get('price_max') ?? null;
 
         $sectorIDData = StockDetails::select('pdsectorind')
             // ->where('pdsectorind', '<>', 'NA')
@@ -833,6 +845,8 @@ class HomeController extends Controller
         $stockConditions = '1=1';
         if($stock_name != null){
             $stockConditions = "s_stock_symbols.symbol = '".$stock_name."'";
+        } elseif (!empty($price_min) && !empty($price_max)) {
+            $stockConditions = "s_stock_daily_price_data.last_price between '".$price_min."' and '".$price_max."'";
         }
 
         foreach($sectorIDData as $sectorID){
@@ -876,6 +890,8 @@ class HomeController extends Controller
     {
         $stock_name = $request->get('stock_name') ?? null;
         $today = (new NSEStockController())->today();
+        $price_min = $request->get('price_min') ?? null;
+        $price_max = $request->get('price_max') ?? null;
 
         $sectorData = StockDetails::select('sector')
             // ->where('sector', '<>', '')
@@ -886,6 +902,8 @@ class HomeController extends Controller
         $stockConditions = '1=1';
         if($stock_name != null){
             $stockConditions = "s_stock_symbols.symbol = '".$stock_name."'";
+        } elseif (!empty($price_min) && !empty($price_max)) {
+            $stockConditions = "s_stock_daily_price_data.last_price between '".$price_min."' and '".$price_max."'";
         }
 
         foreach($sectorData as $sector){

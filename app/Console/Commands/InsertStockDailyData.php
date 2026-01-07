@@ -77,26 +77,25 @@ class InsertStockDailyData extends Command
 
     public function handle()
     {
-        $this->totalStocks = \App\Models\StockSymbol::where('is_active', '1')->count();
+        $this->totalStocks = \App\Models\StockSymbol::where('is_active', '1')
+            ->where('symbol','RELINFRA')
+            ->count();
         $this->info("Starting stock data dispatch for {$this->totalStocks} stocks...");
 
-        \App\Models\StockSymbol::where('is_active', '1')->chunk($this->batchSize, function ($stocks) {
-            $this->batchCount++;
-            $batchStockCount = 0;
-            // print_r($stocks);
-            foreach ($stocks as $stock) {
-                $this->stockCount++;
-                $batchStockCount++;
-                $this->info("Dispatched stock {$stock->symbol} ");
-                Log::info("Dispatched stock {$this->stockCount} of total stocks {$this->totalStocks} with {$batchStockCount} of batchCount {$this->batchCount}. {$stock->symbol} ");
-                // Log::channel('stock_backup_json')->info("Dispatched stock {$this->totalStocks} of total stocks. {$stock->symbol} ");
-                ProcessStockData::dispatch($stock->symbol); 
-                // $this->totalStocks--;
-                // exit();
+        \App\Models\StockSymbol::where('is_active', '1')
+            ->where('symbol','RELINFRA')
+            ->chunk($this->batchSize, function ($stocks) {
+                $this->batchCount++;
+                $batchStockCount = 0;
+                foreach ($stocks as $stock) {
+                    $this->stockCount++;
+                    $batchStockCount++;
+                    $this->info("Dispatched stock {$stock->symbol} ");
+                    Log::info("Dispatched stock {$this->stockCount} of total stocks {$this->totalStocks} with {$batchStockCount} of batchCount {$this->batchCount}. {$stock->symbol} ");
+                    ProcessStockData::dispatch($stock->symbol);
+                }
             }
-
-            // $this->info("Dispatched batch {$this->totalStocks} of {$stock->symbol} stocks.");
-        });
+        );
         
         $this->info("All {$this->totalStocks} stocks have been dispatched to the queue.");
         $this->info("Run 'php artisan queue:work' to process the jobs.");

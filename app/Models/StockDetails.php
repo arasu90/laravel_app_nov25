@@ -18,6 +18,7 @@ class StockDetails extends Model
         'isin',
         'listing_date',
         'status',
+        'series',
         'last_update_time',
         'pdsectorind',
         'trading_status',
@@ -28,6 +29,12 @@ class StockDetails extends Model
         'week_high_low_max',
         'week_high_low_max_date',
         'is_active',
+        'surveillance_surv',
+        'surveillance_desc',
+        'stock_date',
+        'stock_last_price',
+        'stock_change',
+        'stock_p_change',
     ];
     public $timestamps = true;
 

@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('isin');
             $table->date('listing_date');
             $table->string('status');
-            $table->datetime('last_update_time');
+            $table->datetime('last_update_time')->nullable();
             $table->string('pdsectorind');
             $table->string('trading_status');
             $table->string('trading_segment');

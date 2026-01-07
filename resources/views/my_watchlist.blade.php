@@ -16,7 +16,7 @@ use App\Http\Controllers\HomeController;
         <form class="row" action="{{ url()->current() }}" method="get">
           <div class="form-group col-md-4">
             <label for="stock_name" class="control-label">Stock List</label>
-            <select class="form-control select2" id="stock_name" name="stock_name" required>
+            <select class="form-control select2" id="stock_name" name="stock_name">
               <option value="">Select Stock</option>
               @foreach($stock_list as $stock)
                 <option
@@ -27,6 +27,70 @@ use App\Http\Controllers\HomeController;
                 </option>
               @endforeach
             </select>
+          </div>
+           <div class="form-group col-md-4">
+            <label class="control-label">Price Range</label>
+            <div>
+              <div class="d-flex align-items-center mb-2">
+                <small class="mr-2">Min:</small>
+                <input
+                  type="range"
+                  name="price_min"
+                  id="price_min"
+                  min="0"
+                  max="180000"
+                  step="0.1"
+                  value="{{ request('price_min', 0) }}"
+                  oninput="
+                    document.getElementById('price_min_value').value = this.value;
+                  "
+                >
+                <input
+                  type="number"
+                  class="form-control form-control-sm ml-2"
+                  style="width: 90px;"
+                  id="price_min_value"
+                  min="0"
+                  max="180000"
+                  step="0.1"
+                  name="price_min"
+                  value="{{ request('price_min', 0) }}"
+                  oninput="
+                    document.getElementById('price_min').value = this.value;
+                  "
+                >
+              </div>
+
+              <div class="d-flex align-items-center">
+                <small class="mr-2">Max:</small>
+                <input
+                  type="range"
+                  name="price_max"
+                  id="price_max"
+                  min="0"
+                  max="180000"
+                  step="0.1"
+                  value="{{ request('price_max', 180000) }}"
+                  oninput="
+                    document.getElementById('price_max_value').value = this.value;
+                  "
+                >
+                <input
+                  type="number"
+                  class="form-control form-control-sm ml-2"
+                  style="width: 90px;"
+                  id="price_max_value"
+                  min="0"
+                  max="180000"
+                  step="0.1"
+                  name="price_max"
+                  value="{{ request('price_max', 180000) }}"
+                  oninput="
+                    document.getElementById('price_max').value = this.value;
+                  "
+                >
+              </div>
+            </div>
           </div>
           <div class="form-group col-md-4 align-self-end">
             <button class="btn btn-primary" type="submit">

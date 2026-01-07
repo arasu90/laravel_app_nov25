@@ -14,21 +14,21 @@
             </a>
         </li>
         <li>
+            <a class="app-menu__item {{ Route::is('stockDetailView') ? 'active' : '' }} " href="/stock-detail-view">
+                <i class="app-menu__icon fa fa-file-text-o"></i>
+                <span class="app-menu__label">Stock Detail View</span>
+            </a>
+        </li>
+        <li>
             <a class="app-menu__item {{ Route::is('stockListTableView') ? 'active' : '' }} " href="/stock-table">
                 <i class="app-menu__icon fa fa-home"></i>
-                <span class="app-menu__label">Stock Table</span>
+                <span class="app-menu__label">View All Stock</span>
             </a>
         </li>
         <li>
             <a class="app-menu__item {{ Route::is('oneDayView') ? 'active' : '' }} " href="/one-day-view">
                 <i class="app-menu__icon fa fa-inbox"></i>
-                <span class="app-menu__label">One Day View</span>
-            </a>
-        </li>
-        <li>
-            <a class="app-menu__item {{ Route::is('stockDetailView') ? 'active' : '' }} " href="/stock-detail-view">
-                <i class="app-menu__icon fa fa-file-text-o"></i>
-                <span class="app-menu__label">Stock Detail View</span>
+                <span class="app-menu__label">One Day Stock</span>
             </a>
         </li>
         <li>

@@ -86,3 +86,23 @@ fa-bookmark
 
 # add particular service container newly to existing container
 docker compose up -d scheduler
+
+
+# get json value from the table
+SELECT 
+    max(daily_data->>'$.metadata.lastUpdateTime') AS lastUpdateTime
+FROM s_daily_data sdd where sdd.symbol ='KRISHFL-RE' and daily_data->>'$.metadata.lastUpdateTime' != "-";
+
+UPDATE s_stock_details ssd
+SET ssd.last_update_time = (
+    SELECT MAX(
+        STR_TO_DATE(
+            sdd.daily_data->>'$.metadata.lastUpdateTime',
+            '%d-%b-%Y %H:%i:%s'
+        )
+    )
+    FROM s_daily_data sdd
+    WHERE sdd.symbol = ssd.symbol
+      AND sdd.daily_data->>'$.metadata.lastUpdateTime' != '-'
+)
+WHERE ssd.trading_status = 'suspended';

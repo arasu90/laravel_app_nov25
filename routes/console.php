@@ -21,6 +21,7 @@ Schedule::call(function () {
 })->weekdays()
     // ->twiceDaily(10, 16)
     ->at('10:15')
+    ->at('13:30')
     ->at('16:00');
 
 Schedule::call(function () {

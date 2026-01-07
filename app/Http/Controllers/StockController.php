@@ -180,8 +180,16 @@ class StockController extends Controller
                 'week_high_low_min_date' => date('Y-m-d', strtotime($priceInfoWeekHighLowMinDate)),
                 'week_high_low_max' => round($priceInfoWeekHighLowMax, 2),
                 'week_high_low_max_date' => date('Y-m-d', strtotime($priceInfoWeekHighLowMaxDate)),
+                'stock_date' => $today,
+                'stock_last_price' => round($priceInfoLastPrice, 2),
+                'stock_change' => round($priceInfoChange, 2),
+                'stock_p_change' => round($priceInfoPChange, 2),
             ];
 
+            if("-" == $metaDataLastUpdateTime || $metaDataLastUpdateTime == "N/A"){
+                unset($insertData['last_update_time']);
+            }
+            Log::error("infoStockSymbol ".$infoStockSymbol. " data is ". json_encode($insertData, true));
             $insertStockDetails = StockDetails::updateOrCreate(
                 ['symbol' => $infoStockSymbol],
                 $insertData
