@@ -22,7 +22,7 @@ use App\Http\Controllers\Home\Traits\{
 class HomeController extends Controller
 {
     public const VALUE_P_CHANGE_LESS_THAN = "value_p_change < 0";
-    
+
     use DashboardTrait;
     use UtilityTrait;
 
@@ -450,7 +450,8 @@ class HomeController extends Controller
 
                         // add OR condition only after 4 PM
                         if ($currentHour > 15) {
-                            $q->WhereRaw('TIME(updated_at) != TIME(created_at)');
+                            // $q->WhereRaw('TIME(updated_at) != TIME(created_at)');
+                            $q->WhereRaw('hour(time(updated_at))  > 15');
                         }
                     });
             })
@@ -466,6 +467,9 @@ class HomeController extends Controller
             ->get();
 
         $recentSuspendedStock = StockDetails::where('trading_status', 'Suspended')
+            ->whereHas('symbol', function ($q) {
+                $q->where('is_active', true);
+            })
             ->where('is_active', true)
             ->orderby('last_update_time', 'asc')
             ->get();
@@ -553,7 +557,7 @@ class HomeController extends Controller
 
     public function lastFewDays()
     {
-        $days = 13; // number of consecutive days
+        $days = 5; // number of consecutive days
         $today = (new NSEStockController())->today();
         list($startDate, $endDate) = (new NSEStockController)->getDateRange($days);
         DB::enableQueryLog();
@@ -623,7 +627,7 @@ class HomeController extends Controller
             ->orderby('s_stock_symbols.symbol', 'asc')
             ->get();
         
-        $fewDays = 5; // number of consecutive days
+        $fewDays = 3; // number of consecutive days
         list($startDate, $endDate) = (new NSEStockController)->getDateRange($fewDays);
 
         $lastFewDaysUpperCPQuery = DB::table('s_stock_daily_price_data')
@@ -943,4 +947,32 @@ class HomeController extends Controller
         return view('my_watchlist', compact('watchListList','stock_list', 'stock_name'));
     }
 
+    public function indexDetailView(Request $request)
+    {
+        $index_name = $request->get('index_name') ?? null;
+
+        $nseIndexDataRecords = NseIndexDayRecord::where('is_active', true)
+            ->where('index_symbol', $index_name)
+            ->orderby('trade_date', 'desc')
+            ->get();
+        
+        $todayDate = (new NSEStockController())->today();
+
+        $stockDetailsRecords = "";
+        $stock_list = [];
+        $stockDailyPriceRecords = StockDailyPriceData::where('date', $todayDate)
+            // ->whereHas('pd_sector_ind_all', $index_name)
+            ->whereRaw("CONCAT(',', pd_sector_ind_all, ',') LIKE ?", ["%,$index_name,%"])
+            // ->whereRaw("FIND_IN_SET(?, REPLACE(pd_sector_ind_all, ' ', ''))", [$index_name])
+            ->get();
+        return view('index_detail_view',
+            compact(
+                'index_name',
+                'nseIndexDataRecords',
+                'stock_list',
+                'stockDetailsRecords',
+                'stockDailyPriceRecords'
+            )
+        );
+    }
 }

@@ -140,7 +140,7 @@ $stock_name = $request->input('stock_name');
     </h4>
   </div>
   @foreach($day_records as $record)
-  <div class="col-6 col-sm-3 col-md-4 col-lg-2">
+  <div class="col-6 col-sm-4 col-md-3 col-lg-2">
     <div class="widget-small
       {{$record->p_change > 0
         ? 'primary'

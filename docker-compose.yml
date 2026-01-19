@@ -64,6 +64,8 @@ services:
     command: php artisan schedule:work
   db:
     image: mysql:8
+    volumes:
+      - dbdata:/var/lib/mysql
     environment:
       - TZ=Asia/Kolkata
       - MYSQL_ROOT_PASSWORD=root

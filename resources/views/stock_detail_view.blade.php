@@ -100,6 +100,7 @@
                 Trading Status: <span class="{{ $stock_details->trading_status=='Suspended' ? 'badge badge-danger' : '' }}">{{ $stock_details->trading_status ?? 'N/A' }} </span> <br>
                 Trading Segment:{{ $stock_details->trading_segment ?? 'N/A' }}<br>
                 Face Value: {{ $stock_details->face_value ?? 'N/A' }} <br>
+                Surveillance: {{ $stock_details->surveillance_desc }}
                 <h4>52 Week Data</h4>
                 52 Week Low: {{ $stock_details->week_high_low_min ?? 'N/A' }} <br>
                 52 Week Low Date: {{ $stock_details->week_high_low_min_date ?? 'N/A' }} <br>

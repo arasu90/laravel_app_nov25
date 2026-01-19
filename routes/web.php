@@ -96,3 +96,6 @@ Route::get('/stock-price-list', [HomeController::class, 'stockPriceList'])->name
 Route::get('/nse-index-stock-list', [HomeController::class, 'nseIndexStockList'])->name('nseIndexStockList');
 Route::get('/sector-stock-list', [HomeController::class, 'sectorStockList'])->name('sectorStockList');
 Route::get('/icons', [HomeController::class, 'icons'])->name('icons');
+
+Route::get('/index-detail-view', [HomeController::class, 'indexDetailView'])->name('indexDetailView');
+

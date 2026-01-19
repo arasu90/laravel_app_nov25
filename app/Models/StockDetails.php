@@ -35,11 +35,12 @@ class StockDetails extends Model
         'stock_last_price',
         'stock_change',
         'stock_p_change',
+        'pd_sector_ind_all',
     ];
     public $timestamps = true;
 
     public function symbol()
     {
-        return $this->belongsTo(StockSymbol::class, 'symbol', 'symbol');
+        return $this->belongsTo(StockSymbol::class, 'symbol', 'symbol')->where('is_active', true);
     }
 }

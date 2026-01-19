@@ -134,6 +134,7 @@ class StockController extends Controller
             $metaDataStatus = $metadata['status'] ?? 'N/A';
             $metaDataLastUpdateTime = $metadata['lastUpdateTime'] ?? 'N/A';
             $metaDataPDSEctorInd = $metadata['pdSectorInd'] ?? 'N/A';
+            $metaDataPDSEctorIndAll = $metadata['pdSectorIndAll'] ?? '[]';
             $securityInfoTradingStatus = $securityInfo['tradingStatus'] ?? 'N/A';
             $securityInfoTradingSegment = $securityInfo['tradingSegment'] ?? 'N/A';
             $securityInfoFaceValue = $securityInfo['faceValue'] ?? 0;
@@ -157,7 +158,10 @@ class StockController extends Controller
             $industryInfoSector = $industryInfo['sector'] ?? 'N/A';
             $industryInfoIndustry = $industryInfo['industry'] ?? 'N/A';
             $industryInfoBasicIndustry = $industryInfo['basicIndustry'] ?? 'N/A';
-
+            // dd($metadata);
+            if($metaDataPDSEctorIndAll != "NA"){
+                $metaDataPDSEctorIndAll = implode(",",$metaDataPDSEctorIndAll);
+            }
             $insertData = [
                 'symbol' => $infoStockSymbol,
                 'company_name' => $infoStockName,
@@ -184,9 +188,10 @@ class StockController extends Controller
                 'stock_last_price' => round($priceInfoLastPrice, 2),
                 'stock_change' => round($priceInfoChange, 2),
                 'stock_p_change' => round($priceInfoPChange, 2),
+                'pd_sector_ind_all' => $metaDataPDSEctorIndAll
             ];
-
-            if("-" == $metaDataLastUpdateTime || $metaDataLastUpdateTime == "N/A"){
+            // dd($insertData);
+            if("-" == $metaDataLastUpdateTime || $metaDataLastUpdateTime == "N/A" || $metaDataLastUpdateTime == "N/A"){
                 unset($insertData['last_update_time']);
             }
             Log::error("infoStockSymbol ".$infoStockSymbol. " data is ". json_encode($insertData, true));
@@ -217,6 +222,7 @@ class StockController extends Controller
                 'is_52_week_high_value' => $is52WeekHighValue,
                 'is_52_week_low' => $is52WeekLow,
                 'is_52_week_low_value' => $is52WeekLowValue,
+                'pd_sector_ind_all' => $metaDataPDSEctorIndAll,
             ];
 
             $insertDailyData = [

@@ -96,7 +96,7 @@ $index_name = $request->input('index_name');
     </h4>
   </div>
   @foreach($day_records as $record)
-  <div class="col-6 col-sm-3 col-md-4 col-lg-3">
+  <div class="col-6 col-sm-4 col-md-4 col-lg-3">
     <div class="widget-small
       {{$record->value_p_change > 0
         ? 'primary'

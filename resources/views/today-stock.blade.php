@@ -65,7 +65,7 @@ use Carbon\Carbon;
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Today Missed Stock</h3>
+      <h3 class="tile-title">Today Missed Stock ({{ count($todayMissedStock) }})</h3>
       <table class="table table-striped table-hover">
         <thead>
           <tr>
@@ -97,7 +97,7 @@ use Carbon\Carbon;
   <div class="col-md-12">
     <div class="tile">
       <h3 class="tile-title">Recent Suspended Stock</h3>
-      <table class="table table-striped table-hover">
+      <table class="table table-responsive table-striped table-hover">
         <thead>
           <tr>
             <th>#</th>

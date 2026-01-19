@@ -25,6 +25,7 @@ class StockDailyPriceData extends Model
         'is_52_week_low',
         'is_52_week_high_value',
         'is_52_week_low_value',
+        'pd_sector_ind_all',
     ];
     public $timestamps = true;
     public function symbol()
