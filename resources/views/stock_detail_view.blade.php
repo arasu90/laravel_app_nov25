@@ -97,10 +97,10 @@
               <td>
                 Listing Status: {{ $stock_details->status ?? 'N/A' }} <br>
                 Listing Date: {{ $stock_details->listing_date ?? 'N/A' }} <br>
-                Trading Status: <span class="{{ $stock_details->trading_status=='Suspended' ? 'badge badge-danger' : '' }}">{{ $stock_details->trading_status ?? 'N/A' }} </span> <br>
+                Trading Status: <span class="{{ optional($stock_details)->trading_status=='Suspended' ? 'badge badge-danger' : '' }}">{{ $stock_details->trading_status ?? 'N/A' }} </span> <br>
                 Trading Segment:{{ $stock_details->trading_segment ?? 'N/A' }}<br>
                 Face Value: {{ $stock_details->face_value ?? 'N/A' }} <br>
-                Surveillance: {{ $stock_details->surveillance_desc }}
+                Surveillance: {{ $stock_details->surveillance_desc ?? '--' }}
                 <h4>52 Week Data</h4>
                 52 Week Low: {{ $stock_details->week_high_low_min ?? 'N/A' }} <br>
                 52 Week Low Date: {{ $stock_details->week_high_low_min_date ?? 'N/A' }} <br>
@@ -161,16 +161,16 @@
               </td>
               <td>
                 {{ $stock_daily_price_data->last_price }}
-                @if ($stock_daily_price_data->date == $stock_details->week_high_low_min_date )
+                @if ($stock_daily_price_data->date == optional($stock_details)->week_high_low_min_date )
                 <i class="fa fa-bookmark-o"></i>
                 @endif
-                @if ($stock_daily_price_data->date == $stock_details->week_high_low_max_date )
+                @if ($stock_daily_price_data->date == optional($stock_details)->week_high_low_max_date )
                 <i class="fa fa-bookmark"></i>
                 @endif
-                @if ($stock_daily_price_data->last_price == $stock_details->week_high_low_min )
+                @if ($stock_daily_price_data->last_price == optional($stock_details)->week_high_low_min )
                 <i class="fa fa-arrow-down"></i>
                 @endif
-                @if ($stock_daily_price_data->last_price == $stock_details->week_high_low_max )
+                @if ($stock_daily_price_data->last_price == optional($stock_details)->week_high_low_max )
                 <i class="fa fa-arrow-up"></i>
                 @endif
                 @if ($stock_daily_price_data->last_price == $stock_daily_price_data->lower_cp )
@@ -204,10 +204,10 @@
                 @if ($stock_daily_price_data->lower_cp == $stock_daily_price_data->last_price )
                 <i class="fa fa-arrows-h"></i>
                 @endif
-                @if ($stock_daily_price_data->lower_cp == $stock_details->week_high_low_min )
+                @if ($stock_daily_price_data->lower_cp == optional($stock_details)->week_high_low_min )
                 <i class="fa fa-arrow-down"></i>
                 @endif
-                @if ($stock_daily_price_data->lower_cp == $stock_details->week_high_low_max )
+                @if ($stock_daily_price_data->lower_cp == optional($stock_details)->week_high_low_max )
                 <i class="fa fa-arrow-up"></i>
                 @endif
                 @if ($stock_daily_price_data->lower_cp == $stock_daily_price_data->upper_cp )
@@ -225,10 +225,10 @@
                 @if ($stock_daily_price_data->upper_cp == $stock_daily_price_data->last_price )
                 <i class="fa fa-arrows-h"></i>
                 @endif
-                @if ($stock_daily_price_data->upper_cp == $stock_details->week_high_low_min )
+                @if ($stock_daily_price_data->upper_cp == optional($stock_details)->week_high_low_min )
                 <i class="fa fa-arrow-down"></i>
                 @endif
-                @if ($stock_daily_price_data->upper_cp == $stock_details->week_high_low_max )
+                @if ($stock_daily_price_data->upper_cp == optional($stock_details)->week_high_low_max )
                 <i class="fa fa-arrow-up"></i>
                 @endif
                 @if ($stock_daily_price_data->upper_cp == $stock_daily_price_data->lower_cp )
@@ -246,10 +246,10 @@
                 @if ($stock_daily_price_data->intra_day_high_low_min == $stock_daily_price_data->last_price )
                 <i class="fa fa-arrows-h"></i>
                 @endif
-                @if ($stock_daily_price_data->intra_day_high_low_min == $stock_details->week_high_low_min )
+                @if ($stock_daily_price_data->intra_day_high_low_min == optional($stock_details)->week_high_low_min )
                 <i class="fa fa-arrow-down"></i>
                 @endif
-                @if ($stock_daily_price_data->intra_day_high_low_min == $stock_details->week_high_low_max )
+                @if ($stock_daily_price_data->intra_day_high_low_min == optional($stock_details)->week_high_low_max )
                 <i class="fa fa-arrow-up"></i>
                 @endif
                 @if ($stock_daily_price_data->intra_day_high_low_min == $stock_daily_price_data->lower_cp )
@@ -267,10 +267,10 @@
                 @if ($stock_daily_price_data->intra_day_high_low_max == $stock_daily_price_data->last_price )
                 <i class="fa fa-arrows-h"></i>
                 @endif
-                @if ($stock_daily_price_data->intra_day_high_low_max == $stock_details->week_high_low_min )
+                @if ($stock_daily_price_data->intra_day_high_low_max == optional($stock_details)->week_high_low_min )
                 <i class="fa fa-arrow-down"></i>
                 @endif
-                @if ($stock_daily_price_data->intra_day_high_low_max == $stock_details->week_high_low_max )
+                @if ($stock_daily_price_data->intra_day_high_low_max == optional($stock_details)->week_high_low_max )
                 <i class="fa fa-arrow-up"></i>
                 @endif
                 @if ($stock_daily_price_data->intra_day_high_low_max == $stock_daily_price_data->lower_cp )
