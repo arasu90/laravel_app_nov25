@@ -81,7 +81,14 @@ use Carbon\Carbon;
             <td>{{ $loop->iteration }}</td>
             <td><a target="_blank" href="stock-detail-view?stock_name={{ $dataList->symbol }}">{{ $dataList->symbol }}</a></td>
             <td>{{ $dataList->created_at }}</td>
-            <td><a href="update-stock-data/{{$dataList->symbol}}" target="_blank">{{ $dataList->symbol }}</a></td>
+            <td>
+              <a href="update-stock-data/{{$dataList->symbol}}" target="_blank">
+                {{ $dataList->symbol }}
+              </a>
+              <a href="inactive-stocks-web/{{$dataList->symbol}}" class="btn btn-link btn-sm text-danger">
+                <i class="fa fa-trash-o"></i>
+              </a>
+            </td>
           </tr>
           @empty
           <tr>

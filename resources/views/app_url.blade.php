@@ -69,6 +69,14 @@
               <a href="/modify-stocks/oldSymbol/newSymbol" target="_blank">{{ url('/') }}/modify-stocks/{oldSymbol}/{newSymbol}</a>
             </td>
           </tr>
+          <tr>
+            <td>
+              Update all index data
+            </td>
+            <td>
+              <a href="/update-all-index" target="_blank">{{ url('/') }}/update-all-index</a>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

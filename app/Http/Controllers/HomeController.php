@@ -47,7 +47,7 @@ class HomeController extends Controller
                 's_stock_daily_price_data.change',
                 's_stock_daily_price_data.p_change'
             )
-            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date')
+            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date', 's_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change')
             ->orderBy('s_stock_daily_price_data.symbol')
             ->orderBy('s_stock_daily_price_data.date')
             ->get();
@@ -194,7 +194,7 @@ class HomeController extends Controller
             )
             // ->limit(110)
             ->whereRaw($sort_by_column['where'] ?? '1=1')
-            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date')
+            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date','s_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change')
             // ->orderBy('s_stock_daily_price_data.symbol')
             // ->orderBy('s_stock_daily_price_data.date')
             // ->orderBy('s_stock_daily_price_data.p_change', 'desc')
