@@ -99,3 +99,13 @@ Route::get('/icons', [HomeController::class, 'icons'])->name('icons');
 
 Route::get('/index-detail-view', [HomeController::class, 'indexDetailView'])->name('indexDetailView');
 
+// de-active stocks
+Route::get('/inactive-stocks-web/{symbol}', [HomeController::class, 'inActiveSymbolWeb'])->name('inActiveSymbolWeb');
+Route::get('/inactive-stocks/{symbol}', [HomeController::class, 'inActiveSymbol'])->name('inActiveSymbol');
+// modify stocks symbol old to new
+Route::get('/modify-stocks/{oldSymbol}/{newSymbol}', [HomeController::class, 'modifyStock'])->name('modifyStock');
+// recheck the suspended stock to active
+Route::get('/check-suspended-stock', [HomeController::class, 'checkSuspendedStock'])->name('checkSuspendedStock');
+// execute records stocks
+Route::get('/check-stock', [HomeController::class, 'checkStock'])->name('checkStock');
+

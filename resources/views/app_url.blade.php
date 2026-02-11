@@ -53,6 +53,22 @@
               <a href="/get-corporate-info" target="_blank">{{ url('/') }}/get-corporate-info</a>
             </td>
           </tr>
+          <tr>
+            <td>
+              Remove from the stock list
+            </td>
+            <td>
+              <a href="/inactive-stocks/symbol" target="_blank">{{ url('/') }}/inactive-stocks/{symbol}</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Change stock symbol old to new symbol
+            </td>
+            <td>
+              <a href="/modify-stocks/oldSymbol/newSymbol" target="_blank">{{ url('/') }}/modify-stocks/{oldSymbol}/{newSymbol}</a>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

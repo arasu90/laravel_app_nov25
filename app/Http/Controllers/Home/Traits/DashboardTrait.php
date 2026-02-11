@@ -42,7 +42,7 @@ trait DashboardTrait
                 's_stock_daily_price_data.change',
                 's_stock_daily_price_data.p_change'
             )
-            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date');
+            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date','s_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change');
             if($type == 'price')
             {
                 $topGainerList = $topGainerList->orderBy('s_stock_daily_price_data.change', 'desc');
@@ -71,7 +71,7 @@ trait DashboardTrait
                 's_stock_daily_price_data.change',
                 's_stock_daily_price_data.p_change'
             )
-            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date');
+            ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date','s_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change');
             if($type == 'price')
             {
                 $topGainerList = $topGainerList->orderBy('s_stock_daily_price_data.change', 'asc');

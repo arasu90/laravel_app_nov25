@@ -18,6 +18,9 @@ use App\Http\Controllers\Home\Traits\DashboardTrait;
 use App\Http\Controllers\Home\Traits\{
     UtilityTrait
 };
+use Exception;
+use Illuminate\Testing\Constraints\CountInDatabase;
+use stdClass;
 
 class HomeController extends Controller
 {
@@ -450,7 +453,6 @@ class HomeController extends Controller
 
                         // add OR condition only after 4 PM
                         if ($currentHour > 15) {
-                            // $q->WhereRaw('TIME(updated_at) != TIME(created_at)');
                             $q->WhereRaw('hour(time(updated_at))  > 15');
                         }
                     });
@@ -974,5 +976,86 @@ class HomeController extends Controller
                 'stockDailyPriceRecords'
             )
         );
+    }
+
+    public function inActiveSymbolWeb($symbol)
+    {
+        $this->inActiveSymbol($symbol);
+        return redirect()->back();
+    }
+
+    public function inActiveSymbol($symbol)
+    {
+        $response = new stdClass();
+        $response->result = false;
+        $response->msg = "";
+
+        try{
+            $stockSymbol = StockSymbol::where('symbol', $symbol)->first();
+            if($stockSymbol){
+                $stockSymbol->delete();
+                $response->result = true;
+                $response->msg = "Successfully De-Activated";
+            } else {
+                $response->msg = "Invalid Stock Symbol";
+            }
+        } catch(Exception $e){
+            $response->msg = $e;
+        }
+
+        return response()->json($response);
+    }
+
+    public function modifyStock($oldSymbol,$newSymbol)
+    {
+        $response = new stdClass();
+        $response->result = false;
+        $response->msg = "";
+
+        try{
+            $stockSymbol = StockSymbol::where('symbol', $oldSymbol)->where('is_active', true)->first();
+            if($stockSymbol){
+                StockDailyPriceData::where('symbol', $oldSymbol)->update(['symbol'=> $newSymbol]);
+                $stockSymbol->is_active = false;
+                $stockSymbol->save();
+                $response->result = true;
+                $response->msg = "Successfully modified";
+            } else {
+                $response->msg = "Invalid Stock Symbol";
+            }
+        } catch(Exception $e){
+            $response->msg = $e;
+        }
+
+        return response()->json($response);
+    }
+
+    public function checkSuspendedStock()
+    {
+        $response = new stdClass();
+        $response->result = false;
+        $response->msg = "";
+
+        return response()->json($response);
+    }
+
+    public function checkStock()
+    {
+        $stocks = DB::table('s_stock_symbols_new as sssn')
+            ->whereNotIn('sssn.symbol', function ($query) {
+                $query->select('symbol')
+                    ->from('s_stock_symbols');
+            })->skip(290)->take(20)
+            ->get();
+        foreach($stocks as $stock){
+            $data = (new NSEStockController())->equity($stock->symbol)->getData(true);
+            try{
+                DB::table('s_stock_symbols_new as sssn')->where('sssn.symbol',$stock->symbol)->update(['indus'=>$data['info']['industry']]);
+            } catch(Exception $e) {
+                echo $stock->symbol;
+                continue;
+            }
+            dd($data['info']['industry']);
+        }
     }
 }

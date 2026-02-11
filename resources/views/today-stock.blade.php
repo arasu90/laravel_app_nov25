@@ -101,14 +101,14 @@ use Carbon\Carbon;
         <thead>
           <tr>
             <th>#</th>
-            <th>Symbol</th>
+            <th width="10%">Symbol</th>
             <th>Stock Name</th>
             <th>Stock Status</th>
             <th>Trading Status</th>
             <th>Surveillance Surv</th>
-            <th width="25%">Surveillance Desc</th>
+            <th width="20%">Surveillance Desc</th>
             <th>Updated On</th>
-            <th>Action</th>
+            <th width="10%">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -130,7 +130,14 @@ use Carbon\Carbon;
             <td>{{ $dataList->surveillance_surv }}</td>
             <td>{{ $dataList->surveillance_desc }}</td>
             <td>{{ $dataList->last_update_time }}</td>
-            <td><a href="update-stock-data/{{$dataList->symbol}}" target="_blank">{{ $dataList->symbol }}</a></td>
+            <td>
+              <a href="update-stock-data/{{$dataList->symbol}}" target="_blank">
+                {{ $dataList->symbol }}
+              </a>
+              <a href="inactive-stocks-web/{{$dataList->symbol}}" class="btn btn-link btn-sm text-danger">
+                <i class="fa fa-trash-o"></i>
+              </a>
+            </td>
           </tr>
           @empty
           <tr>
