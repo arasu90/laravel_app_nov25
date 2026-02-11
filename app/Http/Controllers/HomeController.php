@@ -993,7 +993,8 @@ class HomeController extends Controller
         try{
             $stockSymbol = StockSymbol::where('symbol', $symbol)->first();
             if($stockSymbol){
-                $stockSymbol->delete();
+                $stockSymbol->is_active = false;
+                $stockSymbol->save();
                 $response->result = true;
                 $response->msg = "Successfully De-Activated";
             } else {
