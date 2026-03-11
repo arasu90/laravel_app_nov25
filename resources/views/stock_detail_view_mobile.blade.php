@@ -1,5 +1,10 @@
 @extends('include.app_layout')
 @section('content')
+<div class="app-title">
+  <div>
+    <h1><i class="fa fa-th-list"></i> Stock Detail View</h1>
+  </div>
+</div>
 <div class="row">
 
   <div class="col-md-12">
