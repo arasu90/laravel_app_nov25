@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('s_portfolio_stocks', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
             $table->string('symbol');
             $table->foreign('symbol')
                 ->references('symbol')
@@ -21,7 +22,13 @@ return new class extends Migration
             $table->decimal('buy_price', 10, 2);
             $table->integer('buy_qty');
             $table->date('buy_date');
+            $table->integer('portfolio_type')->default(1);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
+
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
         });
     }
 

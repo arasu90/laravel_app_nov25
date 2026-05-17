@@ -12,11 +12,7 @@ return new class extends Migration
     public function up(): void
     {
 
-        Schema::table('s_stock_index_name', function (Blueprint $table) {
-            $table->unique('index_symbol');
-        });
-
-        Schema::create('s_nes_index_day_records', function (Blueprint $table) {
+        Schema::create('s_nse_index_day_records', function (Blueprint $table) {
             $table->id();
             $table->string('index_symbol');
             $table->date('trade_date');
@@ -48,6 +44,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('s_nes_index_day_records');
+        Schema::dropIfExists('s_nse_index_day_records');
     }
 };

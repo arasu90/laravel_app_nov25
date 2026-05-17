@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class NseIndexDayRecord extends Model
 {
-    protected $table = 's_nes_index_day_records';
+    protected $table = 's_nse_index_day_records';
 
     protected $fillable = [
         'index_symbol',

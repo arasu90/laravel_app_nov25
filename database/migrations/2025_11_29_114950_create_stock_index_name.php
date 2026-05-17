@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('s_stock_index_name', function (Blueprint $table) {
             $table->id();
             $table->string('index_symbol');
+            $table->unique('index_symbol');
             $table->string('index_name');
             $table->boolean('is_active')->default(true);
             $table->timestamp('created_at')->useCurrent();

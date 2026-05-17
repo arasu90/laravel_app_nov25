@@ -31,6 +31,11 @@ return new class extends Migration
             // $table->decimal('base_price', 10, 2);
             $table->decimal('intra_day_high_low_min', 10, 2);
             $table->decimal('intra_day_high_low_max', 10, 2);
+            $table->decimal('is_52_week_high_value', 10, 2);
+            $table->integer('is_52_week_high')->default(0);
+            $table->decimal('is_52_week_low_value', 10, 2);
+            $table->integer('is_52_week_low')->default(0);
+            $table->text('pd_sector_ind_all')->nullable();
             // $table->decimal('week_high_low_min', 10, 2);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->useCurrent();

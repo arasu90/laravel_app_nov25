@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   app:
     build:
@@ -75,3 +73,6 @@ services:
     ports:
       - "3395:3306"
     command: --default-time-zone="+05:30"
+
+volumes:
+  dbdata:
