@@ -32,98 +32,34 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-md-6">
-    <div class="tile">
-      <h3 class="tile-title">Top Gainer %</h3>
-      <table class="table table-striped">
-        <tbody>
-          @foreach($topGainerPer as $stockList)
-          <tr>
-            <td>
-              <span class="float-right">
-                <span class="text-success float-right">{{ $stockList->last_price }} </span>
-                <br />
-                <span class="badge badge-success">{{ $stockList->change }} ({{ $stockList->p_change }} %) </span>
-              </span>
-              {{ $stockList->company_name }}
-              <br />
-              <small class="text-muted"><a target="_blank" href="stock-detail-view?stock_name={{ $stockList->symbol }}">{{ $stockList->symbol }}</a></small>
-            </td>
-          </tr>
-          @endforeach
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div class="tile">
-      <h3 class="tile-title">Top Looser %</h3>
-      <table class="table table-striped">
-        <tbody>
-          @foreach($topLooserPer as $stockList)
-          <tr>
-            <td>
-              <span class="float-right">
-                <span class="text-danger float-right">{{ $stockList->last_price }} </span>
-                <br />
-                <span class="badge badge-danger">{{ $stockList->change }} ({{ $stockList->p_change }} %) </span>
-              </span>
-              {{ $stockList->company_name }}
-              <br />
-              <small class="text-muted"><a target="_blank" href="stock-detail-view?stock_name={{ $stockList->symbol }}">{{ $stockList->symbol }}</a></small>
-            </td>
-          </tr>
-          @endforeach
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div class="tile">
-      <h3 class="tile-title">Top Gainer</h3>
-      <table class="table table-striped">
-        <tbody>
-          @foreach($topGainerChange as $stockList)
-          <tr>
-            <td>
-              <span class="float-right">
-                <span class="text-success float-right">{{ $stockList->last_price }} </span>
-                <br />
-                <span class="badge badge-success">{{ $stockList->change }} ({{ $stockList->p_change }} %) </span>
-              </span>
-              {{ $stockList->company_name }}
-              <br />
-              <small class="text-muted"><a target="_blank" href="stock-detail-view?stock_name={{ $stockList->symbol }}">{{ $stockList->symbol }}</a></small>
-            </td>
-          </tr>
-          @endforeach
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div class="tile">
-      <h3 class="tile-title">Top Looser</h3>
-      <table class="table table-striped">
-        <tbody>
-          @foreach($topLooserChange as $stockList)
-          <tr>
-            <td>
-              <span class="float-right">
-                <span class="text-danger float-right">{{ $stockList->last_price }} </span>
-                <br />
-                <span class="badge badge-danger">{{ $stockList->change }} ({{ $stockList->p_change }} %) </span>
-              </span>
-              {{ $stockList->company_name }}
-              <br />
-              <small class="text-muted"><a target="_blank" href="stock-detail-view?stock_name={{ $stockList->symbol }}">{{ $stockList->symbol }}</a></small>
-            </td>
-          </tr>
-          @endforeach
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <x-stock-panel
+    title="Top Gainer %"
+    collapseId="topGainerPer"
+    :stocks="$topGainerPer"
+    type="success"
+  />
+  
+  <x-stock-panel
+    title="Top Looser %"
+    collapseId="topLooserPer"
+    :stocks="$topLooserPer"
+    type="danger"
+  />
+
+  <x-stock-panel
+    title="Top Gainer"
+    collapseId="topGainer"
+    :stocks="$topGainerChange"
+    type="success"
+  />
+  
+  <x-stock-panel
+    title="Top Looser"
+    collapseId="topLooser"
+    :stocks="$topLooserChange"
+    type="danger"
+  />
+
   <div class="col-md-6">
     <div class="tile">
       <h3 class="tile-title">52 Week High</h3>
@@ -218,3 +154,38 @@
   </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+.collapse-icon { font-size: 1rem; text-decoration: none; }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+$(function(){
+    // collapse panels by default on phones, expand on larger screens
+    function adjustPanels(){
+      console.log('adjusting panels');
+      
+        if (window.matchMedia('(max-width: 768px)').matches) {
+            $('.tile .collapse').collapse('hide');
+        } else {
+            $('.tile .collapse').collapse('show');
+        }
+    }
+    adjustPanels();
+    $(window).on('resize', adjustPanels);
+
+    // flip chevron in the right‑hand icon
+    $('.tile .collapse').on('shown.bs.collapse', function(){
+        $(this).prev('.tile').find('.collapse-icon i')
+            .removeClass('fa-chevron-down').addClass('fa-chevron-up');
+    });
+    $('.tile .collapse').on('hidden.bs.collapse', function(){
+        $(this).prev('.tile').find('.collapse-icon i')
+            .removeClass('fa-chevron-up').addClass('fa-chevron-down');
+    });
+});
+</script>
+@endpush

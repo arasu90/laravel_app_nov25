@@ -112,7 +112,7 @@ class NSEStockController extends Controller
         while ($this->isHolidayOrWeekend($date)) {
             $date->subDay();
         }
-
+        // die($date->format('Y-m-d'));
         return $date->format('Y-m-d');
     }
 

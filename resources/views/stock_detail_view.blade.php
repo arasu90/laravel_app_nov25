@@ -1,7 +1,6 @@
 @extends('include.app_layout')
 @section('content')
 <div class="row">
-
   <div class="col-md-12">
     <div class="tile">
       <div class="tile-body">
@@ -32,78 +31,33 @@
   <div class="col-md-12">
     <div class="tile">
       <h3 class="tile-title">Stock Detail View for {{ $stock_name }}</h3>
-      <div class="table-responsive table-hover table-striped">
-        <table class="table table-striped table-bordered">
-          <thead>
-            <tr class="text-bold text-center">
-              <th>Company Name</th>
-              <th>Company Details</th>
-              <th>Last 5 Days Chart</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <strong>{{ $stock_details->company_name ?? 'N/A' }}</strong>
-                <br>
-                <span class="badge badge-primary">{{ $stock_details->symbol ?? 'N/A' }}</span>
-                <br>
-                <small>Sector: {{ $stock_details->sector ?? 'N/A' }}</small>
-                <br>
-                <small>Industry: {{ $stock_details->industry ?? 'N/A' }}</small>
-                <br>
-                <span>Price:<i class="fa fa-arrows-h"></i></span>
-                <br>
-                <span>
-                  <span>52WeekLow: <i class="fa fa-arrow-down"></i></span>
-                  <span style="float: inline-end;">
-                    52WeekHigh: <i class="fa fa-arrow-up"></i>
-                  </span>
-                </span>
-                <br>
-                <span>
-                  <span>LowerCP: <i class="fa fa-arrow-circle-o-down"></i></span>
-                  <span style="float: inline-end;">
-                    UpperCP: <i class="fa fa-arrow-circle-o-up"></i>
-                  </span>
-                </span>
-                <br>
-                <span>
-                  <span>IntraDayLow: <i class="fa fa-arrow-circle-down"></i></span>
-                  <span style="float: inline-end;">
-                    IntraDayHigh: <i class="fa fa-arrow-circle-up"></i>
-                  </span>
-                </span>
-                <br>
-                <span>
-                  <span>CurrentDay52WeekLow: <i class="fa fa-bookmark-o"></i></span>
-                  <span style="float: inline-end;">
-                    CurrentDay52WeekHigh: <i class="fa fa-bookmark"></i>
-                  </span>
-                </span>
-                <br>
-                <span>
-                  <span>Day52WeekLow: <i class="fa fa-toggle-down"></i></span>
-                  <span style="float: inline-end;">
-                    Day52WeekHigh: <i class="fa fa-toggle-up"></i>
-                  </span>
-                </span>
-              </td>
-              <td>
-                Listing Status: {{ $stock_details->status ?? 'N/A' }} <br>
-                Listing Date: {{ $stock_details->listing_date ?? 'N/A' }} <br>
-                Trading Status: <span class="{{ optional($stock_details)->trading_status=='Suspended' ? 'badge badge-danger' : '' }}">{{ $stock_details->trading_status ?? 'N/A' }} </span> <br>
-                Trading Segment:{{ $stock_details->trading_segment ?? 'N/A' }}<br>
-                Face Value: {{ $stock_details->face_value ?? 'N/A' }} <br>
-                Surveillance: {{ $stock_details->surveillance_desc ?? '--' }}
-                <h4>52 Week Data</h4>
-                52 Week Low: {{ $stock_details->week_high_low_min ?? 'N/A' }} <br>
-                52 Week Low Date: {{ $stock_details->week_high_low_min_date ?? 'N/A' }} <br>
-                52 Week High: {{ $stock_details->week_high_low_max ?? 'N/A' }} <br>
-                52 Week High Date: {{ $stock_details->week_high_low_max_date ?? 'N/A' }} <br>
-              </td>
-              <td>
-                <div class="embed-responsive embed-responsive-16by9">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="alert alert-primary">
+          <strong>{{ $stock_details->company_name ?? 'N/A' }}</strong>
+          <br>
+          <span class="badge badge-primary">{{ $stock_details->symbol ?? 'N/A' }}</span>
+          <br>
+          <small>Sector: {{ $stock_details->sector ?? 'N/A' }}</small>
+          <br>
+          <small>Industry: {{ $stock_details->industry ?? 'N/A' }}</small>
+          Listing Status: <strong>{{ $stock_details->status ?? 'N/A' }} </strong><br>
+          Listing Date: <strong>{{ $stock_details->listing_date ?? 'N/A' }} </strong><br>
+          Trading Status: <strong><span class="{{ optional($stock_details)->trading_status=='Suspended' ? 'badge badge-danger' : '' }}">{{ $stock_details->trading_status ?? 'N/A' }} </span> </strong><br>
+          Trading Segment:<strong>{{ $stock_details->trading_segment ?? 'N/A' }}</strong><br>
+          Face Value: <strong>{{ $stock_details->face_value ?? 'N/A' }}</strong> <br>
+          Surveillance: <strong>{{ $stock_details->surveillance_desc ?? '--' }}</strong>
+          <h4>52 Week Data</h4>
+          52 Week Low: <span class="badge badge-info">{{ $stock_details->week_high_low_min ?? 'N/A' }}</span> <br>
+          52 Week Low Date: <strong>{{ $stock_details->week_high_low_min_date ?? 'N/A' }}</strong> <br>
+          52 Week High: <span class="badge badge-info">{{ $stock_details->week_high_low_max ?? 'N/A' }}</span> <br>
+          52 Week High Date: <strong>{{ $stock_details->week_high_low_max_date ?? 'N/A' }}</strong> <br>
+        </div>
+        </div>
+        <div class="col-md-4">
+          <div class="alert alert-secondary">
+            <span class="badge badge-primary">Live Price: {{ $stock_details->stock_last_price ?? 'N/A' }}</span>
+            <div class="embed-responsive embed-responsive-16by9">
                   <canvas
                     class="embed-responsive-item"
                     id="lineChartDemoDee"
@@ -116,10 +70,26 @@
                   <span class="badge" style="background-color:#e756cfff;color:white">Open Price</span>
                   <span class="badge" style="background-color:rgba(6, 62, 90, 1);color:white">Last Price</span>
                 </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            </div>
+        </div>
+        <div class="col-md-4">
+          <div class="alert alert-info">
+            <p>
+              <strong>Note:</strong> The icons next to the values indicate their relationship to key price points:
+            </p>
+            <ul>
+              <li><i class="fa fa-arrows-h"></i> - Indicates the value is equal to the current price.</li>
+              <li><i class="fa fa-arrow-down"></i> - Indicates the value is a 52-week low.</li>
+              <li><i class="fa fa-arrow-up"></i> - Indicates the value is a 52-week high.</li>
+              <li><i class="fa fa-arrow-circle-o-down"></i> - Indicates the value is a lower circuit price.</li>
+              <li><i class="fa fa-arrow-circle-o-up"></i> - Indicates the value is an upper circuit price.</li>
+              <li><i class="fa fa-bookmark-o"></i> - Indicates the value is the current day's 52-week low.</li>
+              <li><i class="fa fa-bookmark"></i> - Indicates the value is the current day's 52-week high.</li>
+              <li><i class="fa fa-toggle-down"></i> - Indicates the value is a 52-week low for the day.</li>
+              <li><i class="fa fa-toggle-up"></i> - Indicates the value is a 52-week high for the day.</li>
+            </ul>
+          </div>
+        </div>
       </div>
       <div class="table-responsive table-hover table-striped">
         <table class="table table-striped">

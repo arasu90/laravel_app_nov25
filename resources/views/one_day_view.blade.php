@@ -22,12 +22,16 @@ $stock_name = $request->input('stock_name');
         <form class="row" action="{{ route('oneDayView') }}" method="get">
           <div class="form-group col-md-3">
             <label for="" class="control-label">Stock Name</label>
-            <input
-              class="form-control"
-              type="text"
-              placeholder="Enter Stock Name"
-              name="stock_name"
-              value="{{ $stock_name }}">
+            <select class="form-control select2" name="stock_name">
+              <option value="">Select Stock</option>
+              @foreach($stock_list as $stock)
+              <option
+                value="{{ $stock->symbol }}"
+                {{ $stock->symbol == $stock_name ? 'selected' : '' }}>
+                {{ $stock->symbol }} - {{ $stock->details->company_name ?? 'N/A' }}
+              </option>
+              @endforeach
+            </select>
           </div>
           <div class="form-group col-md-3">
             <label for="" class="control-label">Sort by</label>

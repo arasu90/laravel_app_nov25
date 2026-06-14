@@ -104,7 +104,7 @@ use Carbon\Carbon;
   <div class="col-md-12">
     <div class="tile">
       <h3 class="tile-title">Recent Suspended Stock</h3>
-      <table class="table table-responsive table-striped table-hover">
+      <table class="table table-striped table-hover">
         <thead>
           <tr>
             <th>#</th>

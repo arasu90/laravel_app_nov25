@@ -204,8 +204,8 @@ class HomeController extends Controller
             $day_records = $day_records->where('s_stock_symbols.symbol', 'like', '%'.$stock_name.'%')->orWhere('s_stock_details.company_name', 'like', '%'.$stock_name.'%');
         endif;
         $day_records = $day_records->get();
-
-        return view('one_day_view', compact('day_records', 'record_date', 'stockCount'));
+        $stock_list = StockSymbol::with('details')->where('is_active', true)->orderBy('symbol')->get();
+        return view('one_day_view', compact('day_records', 'record_date', 'stockCount', 'stock_list'));
     }
 
     public function stockDetailView(Request $request)

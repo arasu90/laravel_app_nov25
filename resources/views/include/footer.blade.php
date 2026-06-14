@@ -40,6 +40,8 @@
         $('#indexTable').DataTable({
             ordering: false,
         });
+
+        
     });
 
     var data = {
@@ -82,11 +84,11 @@
     }
     ]
     
-    var ctxl = $("#lineChartDemo").get(0).getContext("2d");
-    var lineChart = new Chart(ctxl).Line(data);
+    // var ctxl = $("#lineChartDemo").get(0).getContext("2d");
+    // var lineChart = new Chart(ctxl).Line(data);
     
-    var ctxp = $("#pieChartDemo").get(0).getContext("2d");
-    var pieChart = new Chart(ctxp).Pie(pdata);
+    // var ctxp = $("#pieChartDemo").get(0).getContext("2d");
+    // var pieChart = new Chart(ctxp).Pie(pdata);
 </script>
 <!-- Google analytics script-->
 <script type="text/javascript">

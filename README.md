@@ -106,3 +106,55 @@ SET ssd.last_update_time = (
       AND sdd.daily_data->>'$.metadata.lastUpdateTime' != '-'
 )
 WHERE ssd.trading_status = 'suspended';
+
+
+# live config
+/usr/bin/php /home/u352542771/domains/babynames21.in/public_html/nse_stock/artisan queue:work --tries=3
+
+/usr/bin/php /home/u352542771/domains/babynames21.in/public_html/nse_stock/artisan insert:stock-daily-data >> /home/u352542771/domains/babynames21.in/public_html/nse_stock/storage/logs/cron.log 2>&1
+
+
+curl -s "https://stock.babynames21.in/all-stocks" > /dev/null
+
+
+	
+curl -s "https://stock.babynames21.in/update-all-index" > /dev/null
+# live config end
+
+# live .htaccess created root folder
+<IfModule mod_rewrite.c>
+RewriteEngine on
+
+RewriteCond %{REQUEST_URI} !^public
+
+RewriteRule ^(.*)$ public/$1 [L]
+
+</IfModule>
+
+
+# live .htaccess created for public html folder
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Handle X-XSRF-Token Header
+    RewriteCond %{HTTP:x-xsrf-token} .
+    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+</IfModule>
