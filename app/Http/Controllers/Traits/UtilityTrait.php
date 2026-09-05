@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Home\Traits;
+namespace App\Http\Controllers\Traits;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -9,16 +9,17 @@ use App\Models\StockHoliday;
 use App\Models\StockSymbol;
 use App\Models\StockDailyPriceData;
 use App\Http\Controllers\NSEStockController;
+use App\Http\Controllers\Traits\ApplicationTrait;
 
 trait UtilityTrait
 {
-    
+    use ApplicationTrait;
+    // last tested on 21 Aug 2026 01:48 AM
     public function holidayList()
     {
         $today = (new NSEStockController())->today();
         $currentMonth = date('m', strtotime($today));
         $holidays = StockHoliday::where('year', date('Y'));
-            // ->where(DB::raw('MONTH(date)'), $currentMonth)
         if($currentMonth > 6):
             $holidays = $holidays->orderBy('date', 'desc');
         else:
@@ -27,14 +28,15 @@ trait UtilityTrait
         $holidays = $holidays->get();
         return view('holiday_list', compact('holidays'));
     }
-
+    // last tested on 21 Aug 2026 01:48 AM
     public function corporateInfo()
     {
         $stock_list = StockSymbol::where('is_active', true)->orderBy('symbol')->get();
         $corporateInfo = DB::table('s_stock_symbols')
             ->join('s_stock_corporate_info', 's_stock_corporate_info.symbol', '=', 's_stock_symbols.symbol')
-            ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
+            ->leftJoin('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
             ->where('s_stock_corporate_info.actions_type', 'corporate_actions')
+            ->where('s_stock_symbols.is_active', 1)
             ->select(
                 's_stock_symbols.symbol',
                 's_stock_details.company_name',
@@ -46,14 +48,72 @@ trait UtilityTrait
             ->get();
         return view('corporate_info', compact('stock_list', 'corporateInfo'));
     }
+    // last tested on 21 Aug 2026 01:48 AM
     public function icons()
     {
         return view('app_icons');
     }
+    // last tested on 21 Aug 2026 01:48 AM
     public function appUrl()
     {
-        $stock_list = StockSymbol::where('is_active', true)->orderBy('symbol')->get();
-        return view('app_url', compact('stock_list'));
+        $stockData = StockSymbol::where('is_active', true)->orderBy('symbol')->first();
+        $url_list = [
+            'app_url' => [
+                [
+                    'title' => 'Get All Stocks & Insert to DB',
+                    'app_url' => '/all-stocks',
+                    'app_url_data' => '/all-stocks',
+                ],
+                [
+                    'title' => 'Get Holidays & Insert to DB',
+                    'app_url' => '/get-holiday-list',
+                    'app_url_data' => '/get-holiday-list',
+                ],
+                [
+                    'title' => 'For Application Available Icon',
+                    'app_url' => '/icons',
+                    'app_url_data' => '/icons',
+                ],
+                [
+                    'title' => 'Update Stock One Data data',
+                    'app_url' => '/update-stock-data/{symbol}',
+                    'app_url_data' => '/update-stock-data/'.$stockData->symbol,
+                ],
+            ],
+            'api_url' => [
+                [
+                    'title' => 'Show all the Stocks',
+                    'app_url' => '/api/all-stocks',
+                    'app_url_data' => 'api/all-stocks',
+                ],
+                [
+                    'title' => 'get circular details',
+                    'app_url' => '/api/circular',
+                    'app_url_data' => 'api/circular',
+                ],
+                [
+                    'title' => 'get holiday details',
+                    'app_url' => '/api/holidays',
+                    'app_url_data' => '/api/holidays',
+                ],
+                [
+                    'title' => 'get stock day data',
+                    'app_url' => '/api/stock/{symbol}',
+                    'app_url_data' => 'api/stock/'.$stockData->symbol,
+                ],
+                [
+                    'title' => 'get circular details',
+                    'app_url' => '/api/circular',
+                    'app_url_data' => 'api/circular',
+                ],
+                [
+                    'title' => 'get circular details',
+                    'app_url' => '/api/circular',
+                    'app_url_data' => 'api/circular',
+                ],
+            ]
+        ];
+        return view('app_url', compact('url_list'));
     }
 
     public function paperTrade()

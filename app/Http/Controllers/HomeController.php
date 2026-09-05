@@ -14,10 +14,10 @@ use App\Models\MyWatchList as MyWatchListMaster;
 use App\Models\NseIndexDayRecord;
 use Carbon\Carbon;
 
-use App\Http\Controllers\Home\Traits\DashboardTrait;
-use App\Http\Controllers\Home\Traits\{
-    UtilityTrait
-};
+use App\Http\Controllers\Traits\UtilityTrait;
+use App\Http\Controllers\Traits\DashboardTrait;
+use App\Http\Controllers\Traits\ApplicationTrait;
+
 use Exception;
 use Illuminate\Testing\Constraints\CountInDatabase;
 use stdClass;
@@ -28,6 +28,7 @@ class HomeController extends Controller
 
     use DashboardTrait;
     use UtilityTrait;
+    use ApplicationTrait;
 
     public function stockListTableView()
     {
@@ -208,9 +209,11 @@ class HomeController extends Controller
         return view('one_day_view', compact('day_records', 'record_date', 'stockCount', 'stock_list'));
     }
 
+    // last tested on 21 Aug 2026 02:19 AM
     public function stockDetailView(Request $request)
     {
-        $stock_name = $request->input('stock_name') ?? 'TNTELE';
+        $activeStock = StockSymbol::where('is_active', true)->first();
+        $stock_name = $request->input('stock_name') ?? $activeStock->symbol;
         $stock_daily_price_data = StockDailyPriceData::where('symbol', $stock_name)
             ->orderBy('date', 'desc')
             ->get();
@@ -437,9 +440,13 @@ class HomeController extends Controller
         return view('view_all_index', compact('dates', 'indexData'));
     }
 
+    // last tested on 21 Aug 2026 02:01 AM
     public function todayStock(){
         $today = (new NSEStockController())->today();
-        $todayAddedStock = StockSymbol::whereDate('created_at', $today)->orderby('symbol', 'asc')->get();
+        $todayAddedStock = StockSymbol::whereDate('created_at', $today)
+            ->where('is_active', true)
+            ->orderby('symbol', 'asc')
+            ->get();
         $currentHour = now()->hour;
 
         $todayMissedStock = DB::table('s_stock_symbols as sss')
@@ -461,9 +468,10 @@ class HomeController extends Controller
             ->get();
 
         list($start, $end) = (new NSEStockController)->getDateRange(5);
-
+        
         $recentAddedStock = StockSymbol::where('is_active', true)
-            ->whereBetween('created_at', [$start, $end])
+            ->whereDate('created_at', '>=', $start)
+            ->whereDate('created_at', '<=', $end)
             ->orderby('created_at', 'desc')
             ->orderby('symbol', 'asc')
             ->get();

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Home\Traits;
+namespace App\Http\Controllers\Traits;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\StockSymbol;
@@ -54,6 +54,7 @@ trait DashboardTrait
             ->get();
         return $topGainerList;
     }
+    
 
     public function topLooserList(string $type)
     {

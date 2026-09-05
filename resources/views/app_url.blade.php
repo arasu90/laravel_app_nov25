@@ -13,6 +13,48 @@
         <th>Name</th>
         <th>URL</th>
         <tbody>
+          @foreach($url_list['app_url'] as $data_url)
+          <tr>
+            <td>
+              {{ $data_url['title'] }}
+            </td>
+            <td>
+              <a href="{{ $data_url['app_url_data'] }}" target="_blank">{{ url('/') }} {{ $data_url['app_url'] }} </a>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
+    <div class="table-responsive table-hover table-striped">
+      <h3 class="tile-title">API URL</h3>
+      <table class="table table-striped table-bordered">
+        <th>Name</th>
+        <th>URL</th>
+        <tbody>
+          @foreach($url_list['api_url'] as $data_url)
+          <tr>
+            <td>
+              {{ $data_url['title'] }}
+            </td>
+            <td>
+              <a href="{{ $data_url['app_url_data'] }}" target="_blank">{{ url('/') }} {{ $data_url['app_url'] }} </a>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="col-md-12">
+  <div class="tile">
+    <h3 class="tile-title">App URL -- old</h3>
+    <div class="table-responsive table-hover table-striped">
+      <table class="table table-striped table-bordered">
+        <th>Name</th>
+        <th>URL</th>
+        <tbody>
           <tr>
             <td>
               Get Insert all Stock Day Records
@@ -81,7 +123,7 @@
       </table>
     </div>
     <div class="table-responsive table-hover table-striped">
-      <h3 class="tile-title">API URL</h3>
+      <h3 class="tile-title">API URL -- old</h3>
       <table class="table table-striped table-bordered">
         <th>Name</th>
         <th>URL</th>

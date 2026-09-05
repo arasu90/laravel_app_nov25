@@ -11,7 +11,7 @@ use Carbon\Carbon;
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Today Added Stock ({{ date("d M Y", strtotime($today)) }})</h3>
+      <h3 class="tile-title">Today Added Stock ({{ count($todayAddedStock) }}) on ({{ date("d M Y", strtotime($today)) }})</h3>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -36,7 +36,7 @@ use Carbon\Carbon;
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Recent Stock Added</h3>
+      <h3 class="tile-title">Recent Stock Added ({{ count($recentAddedStock) }})</h3>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -103,7 +103,7 @@ use Carbon\Carbon;
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Recent Suspended Stock</h3>
+      <h3 class="tile-title">Recent Suspended Stock ({{ count($recentSuspendedStock) }})</h3>
       <table class="table table-striped table-hover">
         <thead>
           <tr>
