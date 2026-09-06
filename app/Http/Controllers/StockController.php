@@ -200,7 +200,7 @@ class StockController extends Controller
                 $insertData
             );
 
-            $is52WeekHigh = date('Y-m-d', strtotime($priceInfoWeekHighLowMaxDate)) == $today ? 1 : 0;
+            $is52WeekHigh = date('Y-m-d', strtotime($priceInfoWeekHighLowMaxDate)) === $today ? 1 : 0;
             $is52WeekHighValue = date('Y-m-d', strtotime($priceInfoWeekHighLowMaxDate)) == $today ? round($priceInfoWeekHighLowMax, 2) : 0;
             $is52WeekLow = date('Y-m-d', strtotime($priceInfoWeekHighLowMinDate)) == $today ? 1 : 0;
             $is52WeekLowValue = date('Y-m-d', strtotime($priceInfoWeekHighLowMinDate)) == $today ? round($priceInfoWeekHighLowMin, 2) : 0;
@@ -251,9 +251,9 @@ class StockController extends Controller
     }
 
 
-    public function getHolidayList(Request $request)
+    public function getAndUpdateHolidayList(Request $request)
     {
-        $type = $request->query('type');
+        $type = $request->query('type') ?? 'trading'; // default to 'trading' if not provided
         $response = (new NSEStockController())->marketHolidays($type);
         $holidaysData = $response->getData(true);
         if(empty($holidaysData['CM'])) {

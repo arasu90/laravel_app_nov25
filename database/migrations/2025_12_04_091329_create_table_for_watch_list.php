@@ -11,24 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('s_watchlist_master', function (Blueprint $table) {
+        Schema::create('s_watch_list_master', function (Blueprint $table) {
             $table->id();
-            $table->string('watchlist_name');
+            $table->string('watch_list_name');
             $table->bigInteger('user_id');
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
             // $table->index(['user_id'], 'idx_user_id');
-            $table->index(['watchlist_name'], 'idx_watchlist_name');
-            // $table->index(['user_id', 'watchlist_name'], 'idx_user_id_watchlist_name');
+            $table->index(['watch_list_name'], 'idx_watch_list_name');
+            // $table->index(['user_id', 'watch_list_name'], 'idx_user_id_watch_list_name');
         });
 
-        Schema::create('s_watchlist_items', function (Blueprint $table) {
+        Schema::create('s_watch_list_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('watchlist_id');
-            $table->foreign('watchlist_id')
+            $table->unsignedBigInteger('watch_list_id');
+            $table->foreign('watch_list_id')
                 ->references('id')
-                ->on('s_watchlist_master')
+                ->on('s_watch_list_master')
                 ->onDelete('cascade');
             $table->string('symbol');
             $table->foreign('symbol')
@@ -38,7 +38,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
 
-            $table->index(['watchlist_id'], 'idx_watchlist_id');
+            $table->index(['watch_list_id'], 'idx_watch_list_id');
             $table->index(['symbol'], 'idx_symbol');
         });
     }
@@ -48,7 +48,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('s_watchlist_master');
-        Schema::dropIfExists('s_watchlist_items');
+        Schema::dropIfExists('s_watch_list_master');
+        Schema::dropIfExists('s_watch_list_items');
     }
 };

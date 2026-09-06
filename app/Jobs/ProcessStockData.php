@@ -5,7 +5,7 @@ namespace App\Jobs;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\StockController;
+use App\Http\Controllers\StockControllerNew;
 
 class ProcessStockData implements ShouldQueue
 {
@@ -28,17 +28,17 @@ class ProcessStockData implements ShouldQueue
      */
     public $maxExceptions = 2;
 
-    public function __construct($stockSymbol)
+    public function __construct(string $stockSymbol)
     {
         $this->stockSymbol = $stockSymbol;
     }
 
-    public function handle()
+    public function handle(StockControllerNew $stockController)
     {
         try {
             Log::info("Processing stocks data: {$this->stockSymbol}");
-            (new StockController())->processStockData($this->stockSymbol);
-            Log::info("Stock processed: {$this->stockSymbol}");
+            $stockController->processStockData($this->stockSymbol);
+            Log::info("Stock processed Done: {$this->stockSymbol}");
         } catch (\Illuminate\Http\Client\RequestException $e) {
             // Handle HTTP errors (403, 429, etc.) - will be retried
             Log::error("HTTP error for stock {$this->stockSymbol}: ".$e->getMessage());

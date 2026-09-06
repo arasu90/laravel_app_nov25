@@ -22,8 +22,8 @@ class StockSymbol extends Model
         return $this->hasOne(StockDailyPriceData::class, 'symbol', 'symbol');
     }
 
-    public function watchlistItems()
+    public function watchListItems()
     {
-        return $this->hasMany(MyWatchlistItem::class, 'symbol', 'symbol');
+        return $this->hasMany(MyWatchListItem::class, 'symbol', 'symbol');
     }
 }

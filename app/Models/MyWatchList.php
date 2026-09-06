@@ -7,19 +7,19 @@ use App\Models\User;
 
 class MyWatchList extends Model
 {
-    protected $table = 's_watchlist_master';
+    protected $table = 's_watch_list_master';
     
     protected $fillable = [
-        'watchlist_name',
+        'watch_list_name',
         'user_id',
         'is_active',
     ];
 
     public $timestamps = true;
 
-    public function watchlistItems()
+    public function watchListItems()
     {
-        return $this->hasMany(MyWatchlistItem::class, 'watchlist_id', 'id');
+        return $this->hasMany(MyWatchListItem::class, 'watch_list_id', 'id');
     }
 
     public function user()

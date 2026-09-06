@@ -45,9 +45,9 @@ trait ApplicationTrait
     ): void {
         $logId = Str::random(8);
 
-        Log::{$type}('Log Start', [
-            'log_id' => $logId,
-        ]);
+        // Log::{$type}('Log Start', [
+        //     'log_id' => $logId,
+        // ]);
 
         if ($echoValue) {
             echo "<br>Log Start [{$logId}]<br>";
@@ -80,9 +80,9 @@ trait ApplicationTrait
             }
         }
 
-        Log::{$type}('Log End', [
-            'log_id' => $logId,
-        ]);
+        // Log::{$type}('Log End', [
+        //     'log_id' => $logId,
+        // ]);
 
         if ($echoValue) {
             echo "Log End [{$logId}]<br>";

@@ -14,7 +14,7 @@
               <tr>
               <th>Symbol</th>
                 @foreach ($dates as $date)
-                    <th>{{ \Carbon\Carbon::parse($date)->format('d,M') }}</th>
+                    <th>{{ \Carbon\Carbon::parse($date)->format('d-M') }}</th>
                 @endforeach
               </tr>
             </thead>

@@ -21,8 +21,8 @@ $stock_name = $request->input('stock_name');
       <div class="tile-body">
         <form class="row" action="{{ route('oneDayView') }}" method="get">
           <div class="form-group col-md-3">
-            <label for="" class="control-label">Stock Name</label>
-            <select class="form-control select2" name="stock_name">
+            <label for="stock_name" class="control-label">Stock Name</label>
+            <select id="stock_name" class="form-control select2" name="stock_name">
               <option value="">Select Stock</option>
               @foreach($stock_list as $stock)
               <option
@@ -34,98 +34,13 @@ $stock_name = $request->input('stock_name');
             </select>
           </div>
           <div class="form-group col-md-3">
-            <label for="" class="control-label">Sort by</label>
-            <select class="form-control" name="sort_by">
-              <option
-                {{ $sort_by == 'name_az' ? 'selected' : '' }}
-                value="name_az">
-                Name A-Z
-              </option>
-              <option
-                {{ $sort_by == 'name_za' ? 'selected' : '' }}
-                value="name_za">
-                Name Z-A
-              </option>
-              <option
-                {{ $sort_by == 'low_price' ? 'selected' : '' }}
-                value="low_price">
-                Price Low to High
-              </option>
-              <option
-                {{ $sort_by == 'high_price' ? 'selected' : '' }}
-                value="high_price">
-                Price High to Low
-              </option>
-              <option
-                {{ $sort_by == 'p_change_asc' ? 'selected' : '' }}
-                value="p_change_asc">
-                Percentage Low to High
-              </option>
-              <option
-                {{ $sort_by == 'p_change_desc' ? 'selected' : '' }}
-                value="p_change_desc">
-                Percentage High to Low
-              </option>
-              <option
-                {{ $sort_by == 'low_price_zero' ? 'selected' : '' }}
-                value="low_price_zero">
-                Price Low to High(Expect 0)
-              </option>
-              <option
-                {{ $sort_by == 'high_price_zero' ? 'selected' : '' }}
-                value="high_price_zero">
-                Price High to Low<(Expect 0)
-              </option>
-              <option
-                {{ $sort_by == 'p_change_asc_gt_zero' ? 'selected' : '' }}
-                value="p_change_asc_gt_zero">
-                Percentage Low to High(only > 0)
-              </option>
-              <option
-                {{ $sort_by == 'p_change_desc_gt_zero' ? 'selected' : '' }}
-                value="p_change_desc_gt_zero">
-                Percentage High to Low(only > 0)
-              </option>
-              <option
-                {{ $sort_by == 'p_change_asc_lt_zero' ? 'selected' : '' }}
-                value="p_change_asc_lt_zero">
-                Percentage Low to High(only < 0)
-              </option>
-              <option
-                {{ $sort_by == 'p_change_desc_lt_zero' ? 'selected' : '' }}
-                value="p_change_desc_lt_zero">
-                Percentage High to Low(only < 0)
-              </option>
-              <option
-                {{ $sort_by == 'low_price_price' ? 'selected' : '' }}
-                value="low_price_price">
-                Price Change Low to High
-              </option>
-              <option
-                {{ $sort_by == 'high_price_price' ? 'selected' : '' }}
-                value="high_price_price">
-                Price Change High to Low
-              </option>
-              <option
-                {{ $sort_by == 'p_change_price_asc_gt_zero' ? 'selected' : '' }}
-                value="p_change_price_asc_gt_zero">
-                Price Change Low to High(only > 0)
-              </option>
-              <option
-                {{ $sort_by == 'p_change_price_desc_gt_zero' ? 'selected' : '' }}
-                value="p_change_price_desc_gt_zero">
-                Price Change High to Low(only > 0)
-              </option>
-              <option
-                {{ $sort_by == 'p_change_price_asc_lt_zero' ? 'selected' : '' }}
-                value="p_change_price_asc_lt_zero">
-                Price Change Low to High(only < 0)
-              </option>
-              <option
-                {{ $sort_by == 'p_change_price_desc_lt_zero' ? 'selected' : '' }}
-                value="p_change_price_desc_lt_zero">
-                Price Change High to Low(only < 0)
-              </option>
+            <label for="sort_by" class="control-label">Sort by</label>
+            <select id="sort_by" class="form-control" name="sort_by">
+              @foreach($sort_options as $value => $label)
+                <option value="{{ $value }}" {{ ($sort_by ?? '') == $value ? 'selected' : '' }}>
+                  {{ $label }}
+                </option>
+              @endforeach
             </select>
           </div>
           <div class="form-group col-md-4 align-self-end">

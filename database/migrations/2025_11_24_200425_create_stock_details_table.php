@@ -27,8 +27,9 @@ return new class extends Migration
             $table->date('listing_date');
             $table->string('status');
             $table->string('series')->nullable();
+            $table->string('market_type')->nullable();
             $table->datetime('last_update_time')->nullable();
-            $table->string('pdsectorind');
+            $table->string('sector_index');
             $table->string('trading_status');
             $table->string('trading_segment');
             $table->string('surveillance_surv')->nullable();
@@ -42,7 +43,7 @@ return new class extends Migration
             $table->decimal('stock_last_price', 10, 2)->nullable();
             $table->decimal('stock_change', 10, 2)->nullable();
             $table->decimal('stock_p_change', 10, 2)->nullable();
-            $table->text('pd_sector_ind_all')->nullable();
+            $table->text('sector_index_all')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->useCurrent();

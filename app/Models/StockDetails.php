@@ -20,7 +20,7 @@ class StockDetails extends Model
         'status',
         'series',
         'last_update_time',
-        'pdsectorind',
+        'sector_index',
         'trading_status',
         'trading_segment',
         'face_value',
@@ -35,7 +35,7 @@ class StockDetails extends Model
         'stock_last_price',
         'stock_change',
         'stock_p_change',
-        'pd_sector_ind_all',
+        'sector_index_all',
     ];
     public $timestamps = true;
 

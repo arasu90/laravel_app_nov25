@@ -6,8 +6,8 @@
       <div class="tile-body">
         <form class="row" action="{{ route('stockDetailView') }}" method="get">
           <div class="form-group col-md-4">
-            <label for="" class="control-label">Stock List</label>
-            <select class="form-control select2" name="stock_name">
+            <label for="stock_name" class="control-label">Stock List</label>
+            <select id="stock_name" class="form-control select2" name="stock_name">
               <option value="">Select Stock</option>
               @foreach($stock_list as $stock)
               <option
@@ -34,29 +34,31 @@
       <div class="row">
         <div class="col-md-4">
           <div class="alert alert-primary">
-          <strong>{{ $stock_details->company_name ?? 'N/A' }}</strong>
+          <strong>{{ $stock_details->company_name }}</strong>
           <br>
-          <span class="badge badge-primary">{{ $stock_details->symbol ?? 'N/A' }}</span>
+          <span class="badge badge-primary">{{ $stock_details->symbol }}</span>
           <br>
-          <small>Sector: {{ $stock_details->sector ?? 'N/A' }}</small>
+          <small>Sector: {{ $stock_details->sector }}</small>
           <br>
-          <small>Industry: {{ $stock_details->industry ?? 'N/A' }}</small>
-          Listing Status: <strong>{{ $stock_details->status ?? 'N/A' }} </strong><br>
-          Listing Date: <strong>{{ $stock_details->listing_date ?? 'N/A' }} </strong><br>
-          Trading Status: <strong><span class="{{ optional($stock_details)->trading_status=='Suspended' ? 'badge badge-danger' : '' }}">{{ $stock_details->trading_status ?? 'N/A' }} </span> </strong><br>
-          Trading Segment:<strong>{{ $stock_details->trading_segment ?? 'N/A' }}</strong><br>
-          Face Value: <strong>{{ $stock_details->face_value ?? 'N/A' }}</strong> <br>
-          Surveillance: <strong>{{ $stock_details->surveillance_desc ?? '--' }}</strong>
+          <small>Industry: {{ $stock_details->industry }}</small>
+          Listing Status: <strong>{{ $stock_details->status }} </strong><br>
+          Listing Date: <strong>{{ $stock_details->listing_date }} </strong><br>
+          Trading Status: <strong><span class="{{ $stock_details->trading_status == 'Suspended' ? 'badge badge-danger' : '' }}">{{ $stock_details->trading_status }} </span> </strong><br>
+          Trading Segment: <strong>{{ $stock_details->trading_segment }}</strong><br>
+          Market Type: <strong>{{ $stock_details->market_type }}</strong><br>
+          Active Series: <strong>{{ $stock_details->series }}</strong><br>
+          Face Value: <strong>{{ $stock_details->face_value }}</strong> <br>
+          Surveillance: <strong>{{ $stock_details->surveillance_desc }}</strong>
           <h4>52 Week Data</h4>
-          52 Week Low: <span class="badge badge-info">{{ $stock_details->week_high_low_min ?? 'N/A' }}</span> <br>
-          52 Week Low Date: <strong>{{ $stock_details->week_high_low_min_date ?? 'N/A' }}</strong> <br>
-          52 Week High: <span class="badge badge-info">{{ $stock_details->week_high_low_max ?? 'N/A' }}</span> <br>
-          52 Week High Date: <strong>{{ $stock_details->week_high_low_max_date ?? 'N/A' }}</strong> <br>
+          52 Week Low: <span class="badge badge-info">{{ $stock_details->week_high_low_min }}</span> <br>
+          52 Week Low Date: <strong>{{ $stock_details->week_high_low_min_date }}</strong> <br>
+          52 Week High: <span class="badge badge-info">{{ $stock_details->week_high_low_max }}</span> <br>
+          52 Week High Date: <strong>{{ $stock_details->week_high_low_max_date }}</strong> <br>
         </div>
         </div>
         <div class="col-md-4">
           <div class="alert alert-secondary">
-            <span class="badge badge-primary">Live Price: {{ $stock_details->stock_last_price ?? 'N/A' }}</span>
+            <span class="badge badge-primary">Live Price: {{ $stock_details->stock_last_price }}</span>
             <div class="embed-responsive embed-responsive-16by9">
                   <canvas
                     class="embed-responsive-item"
@@ -117,6 +119,17 @@
                   ? 'text-danger'
                   : 'text-info')
                 }}">
+              @php
+                $priceIndicators = [
+                  'last_price' => ['value' => $stock_daily_price_data->last_price, 'icon' => 'fa-arrows-h'],
+                  'week_high_low_min' => ['value' => optional($stock_details)->week_high_low_min, 'icon' => 'fa-arrow-down'],
+                  'week_high_low_max' => ['value' => optional($stock_details)->week_high_low_max, 'icon' => 'fa-arrow-up'],
+                  'lower_cp' => ['value' => $stock_daily_price_data->lower_cp, 'icon' => 'fa-arrow-circle-o-down'],
+                  'upper_cp' => ['value' => $stock_daily_price_data->upper_cp, 'icon' => 'fa-arrow-circle-o-up'],
+                  'intra_day_high_low_min' => ['value' => $stock_daily_price_data->intra_day_high_low_min, 'icon' => 'fa-arrow-circle-down'],
+                  'intra_day_high_low_max' => ['value' => $stock_daily_price_data->intra_day_high_low_max, 'icon' => 'fa-arrow-circle-up'],
+                ];
+              @endphp
               <td>
                 {{ $stock_daily_price_data->date }}
                 @if ($stock_daily_price_data->is_52_week_low)
@@ -134,24 +147,7 @@
                 @if ($stock_daily_price_data->date == optional($stock_details)->week_high_low_max_date )
                 <i class="fa fa-bookmark"></i>
                 @endif
-                @if ($stock_daily_price_data->last_price == optional($stock_details)->week_high_low_min )
-                <i class="fa fa-arrow-down"></i>
-                @endif
-                @if ($stock_daily_price_data->last_price == optional($stock_details)->week_high_low_max )
-                <i class="fa fa-arrow-up"></i>
-                @endif
-                @if ($stock_daily_price_data->last_price == $stock_daily_price_data->lower_cp )
-                <i class="fa fa-arrow-circle-o-down"></i>
-                @endif
-                @if ($stock_daily_price_data->last_price == $stock_daily_price_data->upper_cp )
-                <i class="fa fa-arrow-circle-o-up"></i>
-                @endif
-                @if ($stock_daily_price_data->last_price == $stock_daily_price_data->intra_day_high_low_min )
-                <i class="fa fa-arrow-circle-down"></i>
-                @endif
-                @if ($stock_daily_price_data->last_price == $stock_daily_price_data->intra_day_high_low_max )
-                <i class="fa fa-arrow-circle-up"></i>
-                @endif
+                @include('components.price-indicators', ['key' => 'last_price', 'value' => $stock_daily_price_data->last_price, 'indicators' => $priceIndicators])
               </td>
               <td>{{ $stock_daily_price_data->change }}</td>
               <td
@@ -168,87 +164,19 @@
               <td>{{ $stock_daily_price_data->close }}</td>
               <td>
                 {{ $stock_daily_price_data->lower_cp }}
-                @if ($stock_daily_price_data->lower_cp == $stock_daily_price_data->last_price )
-                <i class="fa fa-arrows-h"></i>
-                @endif
-                @if ($stock_daily_price_data->lower_cp == optional($stock_details)->week_high_low_min )
-                <i class="fa fa-arrow-down"></i>
-                @endif
-                @if ($stock_daily_price_data->lower_cp == optional($stock_details)->week_high_low_max )
-                <i class="fa fa-arrow-up"></i>
-                @endif
-                @if ($stock_daily_price_data->lower_cp == $stock_daily_price_data->upper_cp )
-                <i class="fa fa-arrow-circle-o-up"></i>
-                @endif
-                @if ($stock_daily_price_data->lower_cp == $stock_daily_price_data->intra_day_high_low_min )
-                <i class="fa fa-arrow-circle-down"></i>
-                @endif
-                @if ($stock_daily_price_data->lower_cp == $stock_daily_price_data->intra_day_high_low_max )
-                <i class="fa fa-arrow-circle-up"></i>
-                @endif
+                @include('components.price-indicators', ['key' => 'lower_cp', 'value' => $stock_daily_price_data->lower_cp, 'indicators' => $priceIndicators])
               </td>
               <td>
                 {{ $stock_daily_price_data->upper_cp }}
-                @if ($stock_daily_price_data->upper_cp == $stock_daily_price_data->last_price )
-                <i class="fa fa-arrows-h"></i>
-                @endif
-                @if ($stock_daily_price_data->upper_cp == optional($stock_details)->week_high_low_min )
-                <i class="fa fa-arrow-down"></i>
-                @endif
-                @if ($stock_daily_price_data->upper_cp == optional($stock_details)->week_high_low_max )
-                <i class="fa fa-arrow-up"></i>
-                @endif
-                @if ($stock_daily_price_data->upper_cp == $stock_daily_price_data->lower_cp )
-                <i class="fa fa-arrow-circle-o-down"></i>
-                @endif
-                @if ($stock_daily_price_data->upper_cp == $stock_daily_price_data->intra_day_high_low_min )
-                <i class="fa fa-arrow-circle-down"></i>
-                @endif
-                @if ($stock_daily_price_data->upper_cp == $stock_daily_price_data->intra_day_high_low_max )
-                <i class="fa fa-arrow-circle-up"></i>
-                @endif
+                @include('components.price-indicators', ['key' => 'upper_cp', 'value' => $stock_daily_price_data->upper_cp, 'indicators' => $priceIndicators])
               </td>
               <td>
                 {{ $stock_daily_price_data->intra_day_high_low_min }}
-                @if ($stock_daily_price_data->intra_day_high_low_min == $stock_daily_price_data->last_price )
-                <i class="fa fa-arrows-h"></i>
-                @endif
-                @if ($stock_daily_price_data->intra_day_high_low_min == optional($stock_details)->week_high_low_min )
-                <i class="fa fa-arrow-down"></i>
-                @endif
-                @if ($stock_daily_price_data->intra_day_high_low_min == optional($stock_details)->week_high_low_max )
-                <i class="fa fa-arrow-up"></i>
-                @endif
-                @if ($stock_daily_price_data->intra_day_high_low_min == $stock_daily_price_data->lower_cp )
-                <i class="fa fa-arrow-circle-o-down"></i>
-                @endif
-                @if ($stock_daily_price_data->intra_day_high_low_min == $stock_daily_price_data->upper_cp )
-                <i class="fa fa-arrow-circle-o-up"></i>
-                @endif
-                @if ($stock_daily_price_data->intra_day_high_low_min == $stock_daily_price_data->intra_day_high_low_max )
-                <i class="fa fa-arrow-circle-up"></i>
-                @endif
+                @include('components.price-indicators', ['key' => 'intra_day_high_low_min', 'value' => $stock_daily_price_data->intra_day_high_low_min, 'indicators' => $priceIndicators])
               </td>
               <td>
                 {{ $stock_daily_price_data->intra_day_high_low_max }}
-                @if ($stock_daily_price_data->intra_day_high_low_max == $stock_daily_price_data->last_price )
-                <i class="fa fa-arrows-h"></i>
-                @endif
-                @if ($stock_daily_price_data->intra_day_high_low_max == optional($stock_details)->week_high_low_min )
-                <i class="fa fa-arrow-down"></i>
-                @endif
-                @if ($stock_daily_price_data->intra_day_high_low_max == optional($stock_details)->week_high_low_max )
-                <i class="fa fa-arrow-up"></i>
-                @endif
-                @if ($stock_daily_price_data->intra_day_high_low_max == $stock_daily_price_data->lower_cp )
-                <i class="fa fa-arrow-circle-o-down"></i>
-                @endif
-                @if ($stock_daily_price_data->intra_day_high_low_max == $stock_daily_price_data->upper_cp )
-                <i class="fa fa-arrow-circle-o-up"></i>
-                @endif
-                @if ($stock_daily_price_data->intra_day_high_low_max == $stock_daily_price_data->intra_day_high_low_min )
-                <i class="fa fa-arrow-circle-down"></i>
-                @endif
+                @include('components.price-indicators', ['key' => 'intra_day_high_low_max', 'value' => $stock_daily_price_data->intra_day_high_low_max, 'indicators' => $priceIndicators])
               </td>
             </tr>
             @endforeach

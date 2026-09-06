@@ -1,29 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\NSEStockController;
+use App\Http\Controllers\NSEStockControllerNew;
 
-// Route::get('/market-status', [NSEStockController::class, 'marketStatus']);
-Route::get('/stock/{symbol}', [NSEStockController::class, 'equity']);
-// Route::get('/stock/{symbol}/historical', [NSEStockController::class, 'equityHistorical']);
-// Route::get('/indices', [NSEStockController::class, 'indices']);
-Route::get('/all-stocks', [NSEStockController::class, 'allStocks']);
-Route::get('/holidays', [NSEStockController::class, 'marketHolidays']);
-// Route::get('/corporate-info/{symbol}', [NSEStockController::class, 'corporateInfo']);
-// Route::get('/all-index-names', [NSEStockController::class, 'getIndexNames']);
-// Route::get('/equity-master', [NSEStockController::class, 'getEquityMaster']);
-Route::get('/circular', [NSEStockController::class, 'getCircular']);
-// Route::get('/historical-data/{symbol}', [NSEStockController::class, 'getHistoricalData']);
-// Route::get('/historical-data-index/{symbol}', [NSEStockController::class, 'getHistoricalDataIndex']);
+// show the all stocks list from nse api
+Route::get('/all-stocks', [NSEStockControllerNew::class, 'getAllStocksArray']);
 
-use App\Http\Controllers\NseController;
+// show the market holidays list from nse api
+Route::get('/holidays', [NSEStockControllerNew::class, 'marketHolidays']);
 
-Route::get('/nse/quote/{symbol}', [
-    NseController::class,
-    'quote'
-]);
+// show the stock details for a specific stock from nse api
+Route::get('/stock/{symbol}', [NSEStockControllerNew::class, 'getStockDetails']);
 
-Route::get('/nse/market-status', [
-    NseController::class,
-    'marketStatus'
-]);
+// show the corporate info for a specific stock from nse api
+Route::get('/corporate-info/{symbol}', [NSEStockControllerNew::class, 'corporateStockInfo']);
+
+//show the corporate info for a top announcement
+Route::get('/corporate-top-actions', [NSEStockControllerNew::class, 'corporateTopActions']);

@@ -9,23 +9,6 @@ use App\Http\Controllers\NSEStockController;
 
 trait DashboardTrait
 {
-    public function index()
-    {
-        $today = (new NSEStockController())->today();
-
-        return view('home', [
-            'totalStocks'      => StockSymbol::where('is_active', true)->count(),
-            'topGainerPer'     => $this->topGainerList('percentage'),
-            'topGainerChange'  => $this->topGainerList('price'),
-            'topLooserPer'     => $this->topLooserList('percentage'),
-            'topLooserChange'  => $this->topLooserList('price'),
-            'week52High'       => $this->week52HighLow('high'),
-            'week52Low'        => $this->week52HighLow('low'),
-            'nifty50_index'    => NseIndexDayRecord::where('trade_date', $today)->where('index_symbol', 'NIFTY 50')->first(),
-            'index_vix'        => NseIndexDayRecord::where('trade_date', $today)->where('index_symbol', 'INDIA VIX')->first(),
-        ]);
-    }
-
     public function topGainerList(string $type)
     {
         $today = (new NSEStockController())->today();

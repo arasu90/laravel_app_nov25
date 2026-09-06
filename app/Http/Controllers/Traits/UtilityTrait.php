@@ -14,7 +14,7 @@ use App\Http\Controllers\Traits\ApplicationTrait;
 trait UtilityTrait
 {
     use ApplicationTrait;
-    // last tested on 21 Aug 2026 01:48 AM
+    /* // last tested on 21 Aug 2026 01:48 AM
     public function holidayList()
     {
         $today = (new NSEStockController())->today();
@@ -27,8 +27,8 @@ trait UtilityTrait
         endif;
         $holidays = $holidays->get();
         return view('holiday_list', compact('holidays'));
-    }
-    // last tested on 21 Aug 2026 01:48 AM
+    } */
+   /*  // last tested on 21 Aug 2026 01:48 AM
     public function corporateInfo()
     {
         $stock_list = StockSymbol::where('is_active', true)->orderBy('symbol')->get();
@@ -47,13 +47,14 @@ trait UtilityTrait
             ->limit(25)
             ->get();
         return view('corporate_info', compact('stock_list', 'corporateInfo'));
-    }
-    // last tested on 21 Aug 2026 01:48 AM
+    } */
+    
+    // last tested on 06 Sep 2026 11:48 AM
     public function icons()
     {
         return view('app_icons');
     }
-    // last tested on 21 Aug 2026 01:48 AM
+    // last tested on 06 Sep 2026 11:48 AM
     public function appUrl()
     {
         $stockData = StockSymbol::where('is_active', true)->orderBy('symbol')->first();
@@ -66,8 +67,8 @@ trait UtilityTrait
                 ],
                 [
                     'title' => 'Get Holidays & Insert to DB',
-                    'app_url' => '/get-holiday-list',
-                    'app_url_data' => '/get-holiday-list',
+                    'app_url' => '/getAndUpdateHolidayList',
+                    'app_url_data' => '/getAndUpdateHolidayList',
                 ],
                 [
                     'title' => 'For Application Available Icon',
@@ -87,9 +88,9 @@ trait UtilityTrait
                     'app_url_data' => 'api/all-stocks',
                 ],
                 [
-                    'title' => 'get circular details',
-                    'app_url' => '/api/circular',
-                    'app_url_data' => 'api/circular',
+                    'title' => 'Show top Corporate Actions',
+                    'app_url' => '/api/corporate-top-actions',
+                    'app_url_data' => 'api/corporate-top-actions',
                 ],
                 [
                     'title' => 'get holiday details',
@@ -102,21 +103,16 @@ trait UtilityTrait
                     'app_url_data' => 'api/stock/'.$stockData->symbol,
                 ],
                 [
-                    'title' => 'get circular details',
-                    'app_url' => '/api/circular',
-                    'app_url_data' => 'api/circular',
-                ],
-                [
-                    'title' => 'get circular details',
-                    'app_url' => '/api/circular',
-                    'app_url_data' => 'api/circular',
+                    'title' => 'Show corporate info for a specific stock',
+                    'app_url' => '/api/corporate-info/{symbol}',
+                    'app_url_data' => 'api/corporate-info/'.$stockData->symbol,
                 ],
             ]
         ];
         return view('app_url', compact('url_list'));
     }
 
-    public function paperTrade()
+    /* public function paperTrade()
     {
         $stock_list = StockSymbol::with('details')
             ->where('is_active', true)
@@ -148,15 +144,15 @@ trait UtilityTrait
             ->get();
 
         return view('paper_trade', compact('stock_list', 'myPortfolioStocks'));
-    }
+    } */
 
-    public static function sameMonthYear($passDate)
+   /*  public static function sameMonthYear($passDate)
     {
         $date = Carbon::parse($passDate);
         return $date->isSameMonth(now()) && $date->isSameYear(now());
-    }
+    } */
 
-    public function dbQuery()
+    /* public function dbQuery()
     {
         $data = StockDailyPriceData::get();
         foreach($data as $item):
@@ -177,5 +173,5 @@ trait UtilityTrait
             Log::channel('stock_backup')->info($logQuery);
         endforeach;
         return "Data inserted successfully";
-    }
+    } */
 }

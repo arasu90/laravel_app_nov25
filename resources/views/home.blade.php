@@ -15,18 +15,18 @@
     </div>
   </div>
   <div class="col-md-6 col-lg-3">
-    <div class="widget-small {{ optional($nifty50_index)->value_p_change > 0 ? 'primary' : 'danger' }} coloured-icon"><i class="icon fa fa-users fa-3x"></i>
+    <div class="widget-small {{ optional($nifty50Index)->value_p_change > 0 ? 'primary' : 'danger' }} coloured-icon"><i class="icon fa fa-users fa-3x"></i>
       <div class="info">
-        <h4>{{ optional($nifty50_index)->index_symbol }}</h4>
-        <p><b>{{ optional($nifty50_index)->value_last }}</b> <span class="{{ optional($nifty50_index)->value_p_change > 0 ? 'text-primary' : 'text-danger' }}">{{ optional($nifty50_index)->value_change }} ({{ optional($nifty50_index)->value_p_change }}%)</span> </p>
+        <h4>{{ optional($nifty50Index)->index_symbol }}</h4>
+        <p><b>{{ optional($nifty50Index)->value_last }}</b> <span class="{{ optional($nifty50Index)->value_p_change > 0 ? 'text-primary' : 'text-danger' }}">{{ optional($nifty50Index)->value_change }} ({{ optional($nifty50Index)->value_p_change }}%)</span> </p>
       </div>
     </div>
   </div>
   <div class="col-md-6 col-lg-3">
-    <div class="widget-small {{ optional($index_vix)->value_p_change > 0 ? 'primary' : 'danger' }} coloured-icon"><i class="icon fa fa-users fa-3x"></i>
+    <div class="widget-small {{ optional($indexVix)->value_p_change > 0 ? 'primary' : 'danger' }} coloured-icon"><i class="icon fa fa-users fa-3x"></i>
       <div class="info">
-        <h4>{{ optional($index_vix)->index_symbol }}</h4>
-        <p><b>{{ optional($index_vix)->value_last }}</b> <span class="{{ optional($index_vix)->value_p_change > 0 ? 'text-success' : 'text-danger' }}">{{ optional($index_vix)->value_change }} ({{ optional($index_vix)->value_p_change }}%)</span> </p>
+        <h4>{{ optional($indexVix)->index_symbol }}</h4>
+        <p><b>{{ optional($indexVix)->value_last }}</b> <span class="{{ optional($indexVix)->value_p_change > 0 ? 'text-success' : 'text-danger' }}">{{ optional($indexVix)->value_change }} ({{ optional($indexVix)->value_p_change }}%)</span> </p>
       </div>
     </div>
   </div>
