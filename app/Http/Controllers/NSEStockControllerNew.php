@@ -140,6 +140,7 @@ class NSEStockControllerNew extends Controller
             $marketType = $metaData['marketType'];
             $equityDetails = $this->nseClient->getEquityDetails($stockSymbol, $activeSeries, $marketType);
             $generatedStockData = $this->generateStockData($metaData, $equityDetails);
+
             return $this->toJson($generatedStockData);
 
         } catch (\Exception $e) {

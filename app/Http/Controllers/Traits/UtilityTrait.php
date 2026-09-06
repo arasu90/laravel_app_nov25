@@ -58,6 +58,7 @@ trait UtilityTrait
     public function appUrl()
     {
         $stockData = StockSymbol::where('is_active', true)->orderBy('symbol')->first();
+        $stockSymbol = $stockData ? $stockData->symbol : 'TNTELE';
         $url_list = [
             'app_url' => [
                 [
@@ -78,7 +79,7 @@ trait UtilityTrait
                 [
                     'title' => 'Update Stock One Data data',
                     'app_url' => '/update-stock-data/{symbol}',
-                    'app_url_data' => '/update-stock-data/'.$stockData->symbol,
+                    'app_url_data' => '/update-stock-data/'.$stockSymbol,
                 ],
             ],
             'api_url' => [
@@ -100,12 +101,12 @@ trait UtilityTrait
                 [
                     'title' => 'get stock day data',
                     'app_url' => '/api/stock/{symbol}',
-                    'app_url_data' => 'api/stock/'.$stockData->symbol,
+                    'app_url_data' => 'api/stock/'.$stockSymbol,
                 ],
                 [
                     'title' => 'Show corporate info for a specific stock',
                     'app_url' => '/api/corporate-info/{symbol}',
-                    'app_url_data' => 'api/corporate-info/'.$stockData->symbol,
+                    'app_url_data' => 'api/corporate-info/'.$stockSymbol,
                 ],
             ]
         ];
@@ -172,6 +173,6 @@ trait UtilityTrait
             $logQuery = "INSERT INTO s_stock_daily_price_data (`symbol`, `date`, `last_price`, `change`, `p_change`, `previous_close`, `open`, `close`, `lower_cp`, `upper_cp`, `intra_day_high_low_min`, `intra_day_high_low_max`) VALUES ('$symbol', '$date', '$last_price', '$change', '$p_change', '$previous_close', '$open', '$close', '$lower_cp', '$upper_cp', '$intra_day_high_low_min', '$intra_day_high_low_max')";
             Log::channel('stock_backup')->info($logQuery);
         endforeach;
-        return "Data inserted successfully";
+        return "Data inserted successfully";stockData->symbo
     } */
 }

@@ -19,6 +19,7 @@ class StockDetails extends Model
         'listing_date',
         'status',
         'series',
+        'market_type',
         'last_update_time',
         'sector_index',
         'trading_status',

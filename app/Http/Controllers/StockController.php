@@ -174,7 +174,7 @@ class StockController extends Controller
                 'status' => $metaDataStatus,
                 'series' => $metaDataSeries,
                 'last_update_time' => date('Y-m-d H:i:s', strtotime($metaDataLastUpdateTime)),
-                'pdsectorind' => $metaDataPDSEctorInd,
+                'sector_index' => $metaDataPDSEctorInd,
                 'trading_status' => $securityInfoTradingStatus,
                 'trading_segment' => $securityInfoTradingSegment,
                 'surveillance_surv' => $securityInfoSurveillanceSurv,
@@ -188,7 +188,7 @@ class StockController extends Controller
                 'stock_last_price' => round($priceInfoLastPrice, 2),
                 'stock_change' => round($priceInfoChange, 2),
                 'stock_p_change' => round($priceInfoPChange, 2),
-                'pd_sector_ind_all' => $metaDataPDSEctorIndAll
+                'sector_index_all' => $metaDataPDSEctorIndAll
             ];
             // dd($insertData);
             if("-" == $metaDataLastUpdateTime || $metaDataLastUpdateTime == "N/A" || $metaDataLastUpdateTime == "N/A"){
@@ -222,7 +222,7 @@ class StockController extends Controller
                 'is_52_week_high_value' => $is52WeekHighValue,
                 'is_52_week_low' => $is52WeekLow,
                 'is_52_week_low_value' => $is52WeekLowValue,
-                'pd_sector_ind_all' => $metaDataPDSEctorIndAll,
+                'sector_index_all' => $metaDataPDSEctorIndAll,
             ];
 
             $insertDailyData = [
@@ -240,12 +240,12 @@ class StockController extends Controller
             );
             
             if (!$insertStockDetails || !$insertPriceData) {
-                Log::error('Error processing stock data: ' . $insertStockDetails->errors()->first() . ' - ' . $insertPriceData->errors()->first());
+                Log::error('Error processing stock data 2: ' . $insertStockDetails->errors()->first() . ' - ' . $insertPriceData->errors()->first());
                 throw new \Exception('Error processing stock data');
             }
             return $infoStockSymbol;
         } catch (\Exception $e) {
-            Log::error('Error processing stock data: ' . $e->getMessage());
+            Log::error('Error processing stock data 1: ' . $e->getMessage());
             throw new \Exception('Error processing stock data: ' . $e->getMessage());
         }
     }
