@@ -196,9 +196,11 @@ class StockControllerNew extends Controller
                 $insertData
             );
 
-            $is52WeekHigh = date('Y-m-d', strtotime($stockData['yearHightDt'])) === $this->today ? 1 : 0;
+            $is52WeekHigh = !empty($stockData['yearHightDt'])
+                && date('Y-m-d', strtotime($stockData['yearHightDt'])) === $this->today ? 1 : 0;
             $is52WeekHighValue = $is52WeekHigh ? $stockData['yearHigh'] : 0;
-            $is52WeekLow = date('Y-m-d', strtotime($stockData['yearLowDt'])) === $this->today ? 1 : 0;
+            $is52WeekLow = !empty($stockData['yearLowDt'])
+                && date('Y-m-d', strtotime($stockData['yearLowDt'])) === $this->today ? 1 : 0;
             $is52WeekLowValue = $is52WeekLow ? $stockData['yearLow'] : 0;
 
 

@@ -71,7 +71,7 @@ class NSEStockControllerNew extends Controller
     {
         try {
             $response = $this->nseClient->getAllStockSymbol();
-
+            // dd($response['data'][0]['metadata']);
             if (isset($response['data']) && is_array($response['data'])) {
                 $symbols = array_map(function ($item) {
                     return $item['metadata']['symbol'] ?? null;
@@ -136,6 +136,10 @@ class NSEStockControllerNew extends Controller
     {
         try {
             $metaData = $this->nseClient->getMetaData($stockSymbol);
+            if(empty($metaData['activeSeries'])) {
+                $metaData['activeSeries'] = $metaData['tempSuspendedSeries']; // Default to 'EQ' if not available
+            }
+
             $activeSeries = $metaData['activeSeries'];
             $marketType = $metaData['marketType'];
             $equityDetails = $this->nseClient->getEquityDetails($stockSymbol, $activeSeries, $marketType);
@@ -186,7 +190,7 @@ class NSEStockControllerNew extends Controller
         $securityDataInfo->tradingStatus = $securityInfo['isSuspended'] ?? null;
         $securityDataInfo->surveillanceSurv = $securityInfo['surveillance_surv'] ?? null;
         $securityDataInfo->surveillanceDesc = $securityInfo['surveillance_desc'] ?? null;
-        $securityDataInfo->lastUpdateTime = $this->datetimeFormat($lastUpdateTime);
+        $securityDataInfo->lastUpdateTime = $metaDataInfo->isSuspended ? date('Y-m-d H:i:s') : $this->datetimeFormat($lastUpdateTime);
 
         $stockData->securityData = $securityDataInfo;
 
@@ -230,10 +234,10 @@ class NSEStockControllerNew extends Controller
         return HelperServices::twoDecimals($value);
     }
 
-    public function datetimeFormat(?string $value, string $format = 'Y-m-d H:i:s'): string
+    public function datetimeFormat(?string $value, string $format = 'Y-m-d H:i:s')
     {
         if ($value === null || $value === '') {
-            return '';
+            return null;
         }
 
         return HelperServices::datetimeFormat($value, $format);

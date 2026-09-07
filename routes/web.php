@@ -77,3 +77,6 @@ Route::get('/insert-stock-daily-data', function () {
     exec('php /var/www/artisan insert:stock-daily-data > /dev/null 2>&1 &');
     return "Running in background";
 });
+
+// Inactive Suspended Stocks - Get & Insert into Database
+Route::get('/inactive-stocks-web/{symbol}', [HomeController::class, 'inActiveSymbolWeb'])->name('inActiveSymbolWeb');

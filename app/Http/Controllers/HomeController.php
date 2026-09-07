@@ -926,4 +926,49 @@ class HomeController extends Controller
 
         return view('my_portfolio', compact('stock_list', 'myPortfolioStocks'));
     }
+
+    public function inActiveSymbolWeb(string $symbol)
+    {
+        try {
+            $this->inActiveSymbol($symbol);
+        } catch (Exception $e) {
+            return response()->json([
+                'result' => false,
+                'msg' => $e->getMessage(),
+            ], 500);
+        }
+
+        return redirect()->back();
+    }
+
+    public function inActiveSymbol(string $symbol)
+    {
+        $response = new stdClass();
+        $response->result = false;
+        $response->msg = '';
+
+        try {
+            $stockSymbol = StockSymbol::where('symbol', $symbol)->first();
+
+            if ($stockSymbol) {
+                $tradingStatus = $stockSymbol->details?->trading_status;
+
+                if ($tradingStatus !== 'Suspended') {
+                    $response->msg = 'Stock Symbol is not Suspended, cannot De-Activate';
+                    return response()->json($response, 400);
+                }
+
+                $stockSymbol->is_active = false;
+                $stockSymbol->save();
+                $response->result = true;
+                $response->msg = 'Successfully De-Activated';
+            } else {
+                $response->msg = 'Invalid Stock Symbol';
+            }
+        } catch (Exception $e) {
+            $response->msg = $e->getMessage();
+        }
+
+        return response()->json($response);
+    }
 }

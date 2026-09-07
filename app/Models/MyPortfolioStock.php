@@ -13,7 +13,6 @@ class MyPortfolioStock extends Model
         'buy_qty',
         'buy_date',
         'portfolio_type',
-        'user_id',
         'is_active',
     ];
     public $timestamps = true;
