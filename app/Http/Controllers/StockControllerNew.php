@@ -246,4 +246,26 @@ class StockControllerNew extends Controller
             throw $e;
         }
     }
+
+    public function insertLatestDividedActions()
+    {
+        $dividedData = $this->nseStockController->corporateTopActions()->getData(true);
+        $insertCount = 0;
+        foreach($dividedData as $action){
+            $corporateInfoData = [
+                'actions_type' => 'corporate_actions',
+                'symbol' => $action['symbol'],
+                'actions_date' => $this->nseStockController->datetimeFormat($action['exDate'], "Y-m-d"),
+                'record_date' => $this->nseStockController->datetimeFormat($action['recDate'], "Y-m-d"),
+                'actions_purpose' => $action['subject'],
+            ];
+
+            DB::table('s_stock_corporate_info')->insertOrIgnore($corporateInfoData);
+        }
+
+        return response()->json([
+            'message' => "Data inserted or updated successfully Corporate Divided",
+            'success' => true
+        ]);
+    }
 }

@@ -81,6 +81,11 @@ trait UtilityTrait
                     'app_url' => '/update-stock-data/{symbol}',
                     'app_url_data' => '/update-stock-data/'.$stockSymbol,
                 ],
+                [
+                    'title' => 'Get & Insert Latest Corporate Divided Actions',
+                    'app_url' => '/get-corporate-actions/latest-divided',
+                    'app_url_data' => '/get-corporate-actions/latest-divided',
+                ],
             ],
             'api_url' => [
                 [

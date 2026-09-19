@@ -20,6 +20,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->string('actions_type');
             $table->date('actions_date');
+            $table->date('record_date');
             $table->text('actions_purpose');
             $table->timestamps();
 

@@ -12,4 +12,9 @@ class HelperServices
     {
         return \Carbon\Carbon::parse($value)->format($format);
     }
+
+    public static function dateFormat(string $value, string $format = 'Y-m-d'): string
+    {
+        return \Carbon\Carbon::parse($value)->format($format);
+    }
 }

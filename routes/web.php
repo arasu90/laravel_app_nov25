@@ -80,3 +80,6 @@ Route::get('/insert-stock-daily-data', function () {
 
 // Inactive Suspended Stocks - Get & Insert into Database
 Route::get('/inactive-stocks-web/{symbol}', [HomeController::class, 'inActiveSymbolWeb'])->name('inActiveSymbolWeb');
+
+// latest corporate action for divided get and insert db
+Route::get('/get-corporate-actions/latest-divided', [StockControllerNew::class, 'insertLatestDividedActions'])->name('inActiveSymbolWeb');
