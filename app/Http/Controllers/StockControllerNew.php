@@ -268,4 +268,42 @@ class StockControllerNew extends Controller
             'success' => true
         ]);
     }
+
+    public function runMissedStocks()
+    {
+        try {
+            $currentHour = now()->hour;
+            $today = $this->today;
+            $todayMissedStock = DB::table('s_stock_symbols as sss')
+                ->whereNotIn('sss.symbol', function ($query) use ($today, $currentHour) {
+                    $query->select('symbol')
+                        ->from('s_stock_daily_price_data')
+                        ->whereDate('date', $today)
+                        ->when($currentHour > 15, function ($query) {
+                            $query->whereTime('updated_at', '>', '15:00:00');
+                        });
+                })
+                ->where('is_active', true)
+                ->get();
+            foreach ($todayMissedStock as $missedStock) {
+                $this->processStockData($missedStock->symbol);
+            }
+        } catch (Exception $e) {
+             return response()->json([
+                'result' => false,
+                'msg' => $e->getMessage(),
+                'error' => [
+                    'type' => get_class($e),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ],
+            ], 500);
+        }
+
+        return response()->json([
+            'result' => true,
+            'msg' => 'Successfully executed runMissedStocks',
+        ]);
+
+    }
 }

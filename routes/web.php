@@ -54,6 +54,9 @@ Route::get('/stock-price-list', [HomeController::class, 'stockPriceList'])->name
 /*** Sector Stock List ***/
 Route::get('/sector-stock-list', [HomeController::class, 'sectorStockList'])->name('sectorStockList');
 
+/*** Run missed stocks ***/
+Route::get('/run-missed-stocks', [StockControllerNew::class, 'runMissedStocks'])->name('runMissedStocks');
+
 /******* TESTING URL *******/
 // data table view
 // Route::get('/table/data-table', [HomeController::class, 'dataTableView'])->name('dataTableView');

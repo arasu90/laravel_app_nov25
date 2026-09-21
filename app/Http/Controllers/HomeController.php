@@ -160,12 +160,15 @@ class HomeController extends Controller
         $sortByKey = $request->input('sort_by') ?? 'name_az';
         $sortConfig = $this->getOneDaySortConfig($sortByKey);
         $today = $this->nseStockController->today();
-
+        $currentHour = now()->hour;
         $dayRecords = DB::table('s_stock_daily_price_data')
             ->where('date', $today)
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
             ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
             ->where('s_stock_symbols.is_active', true)
+            ->when($currentHour > 15, function ($query) {
+                $query->whereTime('s_stock_daily_price_data.updated_at', '>', '15:00:00');
+            })
             ->select(
                 's_stock_daily_price_data.symbol',
                 's_stock_details.company_name',
@@ -613,12 +616,14 @@ class HomeController extends Controller
     public function lastFewDays()
     {
         $today = $this->today;
-        $days = 5;
-        [$startDate, $endDate] = $this->nseStockController->getDateRange($days);
+        $lastFewDays = 5;
+
+        [$startDate, $endDate] = $this->nseStockController->getDateRange($lastFewDays);
 
         $consecutiveSymbols = function (int $numberOfDays, string $condition, string $from, string $to) {
             return DB::table('s_stock_daily_price_data')
                 ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
+                ->join('s_stock_details', 's_stock_symbols.symbol', '=', 's_stock_details.symbol')
                 ->where('s_stock_symbols.is_active', true)
                 ->whereBetween('s_stock_daily_price_data.date', [$from, $to])
                 ->groupBy('s_stock_symbols.symbol')
@@ -627,17 +632,14 @@ class HomeController extends Controller
         };
 
         $groupedData = function ($symbols, string $from, string $to, bool $includeDetails = false) {
-            $query = $includeDetails
-                ? DB::table('s_stock_daily_price_data')
-                    ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
-                    ->join('s_stock_details', 's_stock_symbols.symbol', '=', 's_stock_details.symbol')
-                    ->whereIn('s_stock_symbols.symbol', $symbols)
-                : StockDailyPriceData::whereIn('symbol', $symbols);
-
-            $data = $query
-                ->whereBetween($includeDetails ? 's_stock_daily_price_data.date' : 'date', [$from, $to])
-                ->orderBy($includeDetails ? 's_stock_symbols.symbol' : 'symbol')
-                ->orderBy($includeDetails ? 's_stock_daily_price_data.date' : 'date')
+            $data = StockDailyPriceData::query()
+                ->whereIn('symbol', $symbols)
+                ->when($includeDetails, function ($query) {
+                    $query->with('details');
+                })
+                ->whereBetween('date', [$from, $to])
+                ->orderBy('symbol')
+                ->orderBy('date')
                 ->get();
 
             return [
@@ -658,12 +660,12 @@ class HomeController extends Controller
         };
 
         [$lastFewDaysGainer, $lastFewGainerDates] = $groupedData(
-            $consecutiveSymbols($days, 's_stock_daily_price_data.last_price > s_stock_daily_price_data.previous_close', $startDate, $endDate),
+            $consecutiveSymbols($lastFewDays, 's_stock_daily_price_data.last_price > s_stock_daily_price_data.previous_close', $startDate, $endDate),
             $startDate,
             $endDate
         );
         [$lastFewDaysLoser, $lastFewLoserDates] = $groupedData(
-            $consecutiveSymbols($days, 's_stock_daily_price_data.last_price < s_stock_daily_price_data.previous_close', $startDate, $endDate),
+            $consecutiveSymbols($lastFewDays, 's_stock_daily_price_data.last_price < s_stock_daily_price_data.previous_close', $startDate, $endDate),
             $startDate,
             $endDate
         );
@@ -671,22 +673,21 @@ class HomeController extends Controller
         $todayHitUpperCP = $todayCircuitData('upper_cp');
         $todayHitLowerCP = $todayCircuitData('lower_cp');
 
-        $circuitDays = 3;
-        [$startDate, $endDate] = $this->nseStockController->getDateRange($circuitDays);
+        [$startDate, $endDate] = $this->nseStockController->getDateRange($lastFewDays);
         [$lastFewDaysUpperCP, $lastFewDaysUpperCPDate] = $groupedData(
-            $consecutiveSymbols($circuitDays, 's_stock_daily_price_data.last_price = s_stock_daily_price_data.upper_cp', $startDate, $endDate),
+            $consecutiveSymbols($lastFewDays, 's_stock_daily_price_data.last_price = s_stock_daily_price_data.upper_cp', $startDate, $endDate),
             $startDate,
             $endDate,
             true
         );
         [$lastFewDaysLowerCP, $lastFewDaysLowerCPDate] = $groupedData(
-            $consecutiveSymbols($circuitDays, 's_stock_daily_price_data.last_price = s_stock_daily_price_data.lower_cp', $startDate, $endDate),
+            $consecutiveSymbols($lastFewDays, 's_stock_daily_price_data.last_price = s_stock_daily_price_data.lower_cp', $startDate, $endDate),
             $startDate,
             $endDate,
             true
         );
 
-        return view('last_few_days_stock', compact(
+        $compactData = compact(
             'today',
             'lastFewDaysGainer',
             'lastFewGainerDates',
@@ -698,7 +699,9 @@ class HomeController extends Controller
             'lastFewDaysUpperCPDate',
             'lastFewDaysLowerCP',
             'lastFewDaysLowerCPDate'
-        ));
+        );
+
+        return view('last_few_days_stock', $compactData);
     }
 
     public function stockPriceList(Request $request)

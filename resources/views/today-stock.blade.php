@@ -65,7 +65,9 @@ use Carbon\Carbon;
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Today Missed Stock ({{ count($todayMissedStock) }})</h3>
+      <h3 class="tile-title">Today Missed Stock ({{ count($todayMissedStock) }})
+        <a href="run-missed-stocks" class="btn-link btn-sm float-right" target="_blank" rel="noopener noreferrer">Run Missed Stocks</a>
+      </h3>
       <table class="table table-striped table-hover">
         <thead>
           <tr>

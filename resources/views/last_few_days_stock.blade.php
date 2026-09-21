@@ -123,7 +123,10 @@
           @forelse($lastFewDaysUpperCP as $key=>$dates)
           <tr class="text-success">
             <td>{{ $loop->iteration }}</td>
-            <td><a target="_blank" href="stock-detail-view?stock_name={{ $key }}">{{ $key }}</a></td>
+            <td>
+              <p>{{ $dates->first()->details->company_name }}</p>
+              <a target="_blank" href="stock-detail-view?stock_name={{ $key }}">{{ $key }}</a>
+            </td>
             @foreach($dates as $date => $dataList)
               <td>
                 <p>{{ $dataList->last_price }}</p>
@@ -159,7 +162,10 @@
           @forelse($lastFewDaysLowerCP as $key=>$dates)
           <tr class="text-danger">
             <td>{{ $loop->iteration }}</td>
-            <td><a target="_blank" href="stock-detail-view?stock_name={{ $key }}">{{ $key }}</a></td>
+            <td>
+              <p>{{ $dates->first()->details->company_name }}</p>
+              <a target="_blank" href="stock-detail-view?stock_name={{ $key }}">{{ $key }}</a>
+            </td>
             @foreach($dates as $date => $dataList)
               <td>
                 <p>{{ $dataList->last_price }}</p>
@@ -195,7 +201,10 @@
           @forelse($lastFewDaysGainer as $key=>$dates)
           <tr class="text-success">
             <td>{{ $loop->iteration }}</td>
-            <td><a target="_blank" href="stock-detail-view?stock_name={{ $key }}">{{ $key }}</a></td>
+            <td>
+              <p>{{ $dates->first()->details->company_name }}</p>
+              <a target="_blank" href="stock-detail-view?stock_name={{ $key }}">{{ $key }}</a>
+            </td>
             @foreach($dates as $date => $dataList)
                 <td>
                   <p>{{ $dataList->last_price }}</p>
@@ -232,6 +241,7 @@
           <tr class="text-danger">
             <td>{{ $loop->iteration }}</td>
             <td>
+              <p>{{ $dates->first()->details->company_name }}</p>
               <a target="_blank" href="stock-detail-view?stock_name={{ $key }}">
                 {{ $key }}
               </a>
