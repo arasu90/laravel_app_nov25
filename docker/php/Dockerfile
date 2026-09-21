@@ -1,15 +1,31 @@
-FROM php:8.2-fpm
+FROM php:8.5-fpm
 
 RUN apt-get update && apt-get install -y \
-    libzip-dev zip unzip \
-    && docker-php-ext-install pdo_mysql zip
+    curl \
+    libzip-dev \
+    zip \
+    unzip \
+    && docker-php-ext-install \
+        pdo_mysql \
+        zip \
+        opcache \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www
 
 # Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+# Install PHP dependencies first for better Docker caching
+COPY composer.json composer.lock ./
+
+RUN composer install \
+    --no-interaction \
+    --prefer-dist
+
+# Copy application
 COPY . /var/www
-RUN composer install --no-dev --optimize-autoloader
+
+COPY docker/php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 CMD ["php-fpm"]

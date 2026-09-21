@@ -1,11 +1,12 @@
 services:
   app:
-    network_mode: "host"
     build:
       context: .
       dockerfile: docker/php/Dockerfile
     volumes:
       - ./:/var/www
+      - /var/www/vendor
+      - /var/www/node_modules
     depends_on:
       - db
 
@@ -27,8 +28,6 @@ services:
       dockerfile: docker/php/Dockerfile
     command: >
       bash -c "
-        php artisan config:clear &&
-        php artisan cache:clear &&
         php artisan queue:work --tries=3 --timeout=120 --sleep=1 &
         php artisan queue:work --tries=3 --timeout=120 --sleep=1 &
         php artisan queue:work --tries=3 --timeout=120 --sleep=1 &
@@ -42,9 +41,11 @@ services:
       "
     volumes:
       - ./:/var/www
+      - /var/www/vendor
+      - /var/www/node_modules
     depends_on:
       - db
-    restart: always   # always restart queue workers
+    restart: unless-stopped   # always restart queue workers
 
   # ✅ Add Scheduler service
   scheduler:
