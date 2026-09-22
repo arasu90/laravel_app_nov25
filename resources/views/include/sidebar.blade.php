@@ -73,12 +73,6 @@
                 <span class="app-menu__label">My Portfolio</span>
             </a>
         </li>
-        <li>
-            <a class="app-menu__item {{ Route::is('stockPriceList') ? 'active' : '' }} " href="/stock-price-list">
-                <i class="app-menu__icon fa fa-stethoscope"></i>
-                <span class="app-menu__label">StockPrice List</span>
-            </a>
-        </li>
         <!-- <li>
             <a class="app-menu__item {{ Route::is('nseIndexStockList') ? 'active' : '' }} " href="/nse-index-stock-list">
                 <i class="app-menu__icon fa fa-exchange"></i>
@@ -86,9 +80,9 @@
             </a>
         </li> -->
         <li>
-            <a class="app-menu__item {{ Route::is('sectorStockList') ? 'active' : '' }} " href="/sector-stock-list">
-                <i class="app-menu__icon fa fa-microphone"></i>
-                <span class="app-menu__label">Sector Stock List</span>
+            <a class="app-menu__item {{ Route::is('allStockList') ? 'active' : '' }} " href="/all-stock-list">
+                <i class="app-menu__icon fa fa-exchange"></i>
+                <span class="app-menu__label">All Stock List</span>
             </a>
         </li>
         <li>

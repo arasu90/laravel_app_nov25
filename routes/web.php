@@ -48,11 +48,8 @@ Route::get('/my-watch-list', [HomeController::class, 'myWatchList'])->name('myWa
 // last few days stock list /** Last Few Days Stocks ***/
 Route::get('/last-few-days-stock', [HomeController::class, 'lastFewDays'])->name('lastFewDays');
 
-/*** Stock Price List ***/
-Route::get('/stock-price-list', [HomeController::class, 'stockPriceList'])->name('stockPriceList');
-
-/*** Sector Stock List ***/
-Route::get('/sector-stock-list', [HomeController::class, 'sectorStockList'])->name('sectorStockList');
+/*** All Stock List With filter ***/
+Route::get('/all-stock-list', [HomeController::class, 'allStockList'])->name('allStockList');
 
 /*** Run missed stocks ***/
 Route::get('/run-missed-stocks', [StockControllerNew::class, 'runMissedStocks'])->name('runMissedStocks');

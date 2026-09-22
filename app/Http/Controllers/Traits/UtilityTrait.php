@@ -77,7 +77,7 @@ trait UtilityTrait
                     'app_url_data' => '/icons',
                 ],
                 [
-                    'title' => 'Update Stock One Data data',
+                    'title' => 'Get &Update Stock One Data data',
                     'app_url' => '/update-stock-data/{symbol}',
                     'app_url_data' => '/update-stock-data/'.$stockSymbol,
                 ],
@@ -85,6 +85,11 @@ trait UtilityTrait
                     'title' => 'Get & Insert Latest Corporate Divided Actions',
                     'app_url' => '/get-corporate-actions/latest-divided',
                     'app_url_data' => '/get-corporate-actions/latest-divided',
+                ],
+                [
+                    'title' => 'Get & Insert Day Records of Stocks',
+                    'app_url' => '/insert-stock-daily-data',
+                    'app_url_data' => '/insert-stock-daily-data',
                 ],
             ],
             'api_url' => [

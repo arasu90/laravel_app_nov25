@@ -302,7 +302,7 @@ class StockControllerNew extends Controller
 
         return response()->json([
             'result' => true,
-            'msg' => 'Successfully executed runMissedStocks',
+            'msg' => "Successfully executed {$todayMissedStock->count()} runMissedStocks",
         ]);
 
     }

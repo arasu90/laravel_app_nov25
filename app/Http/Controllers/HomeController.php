@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Exception;
 use stdClass;
@@ -704,198 +705,6 @@ class HomeController extends Controller
         return view('last_few_days_stock', $compactData);
     }
 
-    public function stockPriceList(Request $request)
-    {
-        $stock_name = $request->get('stock_name') ?? null;
-        $today = $this->today;
-        $price_min = $request->get('price_min') ?? null;
-        $price_max = $request->get('price_max') ?? null;
-
-        $defaultWatchListNames = [
-            [
-                'key_name' => 'price_0_0_5',
-                'name' => 'Price 0-0.5',
-                'condition' => 's_stock_daily_price_data.last_price > 0 AND s_stock_daily_price_data.last_price <= 0.5',
-            ],
-            [
-                'key_name' => 'price_0_5_1',
-                'name' => 'Price 0.5-1',
-                'condition' => 's_stock_daily_price_data.last_price >= 0.5 AND s_stock_daily_price_data.last_price <= 1',
-            ],
-            [
-                'key_name' => 'price_1_5',
-                'name' => 'Price 1-5',
-                'condition' => 's_stock_daily_price_data.last_price >= 1 AND s_stock_daily_price_data.last_price <= 5',
-            ],
-            [
-                'key_name' => 'price_5_10',
-                'name' => 'Price 5-10',
-                'condition' => 's_stock_daily_price_data.last_price >= 5 AND s_stock_daily_price_data.last_price <= 10',
-            ],
-            [
-                'key_name' => 'price_10_20',
-                'name' => 'Price 10-20',
-                'condition' => 's_stock_daily_price_data.last_price >= 10 AND s_stock_daily_price_data.last_price <= 20',
-            ],
-            [
-                'key_name' => 'price_20_50',
-                'name' => 'Price 20-50',
-                'condition' => 's_stock_daily_price_data.last_price >= 20 AND s_stock_daily_price_data.last_price <= 50',
-            ],
-            [
-                'key_name' => 'price_50_100',
-                'name' => 'Price 50-100',
-                'condition' => 's_stock_daily_price_data.last_price >= 50 AND s_stock_daily_price_data.last_price <= 100',
-            ],
-            [
-                'key_name' => 'price_100_200',
-                'name' => 'Price 100-200',
-                'condition' => 's_stock_daily_price_data.last_price >= 100 AND s_stock_daily_price_data.last_price <= 200',
-            ],
-            [
-                'key_name' => 'price_200_500',
-                'name' => 'Price 200-500',
-                'condition' => 's_stock_daily_price_data.last_price >= 200 AND s_stock_daily_price_data.last_price <= 500',
-            ],
-            [
-                'key_name' => 'price_500_1000',
-                'name' => 'Price 500-1000',
-                'condition' => 's_stock_daily_price_data.last_price >= 500 AND s_stock_daily_price_data.last_price <= 1000',
-            ],
-            [
-                'key_name' => 'price_1k_1_5k',
-                'name' => 'Price 1000-1500',
-                'condition' => 's_stock_daily_price_data.last_price >= 1000 AND s_stock_daily_price_data.last_price <= 1500',
-            ],
-            [
-                'key_name' => 'price_1_5k_2k',
-                'name' => 'Price 1500-2000',
-                'condition' => 's_stock_daily_price_data.last_price >= 1500 AND s_stock_daily_price_data.last_price <= 2000',
-            ],
-            [
-                'key_name' => 'price_2k_5k',
-                'name' => 'Price 2000-5000',
-                'condition' => 's_stock_daily_price_data.last_price >= 2000 AND s_stock_daily_price_data.last_price <= 5000',
-            ],
-            [
-                'key_name' => 'price_5k_10k',
-                'name' => 'Price 5000-10000',
-                'condition' => 's_stock_daily_price_data.last_price >= 5000 AND s_stock_daily_price_data.last_price <= 10000',
-            ],
-            [
-                'key_name' => 'price_10000_more',
-                'name' => 'Price 10000 More',
-                'condition' => 's_stock_daily_price_data.last_price > 10000',
-            ]
-        ];
-        $watchListList = [];
-
-        foreach($defaultWatchListNames as $defaultWatchList):
-            $query = DB::table('s_stock_symbols')
-                ->join('s_stock_daily_price_data', 's_stock_daily_price_data.symbol', '=', 's_stock_symbols.symbol')
-                ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
-                ->where('s_stock_daily_price_data.date', $today)
-                ->where('s_stock_symbols.is_active', true)
-                ->whereRaw($defaultWatchList['condition']); // keep this if it's dynamic
-
-            if (!empty($stock_name)) {
-                $query->where('s_stock_symbols.symbol', $stock_name);
-            } elseif (!empty($price_min) && !empty($price_max)) {
-                $query->whereBetween('s_stock_daily_price_data.last_price', [$price_min, $price_max]);
-            }
-
-            $stockList = $query
-                ->select(
-                    's_stock_symbols.symbol',
-                    's_stock_details.company_name',
-                    's_stock_daily_price_data.last_price',
-                    's_stock_daily_price_data.change',
-                    's_stock_daily_price_data.p_change',
-                    's_stock_daily_price_data.previous_close',
-                    's_stock_daily_price_data.open',
-                    's_stock_daily_price_data.close',
-                    's_stock_daily_price_data.lower_cp',
-                    's_stock_daily_price_data.upper_cp',
-                    's_stock_daily_price_data.intra_day_high_low_min',
-                    's_stock_daily_price_data.intra_day_high_low_max',
-                    's_stock_details.week_high_low_min',
-                    's_stock_details.week_high_low_min_date',
-                    's_stock_details.week_high_low_max',
-                    's_stock_details.week_high_low_max_date'
-                )
-                ->orderBy('s_stock_daily_price_data.last_price')
-                ->orderBy('s_stock_daily_price_data.p_change')
-                ->get();
-
-            if ($stockList->isNotEmpty()) {
-                $watchListList[$defaultWatchList['key_name']] = [
-                    'name' => $defaultWatchList['name'],
-                    'stock_list' => $stockList,
-                ];
-            }
-        endforeach;
-
-        $stock_list = StockSymbol::with('details')->where('is_active', true)->get();
-        return view('my_watch_list', compact('watchListList','stock_list', 'stock_name'));
-    }
-
-    public function sectorStockList(Request $request)
-    {
-        $stock_name = $request->get('stock_name') ?? null;
-        $today = $this->today;
-        $price_min = $request->get('price_min') ?? null;
-        $price_max = $request->get('price_max') ?? null;
-
-        $sectorData = StockDetails::select('sector')
-            // ->where('sector', '<>', '')
-            ->groupBy('sector')
-            ->orderBy('sector', 'asc')
-            ->get();
-        $watchListList = [];
-        $stockConditions = '1=1';
-        if($stock_name != null){
-            $stockConditions = "s_stock_symbols.symbol = '".$stock_name."'";
-        } elseif (!empty($price_min) && !empty($price_max)) {
-            $stockConditions = "s_stock_daily_price_data.last_price between '".$price_min."' and '".$price_max."'";
-        }
-
-        foreach($sectorData as $sector){
-            $sectorStocks = DB::table('s_stock_details')
-                ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_details.symbol')
-                ->join('s_stock_daily_price_data', 's_stock_daily_price_data.symbol', '=', 's_stock_symbols.symbol')
-                ->where('s_stock_daily_price_data.date', $today)
-                ->where('s_stock_symbols.is_active', true)
-                ->where('s_stock_details.sector', $sector->sector)
-                ->whereRaw($stockConditions)
-                ->select(
-                    's_stock_details.symbol',
-                    's_stock_details.company_name',
-                    's_stock_daily_price_data.last_price',
-                    's_stock_daily_price_data.change',
-                    's_stock_daily_price_data.p_change',
-                    's_stock_daily_price_data.previous_close',
-                    's_stock_daily_price_data.open',
-                    's_stock_daily_price_data.close',
-                    's_stock_daily_price_data.lower_cp',
-                    's_stock_daily_price_data.upper_cp',
-                    's_stock_daily_price_data.intra_day_high_low_min',
-                    's_stock_daily_price_data.intra_day_high_low_max',
-                    's_stock_details.week_high_low_min',
-                    's_stock_details.week_high_low_min_date',
-                    's_stock_details.week_high_low_max',
-                    's_stock_details.week_high_low_max_date'
-                )
-                ->get();
-            if(count($sectorStocks)>0){
-                $watchListList[str_replace([' ', '-', '&'], '_', $sector->sector)]['name'] = $sector->sector;
-                $watchListList[str_replace([' ', '-', '&'], '_', $sector->sector)]['stock_list'] = $sectorStocks;
-            }
-        }
-
-        $stock_list = StockSymbol::with('details')->where('is_active', true)->get();
-        return view('my_watch_list', compact('watchListList','stock_list', 'stock_name'));
-    }
-
     public function myPortfolio()
     {
         $stock_list = StockSymbol::with('details')
@@ -933,7 +742,13 @@ class HomeController extends Controller
     public function inActiveSymbolWeb(string $symbol)
     {
         try {
-            $this->inActiveSymbol($symbol);
+            $response = $this->inActiveSymbol($symbol);
+            if ($response->getStatusCode() !== 200) {
+                return response()->json([
+                    'result' => false,
+                    'msg' => 'The symbol could not be inactivated.',
+                ], $response->getStatusCode());
+            }
         } catch (Exception $e) {
             return response()->json([
                 'result' => false,
@@ -974,4 +789,257 @@ class HomeController extends Controller
 
         return response()->json($response);
     }
+
+    public function allStockList(Request $request)
+    {
+        $filter_type = $request->input('filter_type', 'price');
+
+        $stockName = $request->input('stock_name');
+        $priceMin = $request->input('price_min');
+        $priceMax = $request->input('price_max');
+        $today = $this->today;
+
+        $selectColumns = [
+            's_stock_symbols.symbol',
+            's_stock_details.company_name',
+            's_stock_daily_price_data.last_price',
+            's_stock_daily_price_data.change',
+            's_stock_daily_price_data.p_change',
+            's_stock_daily_price_data.previous_close',
+            's_stock_daily_price_data.open',
+            's_stock_daily_price_data.close',
+            's_stock_daily_price_data.lower_cp',
+            's_stock_daily_price_data.upper_cp',
+            's_stock_daily_price_data.intra_day_high_low_min',
+            's_stock_daily_price_data.intra_day_high_low_max',
+            's_stock_details.week_high_low_min',
+            's_stock_details.week_high_low_min_date',
+            's_stock_details.week_high_low_max',
+            's_stock_details.week_high_low_max_date',
+        ];
+
+        $baseQuery = DB::table('s_stock_symbols')
+            ->join(
+                's_stock_daily_price_data',
+                's_stock_daily_price_data.symbol',
+                '=',
+                's_stock_symbols.symbol'
+            )
+            ->join(
+                's_stock_details',
+                's_stock_details.symbol',
+                '=',
+                's_stock_symbols.symbol'
+            )
+            ->where('s_stock_daily_price_data.date', $today)
+            ->where('s_stock_symbols.is_active', true)
+            ->when($stockName, function ($query) use ($stockName) {
+                $query->where('s_stock_symbols.symbol', $stockName);
+            })
+            ->when(
+                !$stockName && $priceMin !== null && $priceMax !== null,
+                function ($query) use ($priceMin, $priceMax) {
+                    $query->whereBetween(
+                        's_stock_daily_price_data.last_price',
+                        [$priceMin, $priceMax]
+                    );
+                }
+            );
+
+        $watchListList = [];
+        $filterTypeList = [
+            'price' => 'Price List',
+            'sector' => 'Sector List',
+            'macro' => 'Macro List',
+            'industry' => 'Industry List',
+            'basic_industry' => 'Basic Industry List',
+            'sector_index' => 'Index List',
+        ];
+        $nullTextValue = '-NA-';
+
+        if ($filter_type !== 'price') {
+            $allowedGroupColumns = [
+                'sector',
+                'macro',
+                'industry',
+                'basic_industry',
+                'sector_index',
+            ];
+
+            // dd($filter_type, $allowedGroupColumns);
+            $groupColumn = $filter_type ?? 'sector';
+            $groups = StockDetails::query()
+               
+                ->selectRaw(
+                    "COALESCE(NULLIF($groupColumn, ?), ?) AS $groupColumn",
+                    ['', $nullTextValue]
+                )
+                ->distinct()
+                ->orderBy($groupColumn)
+                ->pluck($groupColumn);
+
+            foreach ($groups as $group) {
+
+                $groupCond = $group === $nullTextValue ? true : false;
+                // dd($groupCond);
+                $stockList = (clone $baseQuery)
+                    ->when(!$groupCond, function ($query) use($groupColumn, $group) {
+                        $query->where("s_stock_details.$groupColumn", $group);
+                    })
+                    ->when($groupCond, function ($query) use($groupColumn) {
+                        $query->whereNull($groupColumn);
+                    })
+                    ->select($selectColumns)
+                    ->orderBy('s_stock_daily_price_data.last_price')
+                    ->orderBy('s_stock_daily_price_data.p_change')
+                    ->get();
+
+                if ($stockList->isNotEmpty()) {
+                    $key = Str::slug($group, '_');
+
+                    $watchListList[$key] = [
+                        'name' => $group,
+                        'stock_list' => $stockList,
+                    ];
+                }
+            }
+
+        } else {
+            $priceGroups = [
+                [
+                    'key' => 'price_0_0_5',
+                    'name' => 'Price 0-0.5',
+                    'min' => 0.0000001,
+                    'max' => 0.5,
+                ],
+                [
+                    'key' => 'price_0_5_1',
+                    'name' => 'Price 0.5-1',
+                    'min' => 0.5,
+                    'max' => 1,
+                ],
+                [
+                    'key' => 'price_1_5',
+                    'name' => 'Price 1-5',
+                    'min' => 1,
+                    'max' => 5,
+                ],
+                [
+                    'key' => 'price_5_10',
+                    'name' => 'Price 5-10',
+                    'min' => 5,
+                    'max' => 10,
+                ],
+                [
+                    'key' => 'price_10_20',
+                    'name' => 'Price 10-20',
+                    'min' => 10,
+                    'max' => 20,
+                ],
+                [
+                    'key' => 'price_20_50',
+                    'name' => 'Price 20-50',
+                    'min' => 20,
+                    'max' => 50,
+                ],
+                [
+                    'key' => 'price_50_100',
+                    'name' => 'Price 50-100',
+                    'min' => 50,
+                    'max' => 100,
+                ],
+                [
+                    'key' => 'price_100_200',
+                    'name' => 'Price 100-200',
+                    'min' => 100,
+                    'max' => 200,
+                ],
+                [
+                    'key' => 'price_200_500',
+                    'name' => 'Price 200-500',
+                    'min' => 200,
+                    'max' => 500,
+                ],
+                [
+                    'key' => 'price_500_1000',
+                    'name' => 'Price 500-1000',
+                    'min' => 500,
+                    'max' => 1000,
+                ],
+                [
+                    'key' => 'price_1k_1_5k',
+                    'name' => 'Price 1000-1500',
+                    'min' => 1000,
+                    'max' => 1500,
+                ],
+                [
+                    'key' => 'price_1_5k_2k',
+                    'name' => 'Price 1500-2000',
+                    'min' => 1500,
+                    'max' => 2000,
+                ],
+                [
+                    'key' => 'price_2k_5k',
+                    'name' => 'Price 2000-5000',
+                    'min' => 2000,
+                    'max' => 5000,
+                ],
+                [
+                    'key' => 'price_5k_10k',
+                    'name' => 'Price 5000-10000',
+                    'min' => 5000,
+                    'max' => 10000,
+                ],
+                [
+                    'key' => 'price_10000_more',
+                    'name' => 'Price 10000 More',
+                    'min' => 10000,
+                    'max' => null,
+                ],
+            ];
+
+            foreach ($priceGroups as $group) {
+                $query = clone $baseQuery;
+
+                if ($group['max'] === null) {
+                    $query->where(
+                        's_stock_daily_price_data.last_price',
+                        '>',
+                        $group['min']
+                    );
+                } else {
+                    $query->whereBetween(
+                        's_stock_daily_price_data.last_price',
+                        [$group['min'], $group['max']]
+                    );
+                }
+
+                $stockList = $query
+                    ->select($selectColumns)
+                    ->orderBy('s_stock_daily_price_data.last_price')
+                    ->orderBy('s_stock_daily_price_data.p_change')
+                    ->get();
+
+                if ($stockList->isNotEmpty()) {
+                    $watchListList[$group['key']] = [
+                        'name' => $group['name'],
+                        'stock_list' => $stockList,
+                    ];
+                }
+            }
+        }
+
+        $stockList = StockSymbol::with('details')
+            ->where('is_active', true)
+            ->get();
+
+        return view('all_stock_list', [
+            'watchListList' => $watchListList,
+            'stock_list' => $stockList,
+            'stock_name' => $stockName,
+            'filterTypeList' => $filterTypeList,
+            'filterSelected' => $filter_type
+        ]);
+    }
+
 }

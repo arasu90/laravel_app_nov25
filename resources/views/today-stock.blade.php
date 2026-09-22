@@ -74,6 +74,7 @@ use Carbon\Carbon;
             <th>#</th>
             <th>Symbol</th>
             <th>Added Date</th>
+            <th>LastUpdatedOn</th>
             <th>Action</th>
           </tr>
         </thead>
@@ -83,6 +84,7 @@ use Carbon\Carbon;
             <td>{{ $loop->iteration }}</td>
             <td><a target="_blank" href="stock-detail-view?stock_name={{ $dataList->symbol }}">{{ $dataList->symbol }}</a></td>
             <td>{{ $dataList->created_at }}</td>
+            <td>{{ $dataList->updated_at }}</td>
             <td>
               <a href="update-stock-data/{{$dataList->symbol}}" target="_blank">
                 {{ $dataList->symbol }}
@@ -94,7 +96,7 @@ use Carbon\Carbon;
           </tr>
           @empty
           <tr>
-            <td colspan="4"><p>No stocks found</p></td>
+            <td colspan="5"><p>No stocks found</p></td>
           </tr>
           @endforelse
         </tbody>

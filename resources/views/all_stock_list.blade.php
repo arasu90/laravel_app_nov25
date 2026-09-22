@@ -16,6 +16,20 @@ use App\Http\Controllers\HomeController;
       <div class="tile-body">
         <form class="row" action="{{ url()->current() }}" method="get">
           <div class="form-group col-md-4">
+            <label for="filter_type" class="control-label">Filter Type</label>
+            <select class="form-control" id="filter_type" name="filter_type">
+              <option value="">Select Stock</option>
+              @foreach ($filterTypeList as $filterKey => $filterType)
+                <option
+                  value="{{ $filterKey }}"
+                  {{ $filterKey == $filterSelected ? 'selected' : '' }}
+                >
+                  {{ $filterType }}
+                </option>
+              @endforeach
+            </select>
+          </div>
+          <div class="form-group col-md-4">
             <label for="stock_name" class="control-label">Stock List</label>
             <select class="form-control select2" id="stock_name" name="stock_name">
               <option value="">Select Stock</option>

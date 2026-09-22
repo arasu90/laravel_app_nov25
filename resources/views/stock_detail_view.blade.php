@@ -40,7 +40,7 @@
           <br>
           <small>Sector: {{ $stock_details->sector }}</small>
           <br>
-          <small>Industry: {{ $stock_details->industry }}</small>
+          <small>Industry: {{ $stock_details->industry }}</small><br>
           Listing Status: <strong>{{ $stock_details->status }} </strong><br>
           Listing Date: <strong>{{ $stock_details->listing_date }} </strong><br>
           Trading Status: <strong><span class="{{ $stock_details->trading_status == 'Suspended' ? 'badge badge-danger' : '' }}">{{ $stock_details->trading_status }} </span> </strong><br>

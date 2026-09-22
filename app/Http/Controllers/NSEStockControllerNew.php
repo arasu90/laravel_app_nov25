@@ -185,7 +185,9 @@ class NSEStockControllerNew extends Controller
         $securityDataInfo->macro = $securityInfo['macro'] ?? null;
         $securityDataInfo->listingDate = $this->datetimeFormat($securityInfo['listingDate'] ?? null, 'Y-m-d');
         $securityDataInfo->status = $securityInfo['secStatus'] ?? null;
-        $securityDataInfo->index = $securityInfo['index'] ?? null;
+        $securityDataInfo->index = blank($securityInfo['index'] ?? null)
+            ? null
+            : $securityInfo['index'];
         $securityDataInfo->indexList = implode(',', $securityInfo['indexList'] ?? []);
         $securityDataInfo->tradingStatus = $securityInfo['isSuspended'] ?? null;
         $securityDataInfo->surveillanceSurv = $securityInfo['surveillance_surv'] ?? null;
