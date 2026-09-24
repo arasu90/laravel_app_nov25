@@ -23,6 +23,7 @@ class NSEStockControllerNew extends Controller
         $this->nseClient = $nseClient;
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function today()
     {
         $date = now();
@@ -38,6 +39,7 @@ class NSEStockControllerNew extends Controller
         return $date->format('Y-m-d');
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     protected function isHolidayOrWeekend(Carbon $date): bool
     {
         return $date->isWeekend()
@@ -158,6 +160,7 @@ class NSEStockControllerNew extends Controller
         }
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     protected function generateStockData(array $metaData, array $equityDetails)
     {
         $stockData  = new stdClass();
@@ -226,16 +229,19 @@ class NSEStockControllerNew extends Controller
        return $stockData;
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function toJson($data)
     {
         return response()->json($data);
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function twoDecimals(float|string|int $value): float
     {
         return HelperServices::twoDecimals($value);
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function datetimeFormat(?string $value, string $format = 'Y-m-d H:i:s')
     {
         if ($value === null || $value === '') {
@@ -245,6 +251,7 @@ class NSEStockControllerNew extends Controller
         return HelperServices::datetimeFormat($value, $format);
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function corporateTopActions()
     {
         try {
@@ -271,6 +278,7 @@ class NSEStockControllerNew extends Controller
         }
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function corporateStockInfo(string $stockSymbol)
     {
         try {
@@ -296,5 +304,4 @@ class NSEStockControllerNew extends Controller
             return response()->json(['error' => self::NO_DATA_FOUND], 404);
         }
     }
-
 }

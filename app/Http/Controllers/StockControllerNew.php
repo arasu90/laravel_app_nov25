@@ -118,6 +118,7 @@ class StockControllerNew extends Controller
         }
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function processStockData(string $symbol)
     {
         try {
@@ -148,6 +149,7 @@ class StockControllerNew extends Controller
         }
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     protected function insertStockData(string $symbol, array $data)
     {
         try {
@@ -247,6 +249,7 @@ class StockControllerNew extends Controller
         }
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function insertLatestDividedActions()
     {
         $dividedData = $this->nseStockController->corporateTopActions()->getData(true);
@@ -268,7 +271,8 @@ class StockControllerNew extends Controller
             'success' => true
         ]);
     }
-
+    
+    // last tested on 23 Sep 2026 11:48 AM
     public function runMissedStocks()
     {
         try {
@@ -304,6 +308,5 @@ class StockControllerNew extends Controller
             'result' => true,
             'msg' => "Successfully executed {$todayMissedStock->count()} runMissedStocks",
         ]);
-
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\NSEStockController;
 
 trait DashboardTrait
 {
+    // last tested on 23 Sep 2026 11:48 AM
     public function topGainerList(string $type)
     {
         $today = (new NSEStockController())->today();
@@ -38,7 +39,7 @@ trait DashboardTrait
         return $topGainerList;
     }
     
-
+    // last tested on 23 Sep 2026 11:48 AM
     public function topLooserList(string $type)
     {
         $today = (new NSEStockController())->today();
@@ -68,6 +69,7 @@ trait DashboardTrait
         return $topGainerList;
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function week52HighLow(string $type)
     {
 

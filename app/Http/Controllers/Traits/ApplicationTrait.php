@@ -36,8 +36,8 @@ trait ApplicationTrait
             $ddEnd ? dd('query end') : '';
         });
     }
-    // last tested on 21 Aug 2026 01:48 AM
 
+    // last tested on 21 Aug 2026 01:48 AM
     protected function appLog(
         array $logMsg = [],
         string $type = 'info',

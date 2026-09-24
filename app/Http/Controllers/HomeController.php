@@ -496,6 +496,7 @@ class HomeController extends Controller
         return view('average_stock', compact('inputs', 'newBuyQuantityAverage', 'newBuyPriceAverage'));
     }
 
+    // last tested on 24 Sep 2026 11:48 AM
     public function paperTrade()
     {
         $stock_list = StockSymbol::with('details')
@@ -530,6 +531,7 @@ class HomeController extends Controller
         return view('paper_trade', compact('stock_list', 'myPortfolioStocks'));
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function myWatchList(Request $request)
     {
         $stock_name = $request->get('stock_name') ?? null;
@@ -614,6 +616,7 @@ class HomeController extends Controller
             ->with('success', 'Stock added to portfolio successfully');
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function lastFewDays()
     {
         $today = $this->today;
@@ -705,6 +708,7 @@ class HomeController extends Controller
         return view('last_few_days_stock', $compactData);
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function myPortfolio()
     {
         $stock_list = StockSymbol::with('details')
@@ -739,6 +743,7 @@ class HomeController extends Controller
         return view('my_portfolio', compact('stock_list', 'myPortfolioStocks'));
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function inActiveSymbolWeb(string $symbol)
     {
         try {
@@ -759,6 +764,7 @@ class HomeController extends Controller
         return redirect()->back();
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function inActiveSymbol(string $symbol)
     {
         $response = new stdClass();
@@ -790,6 +796,7 @@ class HomeController extends Controller
         return response()->json($response);
     }
 
+    // last tested on 23 Sep 2026 11:48 AM
     public function allStockList(Request $request)
     {
         $filter_type = $request->input('filter_type', 'price');
