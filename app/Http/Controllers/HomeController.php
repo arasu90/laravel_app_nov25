@@ -26,6 +26,7 @@ use App\Models\MyPortfolioStock;
 class HomeController extends Controller
 {
     use UtilityTrait;
+    use DashboardTrait;
 
     protected NSEStockControllerNew $nseStockController;
     protected string $today;
@@ -42,12 +43,12 @@ class HomeController extends Controller
     {
         return view('home', [
             'totalStocks'      => StockSymbol::where('is_active', true)->count(),
-            'topGainerPer'     => [],
-            'topGainerChange'  => [],
-            'topLooserPer'     => [],
-            'topLooserChange'  => [],
-            'week52High'       => [],
-            'week52Low'        => [],
+            'topGainerPer'     => $this->topGainerList('p_change'),
+            'topGainerChange'  => $this->topGainerList('price'),
+            'topLooserPer'     => $this->topLooserList('p_change'),
+            'topLooserChange'  => $this->topLooserList('price'),
+            'week52High'       => $this->week52HighLow('high'),
+            'week52Low'        => $this->week52HighLow('low'),
             'nifty50Index'    => 0,
             'indexVix'        => 0,
         ]);

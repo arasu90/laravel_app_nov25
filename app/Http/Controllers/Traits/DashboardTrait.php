@@ -114,6 +114,10 @@ trait DashboardTrait
             ? 'week_high_low_min'
             : 'week_high_low_max';
 
+        $orderByPChange = $type === 'low'
+            ? 'asc'
+            : 'desc';
+
         // Step 1: Get the latest daily price per symbol
         $latestPrices = DB::table('s_stock_daily_price_data as dp')
             ->select('dp.symbol', 'dp.last_price', 'dp.change', 'dp.p_change', 'dp.date')
@@ -145,6 +149,7 @@ trait DashboardTrait
             ->where('ss.is_active', 1)
             ->orderBy("sd.$orderColumn", 'desc')
             ->orderBy('is_at_52week', 'desc')
+            ->orderBy('lp.p_change', $orderByPChange)
             ->limit(10)
             ->get();
     }
