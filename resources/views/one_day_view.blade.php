@@ -65,24 +65,26 @@ $stock_name = $request->input('stock_name');
         ? 'primary'
         : ($record->p_change < 0 ? 'danger' : 'info') }}">
       <div class="info-price">
-        <h4>
-          {{ $record->symbol }}
-          <i
-            class="btn btn-sm fa fa-fw fa-lg
-              {{ $record->p_change > 0
-               ? 'fa-arrow-up'
-               : ($record->p_change < 0
-                ? 'fa-arrow-down'
-                : 'fa-arrow-right')
-              }}"></i>
+        <h4 title="{{ $record->symbol }}">
+          {{ \Illuminate\Support\Str::limit($record->symbol, 7, '...') }}
+          <a href="{{ route('stockDetailView', ['stock_name' => $record->symbol]) }}" title="View stock details" style="color: inherit; text-decoration: none;">
+            <i
+              class="btn btn-sm fa fa-fw fa-lg
+                {{ $record->p_change > 0
+                 ? 'fa-arrow-up'
+                 : ($record->p_change < 0
+                  ? 'fa-arrow-down'
+                  : 'fa-arrow-right')
+                }}"></i>
+          </a>
         </h4>
-        <span style="font-size: 0.6rem;">{{ $record->company_name }}</span>
+        <span style="font-size: 0.6rem;"  title="{{ $record->company_name }}">{{ \Illuminate\Support\Str::limit($record->company_name, 35, '...') }}</span>
         <div class="info-price">
           <span style="float: inline-start;">
             <b>{{ $record->last_price }}</b>
           </span>
           <span style="float: inline-end;">
-            <b>{{ $record->change }} ({{ $record->p_change }}%)</b>
+            <b>{{ $record->change }} ({{ $record->p_change }} %)</b>
           </span>
         </div>
       </div>

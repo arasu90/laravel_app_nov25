@@ -153,7 +153,7 @@ use App\Http\Controllers\HomeController;
           <div class="tile">
             <h3 class="tile-title">{{ $watchListItems['name'] ?? 'N/A' }}</h3>
             <div class="table-responsive table-hover table-striped">
-              <table class="table table-striped watchlistDataTable">
+              <table class="table table-striped DefaultDataTable">
                 <thead>
                   <tr>
                     <th>S.No</th>

@@ -28,7 +28,7 @@ class NSEStockControllerNew extends Controller
     {
         $date = now();
 
-        if ($date->hour < 10) {
+        if ($date->hour < 9) {
             $date->subDay();
         }
 

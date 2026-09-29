@@ -26,7 +26,7 @@
             ordering: false,
             pageLength: 25,
         });
-        $('.watchlistDataTable').DataTable({
+        $('.DefaultDataTable').DataTable({
             ordering: true,
             // order: [[ 1, "asc" ]]
             order: [],
