@@ -14,7 +14,7 @@ use App\Models\StockDetails;
 // use App\Models\DailyData;
 use App\Models\StockDailyPriceData;
 use App\Models\StockHoliday;
-// use App\Models\StockIndexName;
+use App\Models\IpoStockList;
 // use App\Models\DailyStockJsonData;
 // use App\Models\NseIndexDayRecord;
 
@@ -313,6 +313,112 @@ class StockControllerNew extends Controller
             'result' => true,
             'dispatched_count' => $dispatchedCount,
             'msg' => "Successfully queued {$dispatchedCount} missed stocks",
+        ]);
+    }
+
+    public function ShowIpoStockListFromNSE()
+    {
+        $notAllowedSecurityType = ["SME", "Debt", "InvITs", "REITs"];
+        $normalizedNotAllowedSecurityType = array_map('strtoupper', $notAllowedSecurityType);
+
+        $result = $this->nseStockController->getIpoUpcomingStocksfromNSE()->getData(true);
+        $ipoStockList = array_filter($result, function ($ipo) use ($normalizedNotAllowedSecurityType) {
+            $series = strtoupper((string) ($ipo['series'] ?? ''));
+
+            return !in_array($series, $normalizedNotAllowedSecurityType, true);
+        });
+
+        //insert into ipo_stock_lists table
+        $activeIpoList = [];
+        foreach ($ipoStockList as $ipo) {
+            $ipoData = [
+                'symbol' => $ipo['symbol'] ?? null,
+                'symbol_name' => $ipo['companyName'] ?? null,
+                'security_type' => $ipo['series'] ?? null,
+                'issue_start_date' => $this->nseStockController->datetimeFormat($ipo['issueStartDate'] ?? null, 'Y-m-d'),
+                'issue_end_date' => $this->nseStockController->datetimeFormat($ipo['issueEndDate'] ?? null, 'Y-m-d'),
+                'status' => 'Active',
+                'issue_price_range' => $ipo['issuePrice'] ?? null,
+                'issue_price' => null,
+                'date_of_listing' => null,
+            ];
+            $activeIpoList[] = $ipoData;
+        }
+
+        $issuedIpoStockList = $this->nseStockController->getIpoIssuedStocksfromNSE()->getData(true);
+        // dd($issuedIpoStockList);
+        $ListedIpoList = [];
+        foreach ($issuedIpoStockList as $ipo) {
+            $securityType = strtoupper((string) ($ipo['securityType'] ?? null));
+            if (in_array($securityType, $normalizedNotAllowedSecurityType, true)){
+                continue; // Skip this IPO if the security type is not allowed
+            }
+            $listingDate = $this->nseStockController->datetimeFormat($ipo['listingDate'] ?? null, 'Y-m-d');
+            $ipoData = [
+                'symbol' => $ipo['symbol'] ?? null,
+                'symbol_name' => $ipo['company'] ?? null,
+                'security_type' => $securityType ?? null,
+                'issue_start_date' => $this->nseStockController->datetimeFormat($ipo['ipoStartDate'] ?? null, 'Y-m-d'),
+                'issue_end_date' => $this->nseStockController->datetimeFormat($ipo['ipoEndDate'] ?? null, 'Y-m-d'),
+                'status' => $listingDate === null ? 'Listing' : 'Closed',
+                'issue_price_range' => $ipo['priceRange'] ?? null,
+                'issue_price' => $this->nseStockController->twoDecimals($ipo['issuePrice'] ?? null),
+                'date_of_listing' => $listingDate,
+            ];
+            $ListedIpoList[] = $ipoData;
+            if(count($ListedIpoList) >= 30){
+                break; // Limit to 30 records
+            }
+        }
+        return response()->json([
+            'result' => true,
+            'active_ipo_list' => $activeIpoList,
+            'listed_ipo_list' => $ListedIpoList,
+        ]);
+    }
+
+    public function getIpoStockListFromNSE()
+    {
+        $response = $this->ShowIpoStockListFromNSE()->getData(true);
+        if (
+            !($response['result'] ?? false)
+            || !isset($response['active_ipo_list'], $response['listed_ipo_list'])
+            || !is_array($response['active_ipo_list'])
+            || !is_array($response['listed_ipo_list'])
+        ) {
+            return response()->json([
+                'result' => false,
+                'msg' => 'Unable to retrieve a valid IPO list for insertion.',
+            ], 502);
+        }
+
+        $insertCount = 0;
+        $updateCount = 0;
+        $processedCount = 0;
+        $ipoRecords = array_merge($response['active_ipo_list'], $response['listed_ipo_list']);
+
+        foreach ($ipoRecords as $ipoData) {
+            if ($processedCount >= 30) {
+                break;
+            }
+
+            if (empty($ipoData['symbol'])) {
+                continue;
+            }
+
+            $ipoRecord = IpoStockList::updateOrCreate(
+                ['symbol' => $ipoData['symbol']],
+                $ipoData
+            );
+            $ipoRecord->wasRecentlyCreated ? $insertCount++ : $updateCount++;
+            $processedCount++;
+        }
+
+        return response()->json([
+            'result' => true,
+            'inserted_count' => $insertCount,
+            'updated_count' => $updateCount,
+            'msg' => "Successfully inserted {$insertCount} and updated {$updateCount} IPO stocks",
         ]);
     }
 }

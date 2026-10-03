@@ -334,32 +334,46 @@ class HomeController extends Controller
     public function stockDetailView(Request $request)
     {
         $activeStock = StockSymbol::where('is_active', true)->first();
-        $stock_name = $request->input('stock_name') ?? $activeStock->symbol;
+        $stock_name = $request->input('stock_name') ?? $activeStock?->symbol;
+        $stock_list = StockSymbol::with('details')->where('is_active', true)->orderBy('symbol')->get();
+        if ($stock_name === null || $stock_name === '') {
+            return response()->view('stock_detail_view', [
+                'stock_list' => $stock_list,
+                'stock_name' => $stock_name,
+                'error' => 'No active stock is available.',
+            ], 404);
+        }
+
+        $stock_details = StockDetails::where('symbol', $stock_name)->first();
+        if ($stock_details === null) {
+            return response()->view('stock_detail_view', [
+                'stock_list' => $stock_list,
+                'stock_name' => $stock_name,
+                'error' => "Stock details not found for {$stock_name}.",
+            ], 404);
+        }
+
         $stock_daily_price_data = StockDailyPriceData::where('symbol', $stock_name)
             ->orderBy('date', 'desc')
             ->get();
-        $stock_details = StockDetails::where('symbol', $stock_name)->first();
-        $stock_list = StockSymbol::with('details')->where('is_active', true)->orderBy('symbol')->get();
 
-        if ($stock_details) {
-            $stock_details->company_name = $this->valueOrNA($stock_details->company_name);
-            $stock_details->symbol = $this->valueOrNA($stock_details->symbol);
-            $stock_details->sector = $this->valueOrNA($stock_details->sector);
-            $stock_details->industry = $this->valueOrNA($stock_details->industry);
-            $stock_details->status = $this->valueOrNA($stock_details->status);
-            $stock_details->listing_date = $this->formatDate($stock_details->listing_date);
-            $stock_details->trading_status = $this->valueOrNA($stock_details->trading_status);
-            $stock_details->trading_segment = $this->valueOrNA($stock_details->trading_segment);
-            $stock_details->face_value = $this->valueOrNA($stock_details->face_value);
-            $stock_details->surveillance_desc = $this->valueOrNA($stock_details->surveillance_desc);
-            $stock_details->week_high_low_min = $this->valueOrNA($stock_details->week_high_low_min);
-            $stock_details->week_high_low_min_date = $this->formatDate($stock_details->week_high_low_min_date);
-            $stock_details->week_high_low_max = $this->valueOrNA($stock_details->week_high_low_max);
-            $stock_details->week_high_low_max_date = $this->formatDate($stock_details->week_high_low_max_date);
-            $stock_details->stock_last_price = $this->valueOrNA($stock_details->stock_last_price);
-            $stock_details->series = $this->valueOrNA($stock_details->series);
-            $stock_details->market_type = $this->valueOrNA($stock_details->market_type);
-        }
+        $stock_details->company_name = $this->valueOrNA($stock_details->company_name);
+        $stock_details->symbol = $this->valueOrNA($stock_details->symbol);
+        $stock_details->sector = $this->valueOrNA($stock_details->sector);
+        $stock_details->industry = $this->valueOrNA($stock_details->industry);
+        $stock_details->status = $this->valueOrNA($stock_details->status);
+        $stock_details->listing_date = $this->formatDate($stock_details->listing_date);
+        $stock_details->trading_status = $this->valueOrNA($stock_details->trading_status);
+        $stock_details->trading_segment = $this->valueOrNA($stock_details->trading_segment);
+        $stock_details->face_value = $this->valueOrNA($stock_details->face_value);
+        $stock_details->surveillance_desc = $this->valueOrNA($stock_details->surveillance_desc);
+        $stock_details->week_high_low_min = $this->valueOrNA($stock_details->week_high_low_min);
+        $stock_details->week_high_low_min_date = $this->formatDate($stock_details->week_high_low_min_date);
+        $stock_details->week_high_low_max = $this->valueOrNA($stock_details->week_high_low_max);
+        $stock_details->week_high_low_max_date = $this->formatDate($stock_details->week_high_low_max_date);
+        $stock_details->stock_last_price = $this->valueOrNA($stock_details->stock_last_price);
+        $stock_details->series = $this->valueOrNA($stock_details->series);
+        $stock_details->market_type = $this->valueOrNA($stock_details->market_type);
 
         $lineLabel = $stock_daily_price_data
             ->take(5)
@@ -1071,6 +1085,28 @@ class HomeController extends Controller
         $indexStockList = array_slice( $liveIndexStockList['data']['data'], 1);
         // dd($indexList, $nseIndex, $indexDetails, $indexStockList);
         return view('view_all_index_live_stock', compact('indexList', 'nseIndex', 'indexDetails', 'indexStockList'));    
+    }
+
+    public function ipoStockList()
+    {
+        $activeIpoStockList = DB::table('s_ipo_stock_lists as isl')
+            ->where('isl.status', 'Active')
+            ->orderBy('isl.issue_start_date')
+            ->get();
+        $listingIpoStockList = DB::table('s_ipo_stock_lists as isl')
+            ->where('isl.status', 'Listing')
+            ->orderBy('isl.issue_start_date')
+            ->get();
+        $closedIpoStockList = DB::table('s_ipo_stock_lists as isl')
+            ->where('isl.status', 'Closed')
+            ->orderBy('isl.date_of_listing', 'desc')
+            ->get();
+
+        return view('ipo_stock_list', compact(
+            'activeIpoStockList',
+            'listingIpoStockList',
+            'closedIpoStockList'
+        ));
     }
 
 }

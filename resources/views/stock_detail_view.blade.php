@@ -28,6 +28,13 @@
       </div>
     </div>
   </div>
+  @if(isset($error))
+  <div class="col-md-12">
+    <div class="alert alert-danger" role="alert">
+      {{ $error }}
+    </div>
+  </div>
+  @else
   <div class="col-md-12">
     <div class="tile">
       <h3 class="tile-title">Stock Detail View for {{ $stock_name }}</h3>
@@ -218,4 +225,5 @@
     var lineChart = new Chart(ctx).Line(data);
   });
 </script>
+@endif
 @endsection

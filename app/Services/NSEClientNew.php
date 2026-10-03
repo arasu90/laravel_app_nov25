@@ -124,4 +124,14 @@ class NSEClientNew
         if(!$indexName) return [];
         return $this->request($this->baseUrl . "/NextApi/apiClient/marketWatchApi?functionName=getIndicesData&symbol={$indexName}");
     }
+
+    public function getIpoUpcomingStocksfromNSE()
+    {
+        return $this->request($this->baseUrl . "/all-upcoming-issues?category=ipo");
+    }
+
+    public function getIpoIssuedStocksfromNSE()
+    {
+        return $this->request($this->baseUrl . "/public-past-issues");
+    }
 }

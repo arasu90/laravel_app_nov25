@@ -255,15 +255,19 @@ class NSEStockControllerNew extends Controller
     }
 
     // last tested on 23 Sep 2026 11:48 AM
-    public function twoDecimals(float|string|int $value): float
+    public function twoDecimals(float|string|int|null $value): ?float
     {
+        if ($value === null || (is_string($value) && in_array(trim($value), ['', '-'], true))) {
+            return null;
+        }
+
         return HelperServices::twoDecimals($value);
     }
 
     // last tested on 23 Sep 2026 11:48 AM
     public function datetimeFormat(?string $value, string $format = 'Y-m-d H:i:s')
     {
-        if ($value === null || $value === '') {
+        if ($value === null || $value === '' || $value === '-') {
             return null;
         }
 
@@ -384,6 +388,60 @@ class NSEStockControllerNew extends Controller
         } catch (\Exception $e) {
             $this->appLog([
                 'message' => "Error fetching live NSE stock list from NSE API for Index",
+                'error' => $e->getMessage(),
+            ], 'error');
+
+            return response()->json(['error' => self::NO_DATA_FOUND], 404);
+        }
+    }
+
+    public function getIpoUpcomingStocksfromNSE()
+    {
+        try {
+            $securityType = ["Equity","SME","Debt","InvITs","REITs"];
+            $response = $this->nseClient->getIpoUpcomingStocksfromNSE();
+            
+            if (is_array($response)) {
+                return response()->json($response);
+            }
+
+            $this->appLog([
+                'message' => "Unexpected response structure from NSE API for IPO stock list",
+                'response' => $response,
+            ], 'error');
+
+            return response()->json(['error' => self::NO_DATA_FOUND], 404);
+
+        } catch (\Exception $e) {
+            $this->appLog([
+                'message' => "Error fetching IPO stock list from NSE API",
+                'error' => $e->getMessage(),
+            ], 'error');
+
+            return response()->json(['error' => self::NO_DATA_FOUND], 404);
+        }
+    }
+
+    public function getIpoIssuedStocksfromNSE()
+    {
+        try {
+            $securityType = ["Equity","SME","Debt","InvITs","REITs"];
+            $response = $this->nseClient->getIpoIssuedStocksfromNSE();
+            
+            if (is_array($response)) {
+                return response()->json($response);
+            }
+
+            $this->appLog([
+                'message' => "Unexpected response structure from NSE API for IPO issued stock list",
+                'response' => $response,
+            ], 'error');
+
+            return response()->json(['error' => self::NO_DATA_FOUND], 404);
+
+        } catch (\Exception $e) {
+            $this->appLog([
+                'message' => "Error fetching IPO issued stock list from NSE API",
                 'error' => $e->getMessage(),
             ], 'error');
 

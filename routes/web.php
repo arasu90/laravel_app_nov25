@@ -55,7 +55,11 @@ Route::get('/all-stock-list', [HomeController::class, 'allStockList'])->name('al
 Route::get('/run-missed-stocks', [StockControllerNew::class, 'runMissedStocks'])->name('runMissedStocks');
 
 /*** View All Index Live ***/
-Route::get('/view-all-index', [HomeController::class, 'viewAllIndexLive'])->name('viewAllIndexLive');
+Route::get('/view-all-index-live', [HomeController::class, 'viewAllIndexLive'])->name('viewAllIndexLive');
+
+/*** IPO Stock List ***/
+Route::get('/ipo-stock-list', [HomeController::class, 'ipoStockList'])->name('ipoStockList');
+
 
 /******* TESTING URL *******/
 // data table view

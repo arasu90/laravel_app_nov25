@@ -118,6 +118,16 @@ trait UtilityTrait
                     'app_url' => '/api/corporate-info/{symbol}',
                     'app_url_data' => 'api/corporate-info/'.$stockSymbol,
                 ],
+                [
+                    'title' => 'Show IPO Stock List',
+                    'app_url' => '/api/ipo-stock-list',
+                    'app_url_data' => '/api/ipo-stock-list',
+                ],
+                [
+                    'title' => 'Insert IPO Stock List',
+                    'app_url' => '/api/insert-ipo-stock-list',
+                    'app_url_data' => '/api/insert-ipo-stock-list',
+                ],
             ],
             'nse_url' => [
                 [
@@ -140,7 +150,44 @@ trait UtilityTrait
                     'app_url' => 'https://www.nseindia.com/market-data/all-upcoming-issues-ipo',
                     'app_url_data' => 'https://www.nseindia.com/market-data/all-upcoming-issues-ipo',
                 ],
-            ]
+                [
+                    'title' => 'IPO Stocks option 2',
+                    'app_url' => 'https://www.nseindia.com/market-data/new-stock-exchange-listings-recent',
+                    'app_url_data' => 'https://www.nseindia.com/market-data/new-stock-exchange-listings-recent',
+                ],
+                [
+                    'title' => 'Live Stock Details',
+                    'app_url' => 'https://www.nseindia.com/market-data/stocks-traded',
+                    'app_url_data' => 'https://www.nseindia.com/market-data/stocks-traded',
+                ],
+                [
+                    'title' => 'Index Day Records CSV Download',
+                    'app_url' => 'https://www.niftyindices.com/reports/daily-reports',
+                    'app_url_data' => 'https://www.niftyindices.com/Daily_Snapshot/ind_close_all_01102026.csv',
+                ],
+            ],
+            'bse_url' => [
+                [
+                    'title' => 'Base URL',
+                    'app_url' => 'https://api.bseindia.com/BseIndiaAPI/api/GetEquityPreOpen/w?scripcode=',
+                    'app_url_data' => 'https://api.bseindia.com/BseIndiaAPI/api/GetEquityPreOpen/w?scripcode=',
+                ],
+                [
+                    'title' => 'Base URL',
+                    'app_url' => 'https://api.bseindia.com/BseIndiaAPI/api/EQPeerGp/w?scripcomare=&scripcode=530959',
+                    'app_url_data' => 'https://api.bseindia.com/BseIndiaAPI/api/EQPeerGp/w?scripcomare=&scripcode=530959',
+                ],
+                [
+                    'title' => 'Base URL',
+                    'app_url' => 'https://api.bseindia.com/BseIndiaAPI/api/ComHeadernew_par/w?quotetype=&scripcode=530959&seriesid=',
+                    'app_url_data' => 'https://api.bseindia.com/BseIndiaAPI/api/ComHeadernew_par/w?quotetype=&scripcode=530959&seriesid=',
+                ],
+                [
+                    'title' => 'Base URL',
+                    'app_url' => 'https://api.bseindia.com/BseIndiaAPI/api/HighLow/w?Type=EQ&flag=C&scripcode=530959',
+                    'app_url_data' => 'https://api.bseindia.com/BseIndiaAPI/api/HighLow/w?Type=EQ&flag=C&scripcode=530959',
+                ],
+            ],
         ];
         return view('app_url', compact('url_list'));
     }

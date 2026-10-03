@@ -44,7 +44,7 @@
             </a>
         </li> -->
         <li>
-            <a class="app-menu__item {{ Route::is('viewAllIndexLive') ? 'active' : '' }} " href="/view-all-index">
+            <a class="app-menu__item {{ Route::is('viewAllIndexLive') ? 'active' : '' }} " href="/view-all-index-live">
                 <i class="app-menu__icon fa fa-automobile"></i>
                 <span class="app-menu__label">View All Index Live</span>
             </a>
@@ -62,15 +62,21 @@
             </a>
         </li>
         <li>
-            <a class="app-menu__item {{ Route::is('holidayList') ? 'active' : '' }} " href="/holiday-list">
-                <i class="app-menu__icon fa fa-film"></i>
-                <span class="app-menu__label">Holiday List</span>
+            <a class="app-menu__item {{ Route::is('ipoStockList') ? 'active' : '' }} " href="/ipo-stock-list">
+                <i class="app-menu__icon fa fa-exchange"></i>
+                <span class="app-menu__label">IPO Stock List</span>
             </a>
         </li>
         <li>
             <a class="app-menu__item {{ Route::is('corporateActions') ? 'active' : '' }} " href="/corporate-actions">
                 <i class="app-menu__icon fa fa-th-list"></i>
                 <span class="app-menu__label">Corporate Actions</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('holidayList') ? 'active' : '' }} " href="/holiday-list">
+                <i class="app-menu__icon fa fa-film"></i>
+                <span class="app-menu__label">Holiday List</span>
             </a>
         </li>
         <li>
@@ -85,12 +91,6 @@
                 <span class="app-menu__label">My Portfolio</span>
             </a>
         </li>
-        <!-- <li>
-            <a class="app-menu__item {{ Route::is('nseIndexStockList') ? 'active' : '' }} " href="/nse-index-stock-list">
-                <i class="app-menu__icon fa fa-exchange"></i>
-                <span class="app-menu__label">NSEIndex Stock List--C</span>
-            </a>
-        </li> -->
         <li>
             <a class="app-menu__item {{ Route::is('myWatchList') ? 'active' : '' }} " href="/my-watch-list">
                 <i class="app-menu__icon fa fa-clock-o"></i>
