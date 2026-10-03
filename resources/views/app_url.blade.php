@@ -45,6 +45,25 @@
         </tbody>
       </table>
     </div>
+    <div class="table-responsive table-hover table-striped">
+      <h3 class="tile-title">NSE URL</h3>
+      <table class="table table-striped table-bordered">
+        <th>Name</th>
+        <th>URL</th>
+        <tbody>
+          @foreach($url_list['nse_url'] as $data_url)
+          <tr>
+            <td>
+              {{ $data_url['title'] }}
+            </td>
+            <td>
+              <a href="{{ $data_url['app_url_data'] }}" target="_blank">{{ $data_url['app_url'] }} </a>
+            </td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 <div class="col-md-12">

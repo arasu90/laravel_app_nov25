@@ -1050,4 +1050,27 @@ class HomeController extends Controller
         ]);
     }
 
+    public function viewAllIndexLive(Request $request)
+    {
+        $nseIndex = $request->input('nse_index', 'NIFTY 50');
+
+        $indexListData = $this->nseStockController->getAllIndexDataCached();
+        $indexList = [];
+        foreach($indexListData['data'] as $indexData) {
+            foreach($indexData as $index => $key) {
+                $indexList[$key] = $index;
+            }
+        }
+        $liveIndexStockList = $this->nseStockController->getLiveNseStockList($nseIndex)->getData(true);
+        $indexDetails['count'] = $liveIndexStockList['data']['aduCount'];
+        $indexDetails['data'] = $liveIndexStockList['data']['data'][0];
+        $indexDetails['marketStatus'] = $liveIndexStockList['data']['marketStatus'];
+        $indexDetails['timestamp'] = $liveIndexStockList['data']['timestamp'];
+        // dd($liveIndexStockList, $indexDetails);
+
+        $indexStockList = array_slice( $liveIndexStockList['data']['data'], 1);
+        // dd($indexList, $nseIndex, $indexDetails, $indexStockList);
+        return view('view_all_index_live_stock', compact('indexList', 'nseIndex', 'indexDetails', 'indexStockList'));    
+    }
+
 }

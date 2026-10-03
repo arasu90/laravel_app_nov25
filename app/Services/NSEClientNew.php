@@ -107,4 +107,21 @@ class NSEClientNew
 
         return $this->request($this->baseUrl . "/NextApi/apiClient/GetQuoteApi?functionName=getCorpAction&symbol={$encodedSymbol}&marketApiType=equities&noOfRecords=5");
     }
+
+    public function getSurveillanceData($symbol)
+    {
+        if(!$symbol) return [];
+        return $this->request($this->baseUrl . "/NextApi/apiClient/GetQuoteApi?functionName=getRegDetails&symbol={$symbol}");
+    }
+
+    public function getIndexList()
+    {
+        return $this->request($this->baseUrl . "/NextApi/apiClient/marketWatchApi?functionName=getIndexList");
+    }
+
+    public function getLiveNseStockList($indexName)
+    {
+        if(!$indexName) return [];
+        return $this->request($this->baseUrl . "/NextApi/apiClient/marketWatchApi?functionName=getIndicesData&symbol={$indexName}");
+    }
 }

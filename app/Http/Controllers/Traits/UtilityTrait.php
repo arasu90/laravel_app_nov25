@@ -118,6 +118,28 @@ trait UtilityTrait
                     'app_url' => '/api/corporate-info/{symbol}',
                     'app_url_data' => 'api/corporate-info/'.$stockSymbol,
                 ],
+            ],
+            'nse_url' => [
+                [
+                    'title' => 'Report of Additional Surveillance Measure(ASM) stocks',
+                    'app_url' => 'https://www.nseindia.com/reports/asm',
+                    'app_url_data' => 'https://www.nseindia.com/reports/asm',
+                ],
+                [
+                    'title' => 'Report of Graded Surveillance Measure(GSM) stocks',
+                    'app_url' => 'https://www.nseindia.com/reports/gsm',
+                    'app_url_data' => 'https://www.nseindia.com/reports/gsm',
+                ],
+                [
+                    'title' => 'Stock List and Details of Securities Available for Trading',
+                    'app_url' => 'https://www.nseindia.com/static/market-data/securities-available-for-trading',
+                    'app_url_data' => 'https://www.nseindia.com/static/market-data/securities-available-for-trading',
+                ],
+                [
+                    'title' => 'IPO Stock Details',
+                    'app_url' => 'https://www.nseindia.com/market-data/all-upcoming-issues-ipo',
+                    'app_url_data' => 'https://www.nseindia.com/market-data/all-upcoming-issues-ipo',
+                ],
             ]
         ];
         return view('app_url', compact('url_list'));

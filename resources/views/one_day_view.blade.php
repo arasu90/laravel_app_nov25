@@ -78,7 +78,7 @@ $stock_name = $request->input('stock_name');
                 }}"></i>
           </a>
         </h4>
-        <span style="font-size: 0.6rem;"  title="{{ $record->company_name }}">{{ \Illuminate\Support\Str::limit($record->company_name, 35, '...') }}</span>
+        <span style="font-size: 0.6rem;"  title="{{ $record->company_name }}">{{ \Illuminate\Support\Str::limit($record->company_name, 30, '...') }}</span>
         <div class="info-price">
           <span style="float: inline-start;">
             <b>{{ $record->last_price }}</b>

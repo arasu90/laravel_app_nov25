@@ -7,6 +7,7 @@ use App\Services\NSEClientNew;
 use App\Services\HelperServices;
 use App\Models\StockHoliday;
 use App\Http\Controllers\Traits\ApplicationTrait;
+use Illuminate\Support\Facades\Cache;
 use stdClass;
 
 class NSEStockControllerNew extends Controller
@@ -163,6 +164,7 @@ class NSEStockControllerNew extends Controller
     // last tested on 23 Sep 2026 11:48 AM
     protected function generateStockData(array $metaData, array $equityDetails)
     {
+        // dd($equityDetails);
         $stockData  = new stdClass();
         $metaDataInfo = new stdClass();
         $metaDataInfo->stockSymbol = $metaData['symbol'] ?? null;
@@ -193,8 +195,25 @@ class NSEStockControllerNew extends Controller
             : $securityInfo['index'];
         $securityDataInfo->indexList = implode(',', $securityInfo['indexList'] ?? []);
         $securityDataInfo->tradingStatus = $securityInfo['isSuspended'] ?? null;
-        $securityDataInfo->surveillanceSurv = $securityInfo['surveillance_surv'] ?? null;
-        $securityDataInfo->surveillanceDesc = $securityInfo['surveillance_desc'] ?? null;
+
+        $surveillance_data = $this->nseClient->getSurveillanceData($metaDataInfo->stockSymbol);
+        $surveillance_surv = $surveillance_desc = null;
+        if($surveillance_data && isset($surveillance_data[0]['regAction'])) {
+            $surveillanceRegAction = $surveillance_data[0]['regAction'];
+            preg_match_all('/\b(?:GSM|ESM|ASM)-\d+\b/', $surveillanceRegAction, $matches);
+
+            $gsmEsm = implode(', ', $matches[0]); // ['GSM-0', 'ESM-1']
+
+            $remaining = trim(
+                preg_replace('/\b(?:GSM|ESM|ASM)-\d+\s*\|\s*/', '', $surveillanceRegAction),
+                " |"
+            );
+
+            $surveillance_surv = $gsmEsm ?: null;
+            $surveillance_desc = $surveillanceRegAction;
+        }
+        $securityDataInfo->surveillanceSurv = $surveillance_surv ?? null;
+        $securityDataInfo->surveillanceDesc = $surveillance_desc ?? null;
         $securityDataInfo->lastUpdateTime = $metaDataInfo->isSuspended ? date('Y-m-d H:i:s') : $this->datetimeFormat($lastUpdateTime);
 
         $stockData->securityData = $securityDataInfo;
@@ -304,4 +323,72 @@ class NSEStockControllerNew extends Controller
             return response()->json(['error' => self::NO_DATA_FOUND], 404);
         }
     }
+
+    // last tested on 03 Oct 2026 07:18 PM
+    private function getAllIndexData()
+    {
+        try {
+            $this->appLog([
+                'message' => 'Fetching all index data from NSE API',
+            ], 'info');
+            $response = $this->nseClient->getIndexList();
+            
+            if (is_array($response)) {
+                return response()->json($response);
+            }
+
+            $this->appLog([
+                'message' => "Unexpected response structure from NSE API for Index",
+                'response' => $response,
+            ], 'error');
+
+            return response()->json(['error' => self::NO_DATA_FOUND], 404);
+
+        } catch (\Exception $e) {
+            $this->appLog([
+                'message' => "Error fetching index data from NSE API for Index",
+                'error' => $e->getMessage(),
+            ], 'error');
+
+            return response()->json(['error' => self::NO_DATA_FOUND], 404);
+        }
+    }
+
+    public function getAllIndexDataCached()
+    {
+        return Cache::remember(
+            'nse_all_index_data_' . now()->toDateString(),
+            now()->endOfDay(),
+            function () {
+                return $this->getAllIndexData()->getData(true);
+            }
+        );
+    }
+
+    public function getLiveNseStockList($indexName)
+    {
+        try {
+            $response = $this->nseClient->getLiveNseStockList($indexName);
+            
+            if (is_array($response)) {
+                return response()->json($response);
+            }
+
+            $this->appLog([
+                'message' => "Unexpected response structure from NSE API for live NSE stock list",
+                'response' => $response,
+            ], 'error');
+
+            return response()->json(['error' => self::NO_DATA_FOUND], 404);
+
+        } catch (\Exception $e) {
+            $this->appLog([
+                'message' => "Error fetching live NSE stock list from NSE API for Index",
+                'error' => $e->getMessage(),
+            ], 'error');
+
+            return response()->json(['error' => self::NO_DATA_FOUND], 404);
+        }
+    }
+
 }

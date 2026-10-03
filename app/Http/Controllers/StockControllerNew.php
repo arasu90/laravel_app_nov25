@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\NSEStockControllerNew;
 use App\Http\Controllers\Traits\ApplicationTrait;
+use App\Jobs\ProcessStockData;
 
 // use App\Models\StockSymbol;
 use App\Models\StockDetails;
@@ -278,7 +279,7 @@ class StockControllerNew extends Controller
         try {
             $currentHour = now()->hour;
             $today = $this->today;
-            $todayMissedStock = DB::table('s_stock_symbols as sss')
+            $missedStocks = DB::table('s_stock_symbols as sss')
                 ->whereNotIn('sss.symbol', function ($query) use ($today, $currentHour) {
                     $query->select('symbol')
                         ->from('s_stock_daily_price_data')
@@ -287,12 +288,16 @@ class StockControllerNew extends Controller
                             $query->whereTime('updated_at', '>', '15:00:00');
                         });
                 })
-                ->where('is_active', true)
-                ->get();
-            foreach ($todayMissedStock as $missedStock) {
-                $this->processStockData($missedStock->symbol);
-            }
-        } catch (Exception $e) {
+                ->where('is_active', true);
+
+            $dispatchedCount = 0;
+            $missedStocks->chunk(100, function ($stocks) use (&$dispatchedCount) {
+                foreach ($stocks as $stock) {
+                    ProcessStockData::dispatch($stock->symbol);
+                    $dispatchedCount++;
+                }
+            });
+        } catch (\Throwable $e) {
              return response()->json([
                 'result' => false,
                 'msg' => $e->getMessage(),
@@ -306,7 +311,8 @@ class StockControllerNew extends Controller
 
         return response()->json([
             'result' => true,
-            'msg' => "Successfully executed {$todayMissedStock->count()} runMissedStocks",
+            'dispatched_count' => $dispatchedCount,
+            'msg' => "Successfully queued {$dispatchedCount} missed stocks",
         ]);
     }
 }

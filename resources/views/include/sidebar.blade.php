@@ -31,22 +31,22 @@
                 <span class="app-menu__label">One Day Stock</span>
             </a>
         </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('allStockList') ? 'active' : '' }} " href="/all-stock-list">
+                <i class="app-menu__icon fa fa-exchange"></i>
+                <span class="app-menu__label">All Stock List</span>
+            </a>
+        </li>   
         <!-- <li>
             <a class="app-menu__item {{ Route::is('oneDayIndex') ? 'active' : '' }} " href="/one-day-index">
                 <i class="app-menu__icon fa fa-filter"></i>
                 <span class="app-menu__label">One Day Index--C</span>
             </a>
         </li> -->
-        <!-- <li>
-            <a class="app-menu__item {{ Route::is('viewAllIndex') ? 'active' : '' }} " href="/view-all-index">
-                <i class="app-menu__icon fa fa-automobile"></i>
-                <span class="app-menu__label">View All Index--C</span>
-            </a>
-        </li> -->
         <li>
-            <a class="app-menu__item {{ Route::is('holidayList') ? 'active' : '' }} " href="/holiday-list">
-                <i class="app-menu__icon fa fa-film"></i>
-                <span class="app-menu__label">Holiday List</span>
+            <a class="app-menu__item {{ Route::is('viewAllIndexLive') ? 'active' : '' }} " href="/view-all-index">
+                <i class="app-menu__icon fa fa-automobile"></i>
+                <span class="app-menu__label">View All Index Live</span>
             </a>
         </li>
         <li>
@@ -59,6 +59,18 @@
             <a class="app-menu__item {{ Route::is('lastFewDays') ? 'active' : '' }} " href="/last-few-days-stock">
                 <i class="app-menu__icon fa fa-tablet"></i>
                 <span class="app-menu__label">Last Few Days Stocks</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('holidayList') ? 'active' : '' }} " href="/holiday-list">
+                <i class="app-menu__icon fa fa-film"></i>
+                <span class="app-menu__label">Holiday List</span>
+            </a>
+        </li>
+        <li>
+            <a class="app-menu__item {{ Route::is('corporateActions') ? 'active' : '' }} " href="/corporate-actions">
+                <i class="app-menu__icon fa fa-th-list"></i>
+                <span class="app-menu__label">Corporate Actions</span>
             </a>
         </li>
         <li>
@@ -80,12 +92,6 @@
             </a>
         </li> -->
         <li>
-            <a class="app-menu__item {{ Route::is('allStockList') ? 'active' : '' }} " href="/all-stock-list">
-                <i class="app-menu__icon fa fa-exchange"></i>
-                <span class="app-menu__label">All Stock List</span>
-            </a>
-        </li>
-        <li>
             <a class="app-menu__item {{ Route::is('myWatchList') ? 'active' : '' }} " href="/my-watch-list">
                 <i class="app-menu__icon fa fa-clock-o"></i>
                 <span class="app-menu__label">WatchList</span>
@@ -95,12 +101,6 @@
             <a class="app-menu__item {{ Route::is('PaperTrade') ? 'active' : '' }} " href="/paper-trade">
                 <i class="app-menu__icon fa fa-paperclip"></i>
                 <span class="app-menu__label">Paper Trade</span>
-            </a>
-        </li>
-        <li>
-            <a class="app-menu__item {{ Route::is('corporateActions') ? 'active' : '' }} " href="/corporate-actions">
-                <i class="app-menu__icon fa fa-th-list"></i>
-                <span class="app-menu__label">Corporate Actions</span>
             </a>
         </li>
         <li>
