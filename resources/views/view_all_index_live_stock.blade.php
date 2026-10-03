@@ -40,7 +40,16 @@
             <br>
             <span>Last Price: <strong>{{$indexDetails['data']['lastPrice'] }}</strong></span>
             <br>
-            <span>Change : <strong>{{ $indexDetails['data']['change'] }} <span class="badge badge-danger"> ( {{ $indexDetails['data']['pChange'] }} % )</span></strong></span><br>
+            <span>Change : <strong class="badge {{ $indexDetails['data']['pChange'] > 0
+                ? 'badge-primary'
+                : ($indexDetails['data']['pChange'] < 0
+                  ? 'badge-danger'
+                  : 'badge-info')
+                }}">{{ $indexDetails['data']['change'] }} ( {{ $indexDetails['data']['pChange'] }} % )</strong></span><br>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="alert alert-primary">
             <h4>Day Changes </h4>
             Day Low: <strong>{{ $indexDetails['data']['dayLow'] }}</strong><br>
             Day High: <strong>{{ $indexDetails['data']['dayHigh'] }}</strong><br>
@@ -48,9 +57,20 @@
             52 Week High: <strong>{{ $indexDetails['data']['yearHigh'] }}</strong><br>
           </div>
         </div>
+        <div class="col-md-4">
+          <div class="alert alert-primary">
+            <strong>{{ $indexDetails['marketStatus']['marketStatus'] }}</strong>
+            <br>
+            <span class="badge badge-primary">{{ $indexDetails['marketStatus']['marketStatusMessage'] }}</span>
+            <p>Market Last updated Time: <strong>{{ $indexDetails['timestamp'] }}</strong></p>
+            <p class="badge badge-primary">Advanced: <strong>{{ $indexDetails['count']['advances'] }}</strong></p>
+            <p class="badge badge-danger">Declined: <strong>{{ $indexDetails['count']['declines'] }}</strong></p>
+            <p class="badge badge-info">Unchanged: <strong>{{ $indexDetails['count']['unchange'] }}</strong></p>
+          </div>
+        </div>
       </div>
       <div class="table-responsive table-hover table-striped">
-        <table class="table table-striped">
+        <table class="table table-striped DefaultDataTable">
           <thead>
             <tr>
               <th>Stock</th>
