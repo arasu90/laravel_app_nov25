@@ -37,7 +37,12 @@ class ProcessStockData implements ShouldQueue
     {
         try {
             Log::info("Processing stocks data: {$this->stockSymbol}");
-            $stockController->processStockData($this->stockSymbol);
+            $result = $stockController->processStockData($this->stockSymbol);
+            if ($result === null) {
+                Log::warning("No stock data processed for {$this->stockSymbol}");
+                return;
+            }
+
             Log::info("Stock processed Done: {$this->stockSymbol}");
         } catch (\Illuminate\Http\Client\RequestException $e) {
             // Handle HTTP errors (403, 429, etc.) - will be retried

@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('trading_status');
             $table->string('trading_segment');
             $table->string('surveillance_surv')->nullable();
-            $table->string('surveillance_desc')->nullable();
+            $table->text('surveillance_desc')->nullable();
             $table->string('face_value');
             $table->decimal('week_high_low_min', 10, 2);
             $table->date('week_high_low_min_date')->nullable();

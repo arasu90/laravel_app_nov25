@@ -90,7 +90,9 @@ class NSEClientNew
 
     public function getEquityDetails(string $stockSymbol, array $activeSeries, string $marketType)
     {
-        $activeSeries = $activeSeries[0] ?? 'EQ'; // Default to 'EQ' if not available
+        $activeSeries = in_array('EQ', $activeSeries, true)
+            ? 'EQ'
+            : ($activeSeries[0] ?? 'EQ');
         $encodedSymbol = rawurlencode($stockSymbol);
 
         return $this->request($this->baseUrl . "/NextApi/apiClient/GetQuoteApi?functionName=getSymbolData&marketType={$marketType}&series={$activeSeries}&symbol={$encodedSymbol}");

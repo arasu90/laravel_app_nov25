@@ -50,6 +50,9 @@
                   <th>Issue End</th>
                   <th>Issue Price Range</th>
                   <th>Issue Price</th>
+                  @if($key === 'closed')
+                    <th>Live Price</th>
+                  @endif
                   <th>Listing Date</th>
                 </tr>
               </thead>
@@ -69,11 +72,21 @@
                     <td>{{ $stock->issue_end_date ?? '-' }}</td>
                     <td>{{ $stock->issue_price_range ?? '-' }}</td>
                     <td>{{ $stock->issue_price ?? '-' }}</td>
+                    @if($key === 'closed')
+                      @php  
+                        $livePriceBadge = !is_numeric($stock->live_price)
+                          ? 'badge-secondary'
+                          : (!is_numeric($stock->issue_price)
+                            ? 'badge-secondary'
+                            : ($stock->live_price > $stock->issue_price ? 'badge-success' : 'badge-danger'));
+                      @endphp
+                      <td><span class="badge {{ $livePriceBadge }}">{{ $stock->live_price ?? '-' }}</span></td>
+                    @endif
                     <td>{{ $stock->date_of_listing ?? '-' }}</td>
                   </tr>
                 @empty
                   <tr>
-                    <td colspan="7" class="text-center">No {{ strtolower($ipoList['title']) }} IPOs found.</td>
+                    <td colspan="{{ $key === 'closed' ? 9 : 8 }}" class="text-center">No {{ strtolower($ipoList['title']) }} IPOs found.</td>
                   </tr>
                 @endforelse
               </tbody>

@@ -126,11 +126,23 @@ class StockControllerNew extends Controller
             $response = $this->nseStockController->getStockDetails($symbol);
             $data = $response->getData(true);
             
-            if (empty($data)) {
+            if (!$response->isSuccessful() || !is_array($data) || empty($data) || isset($data['error'])) {
                 $this->appLog([
-                    'message' => "No data returned for stock: {$symbol}",
+                    'message' => "No usable data returned for stock: {$symbol}",
+                    'status' => $response->getStatusCode(),
+                    'response' => $data,
                 ], 'warning');
                 return null;
+            }
+
+            foreach (['metaData', 'securityData', 'priceData'] as $section) {
+                if (!isset($data[$section]) || !is_array($data[$section])) {
+                    $this->appLog([
+                        'message' => "Incomplete stock data returned for stock: {$symbol}",
+                        'missing_section' => $section,
+                    ], 'warning');
+                    return null;
+                }
             }
                     
         } catch (\Exception $e) {
@@ -291,12 +303,12 @@ class StockControllerNew extends Controller
                 ->where('is_active', true);
 
             $dispatchedCount = 0;
-            $missedStocks->chunk(100, function ($stocks) use (&$dispatchedCount) {
+            $missedStocks->chunkById(100, function ($stocks) use (&$dispatchedCount) {
                 foreach ($stocks as $stock) {
                     ProcessStockData::dispatch($stock->symbol);
                     $dispatchedCount++;
                 }
-            });
+            }, 'sss.id', 'id');
         } catch (\Throwable $e) {
              return response()->json([
                 'result' => false,

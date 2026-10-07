@@ -1098,8 +1098,13 @@ class HomeController extends Controller
             ->orderBy('isl.issue_start_date')
             ->get();
         $closedIpoStockList = DB::table('s_ipo_stock_lists as isl')
+            ->leftJoin('s_stock_details as sd', function ($join) {
+                $join->on('sd.symbol', '=', 'isl.symbol')
+                    ->where('sd.is_active', true);
+            })
             ->where('isl.status', 'Closed')
             ->orderBy('isl.date_of_listing', 'desc')
+            ->select('isl.*', 'sd.stock_last_price as live_price')
             ->get();
 
         return view('ipo_stock_list', compact(
