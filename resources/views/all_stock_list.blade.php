@@ -179,7 +179,7 @@ use App\Http\Controllers\HomeController;
                         <p>{{ $watchListItem->company_name ?? '' }}</p>
                         <a
                           target="_blank"
-                          href="{{ url('stock-detail-view', ['stock_name' => $watchListItem->symbol]) }}"
+                          href="{{ route('stockDetailView', ['stock_name' => $watchListItem->symbol]) }}"
                         >
                           {{ $watchListItem->symbol }}
                         </a>

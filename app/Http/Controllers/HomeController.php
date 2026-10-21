@@ -636,8 +636,9 @@ class HomeController extends Controller
     {
         $today = $this->today;
         $lastFewDays = 5;
+        $recentDays = 3;
 
-        [$startDate, $endDate] = $this->nseStockController->getDateRange($lastFewDays);
+        [$startDate, $endDate] = $this->nseStockController->getDateRange($recentDays);
 
         $consecutiveSymbols = function (int $numberOfDays, string $condition, string $from, string $to) {
             return DB::table('s_stock_daily_price_data')
@@ -679,12 +680,12 @@ class HomeController extends Controller
         };
 
         [$lastFewDaysGainer, $lastFewGainerDates] = $groupedData(
-            $consecutiveSymbols($lastFewDays, 's_stock_daily_price_data.last_price > s_stock_daily_price_data.previous_close', $startDate, $endDate),
+            $consecutiveSymbols($recentDays, 's_stock_daily_price_data.last_price > s_stock_daily_price_data.previous_close', $startDate, $endDate),
             $startDate,
             $endDate
         );
         [$lastFewDaysLoser, $lastFewLoserDates] = $groupedData(
-            $consecutiveSymbols($lastFewDays, 's_stock_daily_price_data.last_price < s_stock_daily_price_data.previous_close', $startDate, $endDate),
+            $consecutiveSymbols($recentDays, 's_stock_daily_price_data.last_price < s_stock_daily_price_data.previous_close', $startDate, $endDate),
             $startDate,
             $endDate
         );
@@ -717,7 +718,9 @@ class HomeController extends Controller
             'lastFewDaysUpperCP',
             'lastFewDaysUpperCPDate',
             'lastFewDaysLowerCP',
-            'lastFewDaysLowerCPDate'
+            'lastFewDaysLowerCPDate',
+            $lastFewDays,
+            $recentDays
         );
 
         return view('last_few_days_stock', $compactData);

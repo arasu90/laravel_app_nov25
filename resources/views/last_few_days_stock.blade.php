@@ -108,7 +108,7 @@
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Last Few Days({{ count($lastFewDaysUpperCPDate) }}) Upper CP</h3>
+      <h3 class="tile-title">Last Few Days({{$lastFewDays}}) Upper CP</h3>
       <table class="table table-striped table-hover DefaultDataTable">
         <thead>
           <tr>
@@ -147,7 +147,7 @@
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Last Few Days({{ count($lastFewDaysLowerCPDate) }}) Lower CP</h3>
+      <h3 class="tile-title">Last Few Days({{$lastFewDays}}) Lower CP</h3>
       <table class="table table-striped table-hover DefaultDataTable">
         <thead>
           <tr>
@@ -186,7 +186,7 @@
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Last {{ count($lastFewGainerDates) }} days Gainer</h3>
+      <h3 class="tile-title">Last {{$recentDays}} days Gainer</h3>
       <table class="table table-striped table-hover DefaultDataTable">
         <thead>
           <tr class=" table-success">
@@ -225,7 +225,7 @@
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Last {{ count($lastFewLoserDates) }} days Loser</h3>
+      <h3 class="tile-title">Last {{$recentDays}} days Loser</h3>
       <table class="table table-striped table-hover DefaultDataTable">
         <thead>
           <tr class="table-danger">
