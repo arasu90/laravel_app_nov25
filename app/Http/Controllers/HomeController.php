@@ -719,8 +719,8 @@ class HomeController extends Controller
             'lastFewDaysUpperCPDate',
             'lastFewDaysLowerCP',
             'lastFewDaysLowerCPDate',
-            $lastFewDays,
-            $recentDays
+            'lastFewDays',
+            'recentDays'
         );
 
         return view('last_few_days_stock', $compactData);
