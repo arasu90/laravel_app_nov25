@@ -1079,11 +1079,14 @@ class HomeController extends Controller
         $indexDetails['data'] = $liveIndexStockList['data']['data'][0];
         $indexDetails['marketStatus'] = $liveIndexStockList['data']['marketStatus'];
         $indexDetails['timestamp'] = $liveIndexStockList['data']['timestamp'];
-        // dd($liveIndexStockList, $indexDetails);
 
         $indexStockList = array_slice( $liveIndexStockList['data']['data'], 1);
-        // dd($indexList, $nseIndex, $indexDetails, $indexStockList);
-        return view('view_all_index_live_stock', compact('indexList', 'nseIndex', 'indexDetails', 'indexStockList'));    
+
+        $indexDayRecords = NseIndexDayRecord::where('trade_date', $this->today)
+            ->where('index_symbol', $nseIndex)
+            ->orderBy('trade_date', 'desc')
+            ->get();
+        return view('view_all_index_live_stock', compact('indexList', 'nseIndex', 'indexDetails', 'indexStockList', 'indexDayRecords'));    
     }
 
     public function ipoStockList()

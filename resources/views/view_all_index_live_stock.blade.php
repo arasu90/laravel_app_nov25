@@ -73,6 +73,73 @@
         <table class="table table-striped DefaultDataTable">
           <thead>
             <tr>
+              <th>Date</th>
+              <th>Last Price</th>
+              <th>Change</th>
+              <th>Change %</th>
+              <th>Previous Close</th>
+              <th>Open</th>
+              <th>Close</th>
+              <th>Intra Day Low</th>
+              <th>Intra Day High</th>
+              <th>StocksAdvanceDeclineUnchanged</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach($indexDayRecords as $indexDayRecord)
+            <tr
+              class="{{ $indexDayRecord['value_p_change'] > 0
+                ? 'text-success'
+                : ($indexDayRecord['value_p_change'] < 0
+                  ? 'text-danger'
+                  : 'text-info')
+                }}">
+              <td>
+                {{ $indexDayRecord['trade_date'] }}
+              </td>
+              <td>
+                {{ $indexDayRecord['value_last'] }}
+              </td>
+              <td>{{ $indexDayRecord['value_change'] }}</td>
+              <td
+                class="{{ $indexDayRecord['value_p_change'] > 0
+                  ? 'table-success'
+                  : ($indexDayRecord['value_p_change'] < 0
+                    ? 'table-danger'
+                    : 'table-info')
+                  }}">
+                {{ $indexDayRecord['value_p_change'] }} %
+              </td>
+              <td>{{ $indexDayRecord['previous_close'] }}</td>
+              <td>{{ $indexDayRecord['value_open'] }}</td>
+              <td>
+                {{ $indexDayRecord['day_low'] }}
+              </td>
+              <td>
+                {{ $indexDayRecord['day_high'] }}
+              </td>
+              <td>
+                {{ $indexDayRecord['year_low'] }}
+              </td>
+              <td>
+                <p class="badge badge-success">Advances: {{ $indexDayRecord['advances'] }}</p>
+                <p class="badge badge-danger">Declines: {{ $indexDayRecord['declines'] }}</p>
+                <p class="badge badge-info">Unchanged: {{ $indexDayRecord['unchanged'] }}</p>
+              </td>
+            </tr>
+            @endforeach
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-12">
+    <div class="tile">
+      <h3 class="tile-title">Stock List for {{ $nseIndex }}</h3>
+      <div class="table-responsive table-hover table-striped">
+        <table class="table table-striped DefaultDataTable">
+          <thead>
+            <tr>
               <th>Stock</th>
               <th>Last Price</th>
               <th>Change</th>
@@ -95,7 +162,7 @@
                   : 'text-info')
                 }}">
               <td>
-                {{ $stock_daily_price_data['identifier'] }}
+                {{ $stock_daily_price_data['companyName'] }}
                 <p><a href="{{ route('stockDetailView', ['stock_name' => $stock_daily_price_data['symbol']]) }}" target="_blank">{{ $stock_daily_price_data['symbol'] }}</a></p>
               </td>
               <td>
