@@ -136,4 +136,15 @@ class NSEClientNew
     {
         return $this->request($this->baseUrl . "/public-past-issues");
     }
+
+    // fetching all available index names from nse api but not used in the application
+    public function getAllIndexNames()
+    {
+        return $this->request($this->baseUrl . "/index-names");
+    }
+
+    public function getNSEIndexAll()
+    {
+        return $this->request($this->baseUrl . "/allIndices");
+    }
 }

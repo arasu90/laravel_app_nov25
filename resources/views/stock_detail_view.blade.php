@@ -37,7 +37,12 @@
   @else
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title">Stock Detail View for {{ $stock_name }}</h3>
+      <h3 class="tile-title">
+        Stock Detail View for {{ $stock_name }}
+        <a href="inactive-stocks-web/{{ $stock_details->symbol }}" class="btn btn-link btn-sm text-danger float-right">
+          <i class="fa fa-trash-o"></i>
+        </a>
+      </h3>
       <div class="row">
         <div class="col-md-4">
           <div class="alert alert-primary">

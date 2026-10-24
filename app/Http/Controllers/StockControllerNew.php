@@ -15,8 +15,8 @@ use App\Models\StockDetails;
 use App\Models\StockDailyPriceData;
 use App\Models\StockHoliday;
 use App\Models\IpoStockList;
-// use App\Models\DailyStockJsonData;
-// use App\Models\NseIndexDayRecord;
+use App\Models\StockIndexName;
+use App\Models\NseIndexDayRecord;
 
 class StockControllerNew extends Controller
 {
@@ -431,6 +431,105 @@ class StockControllerNew extends Controller
             'inserted_count' => $insertCount,
             'updated_count' => $updateCount,
             'msg' => "Successfully inserted {$insertCount} and updated {$updateCount} IPO stocks",
+        ]);
+    }
+
+    public function getNSEIndexNamesFromNSE()
+    {
+        $response = $this->nseStockController->getNSEIndexNamesfromNSE()->getData(true);
+        if (!is_array($response) || empty($response)) {
+            return response()->json([
+                'result' => false,
+                'msg' => 'Unable to retrieve a valid NSE Index Names list for insertion.',
+            ], 502);
+        }
+
+        $insertCount = 0;
+        $updateCount = 0;
+        // dd($response);
+        foreach ($response as $indexData) {
+            if (empty($indexData['indexSymbol'])) {
+                continue;
+            }
+            // dd($indexData);
+            $indexRecord = StockIndexName::updateOrInsert(
+                ['index_symbol' => $indexData['indexSymbol']],
+                [
+                    'index_name' => $indexData['index'] ?? null,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+
+            // dd($indexRecord);
+
+            if ($indexRecord) {
+                $insertCount++;
+            } else {
+                $updateCount++;
+            }
+        }
+
+        return response()->json([
+            'result' => true,
+            'inserted_count' => $insertCount,
+            'updated_count' => $updateCount,
+            'msg' => "Successfully inserted {$insertCount} and updated {$updateCount} NSE Index Names",
+        ]);
+    }
+
+    public function getNSEIndexDataFromNSE()
+    {
+        $response = $this->nseStockController->getNSEIndexDatafromNSE()->getData(true);
+        // dd($response);
+        if (!is_array($response) || empty($response)) {
+            return response()->json([
+                'result' => false,
+                'msg' => 'Unable to retrieve a valid NSE Index Data list for insertion.',
+            ], 502);
+        }
+
+        $insertCount = 0;
+        $updateCount = 0;
+
+        foreach ($response as $indexData) {
+            if (empty($indexData['indexSymbol'])) {
+                continue;
+            }
+            // dd($indexData);
+            $indexRecord = NseIndexDayRecord::updateOrCreate(
+                ['index_symbol' => $indexData['indexSymbol'], 'trade_date' => $this->today],
+                [
+                    'value_last' => $indexData['last'] ?? null,
+                    'value_open' => $indexData['open'] ?? null,
+                    'day_high' => $indexData['high'] ?? null,
+                    'day_low' => $indexData['low'] ?? null,
+                    'value_change' => $indexData['variation'] ?? null,
+                    'value_p_change' => $indexData['percentChange'] ?? null,
+                    'previous_close' => $indexData['previousClose'] ?? null,
+                    'year_high' => $indexData['yearHigh'] ?? null,
+                    'year_low' => $indexData['yearLow'] ?? null,
+                    'declines' => $indexData['declines'] ?? 0,
+                    'advances' => $indexData['advances'] ?? 0,
+                    'unchanged' => $indexData['unchanged'] ?? 0,
+                    'is_active' => 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]
+            );
+
+            if ($indexRecord->wasRecentlyCreated) {
+                $insertCount++;
+            } else {
+                $updateCount++;
+            }
+        }
+
+        return response()->json([
+            'result' => true,
+            'inserted_count' => $insertCount,
+            'updated_count' => $updateCount,
+            'msg' => "Successfully inserted {$insertCount} and updated {$updateCount} NSE Index Data",
         ]);
     }
 }

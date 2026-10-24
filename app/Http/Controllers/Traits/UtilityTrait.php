@@ -91,6 +91,16 @@ trait UtilityTrait
                     'app_url' => '/insert-stock-daily-data',
                     'app_url_data' => '/insert-stock-daily-data',
                 ],
+                [
+                    'title' => 'View NSE Index Names',
+                    'app_url' => '/api/view-nse-index-names',
+                    'app_url_data' => '/api/view-nse-index-names',
+                ],
+                [
+                    'title' => 'View NSE Index Data',
+                    'app_url' => '/api/view-nse-index-data',
+                    'app_url_data' => '/api/view-nse-index-data',
+                ],
             ],
             'api_url' => [
                 [
@@ -127,6 +137,16 @@ trait UtilityTrait
                     'title' => 'Insert IPO Stock List',
                     'app_url' => '/api/insert-ipo-stock-list',
                     'app_url_data' => '/api/insert-ipo-stock-list',
+                ],
+                [
+                    'title' => 'Insert NSE Index Names',
+                    'app_url' => '/api/insert-nse-index-names',
+                    'app_url_data' => '/api/insert-nse-index-names',
+                ],
+                [
+                    'title' => 'Insert NSE Index Data',
+                    'app_url' => '/api/insert-nse-index-data',
+                    'app_url_data' => '/api/insert-nse-index-data',
                 ],
             ],
             'nse_url' => [

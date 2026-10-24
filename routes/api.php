@@ -24,3 +24,15 @@ Route::get('/ipo-stock-list', [StockControllerNew::class, 'ShowIpoStockListFromN
 
 // get and insert the ipo stock list into the database
 Route::get('/insert-ipo-stock-list', [StockControllerNew::class, 'getIpoStockListFromNSE']);
+
+// get and insert the NSE Index Names into the database
+Route::get('/insert-nse-index-names', [StockControllerNew::class, 'getNSEIndexNamesFromNSE']);
+
+// get and insert the NSE Index Data into the database
+Route::get('/insert-nse-index-data', [StockControllerNew::class, 'getNSEIndexDataFromNSE']);
+
+// get and insert the NSE Index Names into the database
+Route::get('/view-nse-index-names', [NSEStockControllerNew::class, 'getNSEIndexNamesFromNSE']);
+
+// get and insert the NSE Index Data into the database
+Route::get('/view-nse-index-data', [NSEStockControllerNew::class, 'getNSEIndexDataFromNSE']);

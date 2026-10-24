@@ -449,4 +449,56 @@ class NSEStockControllerNew extends Controller
         }
     }
 
+    public function getNSEIndexNamesFromNSE()
+    {
+        try {
+            $responseData = $this->nseClient->getNSEIndexAll();
+            $response = is_array($responseData) ? $responseData['data'] : [];
+            if (is_array($response)) {
+                return response()->json($response);
+            }
+
+            $this->appLog([
+                'message' => "Unexpected response structure from NSE API for all index names",
+                'response' => $response,
+            ], 'error');
+
+            return response()->json(['error' => self::NO_DATA_FOUND], 404);
+
+        } catch (\Exception $e) {
+            $this->appLog([
+                'message' => "Error fetching all index names from NSE API",
+                'error' => $e->getMessage(),
+            ], 'error');
+
+            return response()->json(['error' => self::NO_DATA_FOUND], 404);
+        }
+    }
+
+    public function getNSEIndexDataFromNSE()
+    {
+        try {
+            $responseData = $this->nseClient->getNSEIndexAll();
+            $response = is_array($responseData) ? $responseData['data'] : [];
+            
+            if (is_array($response)) {
+                return response()->json($response);
+            }
+
+            $this->appLog([
+                'message' => "Unexpected response structure from NSE API for all index data",
+                'response' => $response,
+            ], 'error');
+
+            return response()->json(['error' => self::NO_DATA_FOUND], 404);
+
+        } catch (\Exception $e) {
+            $this->appLog([
+                'message' => "Error fetching all index data from NSE API",
+                'error' => $e->getMessage(),
+            ], 'error');
+
+            return response()->json(['error' => self::NO_DATA_FOUND], 404);
+        }
+    }
 }

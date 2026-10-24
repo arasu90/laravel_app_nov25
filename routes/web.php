@@ -60,6 +60,8 @@ Route::get('/view-all-index-live', [HomeController::class, 'viewAllIndexLive'])-
 /*** IPO Stock List ***/
 Route::get('/ipo-stock-list', [HomeController::class, 'ipoStockList'])->name('ipoStockList');
 
+// one day view all index changes /*** One Day Index ***/
+Route::get('/one-day-index', [HomeController::class, 'oneDayIndex'])->name('oneDayIndex');
 
 /******* TESTING URL *******/
 // data table view

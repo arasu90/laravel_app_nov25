@@ -37,12 +37,12 @@
                 <span class="app-menu__label">All Stock List</span>
             </a>
         </li>   
-        <!-- <li>
+        <li>
             <a class="app-menu__item {{ Route::is('oneDayIndex') ? 'active' : '' }} " href="/one-day-index">
                 <i class="app-menu__icon fa fa-filter"></i>
-                <span class="app-menu__label">One Day Index--C</span>
+                <span class="app-menu__label">One Day Index</span>
             </a>
-        </li> -->
+        </li>
         <li>
             <a class="app-menu__item {{ Route::is('viewAllIndexLive') ? 'active' : '' }} " href="/view-all-index-live">
                 <i class="app-menu__icon fa fa-automobile"></i>
