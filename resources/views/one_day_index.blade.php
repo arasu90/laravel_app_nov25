@@ -22,13 +22,17 @@ $index_name = $request->input('index_name');
       <div class="tile-body">
         <form class="row" action="{{ route('oneDayIndex') }}" method="get">
           <div class="form-group col-md-3">
-            <label for="" class="control-label">Index Name</label>
-            <input
-              class="form-control"
-              type="text"
-              placeholder="Enter Index Name"
-              name="index_name"
-              value="{{ $index_name }}">
+            <label for="" class="control-label">Index List</label>
+            <select class="form-control select2" name="index_name">
+              <option value="">Select Index</option>
+              @foreach($indexListData as $index)
+              <option
+                value="{{ $index->index_symbol }}"
+                {{ $index->index_symbol == $indexName ? 'selected' : '' }}>
+                {{ $index->index_symbol }}
+              </option>
+              @endforeach
+            </select>
           </div>
           <div class="form-group col-md-3">
             <label for="" class="control-label">Sort by</label>
@@ -104,7 +108,8 @@ $index_name = $request->input('index_name');
       <div class="info-price">
         <h4>
           {{ $record->index_symbol }}
-          <i
+          <a href="{{ route('viewAllIndexLive', ['nse_index' => $record->index_symbol]) }}" title="View stock details" style="color: inherit; text-decoration: none;">
+            <i
             class="btn btn-sm fa fa-fw fa-lg
               {{ $record->value_p_change > 0
                ? 'fa-arrow-up'
@@ -112,6 +117,7 @@ $index_name = $request->input('index_name');
                 ? 'fa-arrow-down'
                 : 'fa-arrow-right')
               }}"></i>
+          </a>
         </h4>
         <span style="font-size: 0.6rem;">P.Close: {{ $record->previous_close }}</span>
         <div class="info-price">

@@ -9,14 +9,17 @@ use App\Http\Controllers\NSEStockController;
 
 trait DashboardTrait
 {
+    protected function today()
+    {
+        return (new NSEStockController())->today();
+    }
     // last tested on 23 Sep 2026 11:48 AM
     public function topGainerList(string $type)
     {
-        $today = (new NSEStockController())->today();
         $topGainerList = DB::table('s_stock_daily_price_data')
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
             ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
-            ->where('s_stock_daily_price_data.date', $today)
+            ->where('s_stock_daily_price_data.date', $this->today)
             ->where('s_stock_symbols.is_active', true)
             ->select(
                 's_stock_daily_price_data.symbol',
@@ -42,11 +45,10 @@ trait DashboardTrait
     // last tested on 23 Sep 2026 11:48 AM
     public function topLooserList(string $type)
     {
-        $today = (new NSEStockController())->today();
         $topGainerList = DB::table('s_stock_daily_price_data')
             ->join('s_stock_symbols', 's_stock_symbols.symbol', '=', 's_stock_daily_price_data.symbol')
             ->join('s_stock_details', 's_stock_details.symbol', '=', 's_stock_symbols.symbol')
-            ->where('s_stock_daily_price_data.date', $today)
+            ->where('s_stock_daily_price_data.date', $this->today)
             ->where('s_stock_symbols.is_active', true)
             ->select(
                 's_stock_daily_price_data.symbol',
@@ -152,5 +154,13 @@ trait DashboardTrait
             ->orderBy('lp.p_change', $orderByPChange)
             ->limit(10)
             ->get();
+    }
+
+    public function getNseIndexData($indexSymbol = 'NIFTY 50')
+    {
+        $nseIndexData = NseIndexDayRecord::where('trade_date', $this->today)
+            ->where('index_symbol', $indexSymbol)
+            ->first();
+        return $nseIndexData;
     }
 }

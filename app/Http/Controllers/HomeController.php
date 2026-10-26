@@ -23,6 +23,7 @@ use App\Models\StockDailyPriceData;
 use App\Models\MyWatchList;
 use App\Models\MyPortfolioStock;
 use App\Models\NseIndexDayRecord;
+use App\Models\StockIndexName;
 
 class HomeController extends Controller
 {
@@ -50,8 +51,8 @@ class HomeController extends Controller
             'topLooserChange'  => $this->topLooserList('price'),
             'week52High'       => $this->week52HighLow('high'),
             'week52Low'        => $this->week52HighLow('low'),
-            'nifty50Index'    => 0,
-            'indexVix'        => 0,
+            'nifty50Index'    => $this->getNseIndexData(),
+            'indexVix'        => $this->getNseIndexData('INDIA VIX'),
         ]);
     }
 
@@ -1123,6 +1124,7 @@ class HomeController extends Controller
         $today = $this->today;
         $record_date = $today;
 
+        $indexListData = StockIndexName::where('is_active', true)->get();
         $sort_by_column = match($sort_by) {
             'top_gain_asc' => [
                 'column' => 'value_p_change',
@@ -1179,11 +1181,11 @@ class HomeController extends Controller
             // ->orderBy('s_stock_daily_price_data.p_change', 'desc')
             ->orderBy($sort_by_column['column'], $sort_by_column['order']);
         if(!empty($indexName)):
-            $day_records = $day_records->where('index_symbol', 'like', '%'.$indexName.'%');
+            $day_records = $day_records->where('index_symbol',$indexName);
         endif;
 
         $day_records = $day_records->get();
-        return view('one_day_index', compact('day_records', 'record_date'));
+        return view('one_day_index', compact('day_records', 'record_date', 'indexListData', 'sort_by', 'indexName'));
     }
 
 }

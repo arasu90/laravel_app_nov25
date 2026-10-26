@@ -6,7 +6,7 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-md-6 col-lg-3">
+  <div class="col-md-6 col-lg-4">
     <div class="widget-small info coloured-icon"><i class="icon fa fa-users fa-3x"></i>
       <div class="info">
         <h4>Total Stocks</h4>
@@ -14,7 +14,7 @@
       </div>
     </div>
   </div>
-  <div class="col-md-6 col-lg-3">
+  <div class="col-md-6 col-lg-4">
     <div class="widget-small {{ optional($nifty50Index)->value_p_change > 0 ? 'primary' : 'danger' }} coloured-icon"><i class="icon fa fa-users fa-3x"></i>
       <div class="info">
         <h4>{{ optional($nifty50Index)->index_symbol }}</h4>
@@ -22,7 +22,7 @@
       </div>
     </div>
   </div>
-  <div class="col-md-6 col-lg-3">
+  <div class="col-md-6 col-lg-4">
     <div class="widget-small {{ optional($indexVix)->value_p_change > 0 ? 'primary' : 'danger' }} coloured-icon"><i class="icon fa fa-users fa-3x"></i>
       <div class="info">
         <h4>{{ optional($indexVix)->index_symbol }}</h4>
