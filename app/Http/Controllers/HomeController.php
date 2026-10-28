@@ -443,7 +443,7 @@ class HomeController extends Controller
             )
             ->groupBy('s_stock_daily_price_data.symbol', 's_stock_details.company_name', 's_stock_daily_price_data.date', 's_stock_daily_price_data.last_price', 's_stock_daily_price_data.change', 's_stock_daily_price_data.p_change')
             ->orderBy('s_stock_daily_price_data.symbol')
-            ->orderBy('s_stock_daily_price_data.date')
+            ->orderBy('s_stock_daily_price_data.date', 'desc')
             ->get();
 
         // 3️⃣ Transform into pivot data
@@ -1083,8 +1083,7 @@ class HomeController extends Controller
 
         $indexStockList = array_slice( $liveIndexStockList['data']['data'], 1);
 
-        $indexDayRecords = NseIndexDayRecord::where('trade_date', $this->today)
-            ->where('index_symbol', $nseIndex)
+        $indexDayRecords = NseIndexDayRecord::where('index_symbol', $nseIndex)
             ->orderBy('trade_date', 'desc')
             ->get();
         return view('view_all_index_live_stock', compact('indexList', 'nseIndex', 'indexDetails', 'indexStockList', 'indexDayRecords'));    

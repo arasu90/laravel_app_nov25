@@ -73,10 +73,10 @@
         <table class="table table-striped DefaultDataTable">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Last Price</th>
+              <th>TradeDate</th>
+              <th>LastPrice</th>
               <th>Change</th>
-              <th>Change %</th>
+              <th>Change(%)</th>
               <th>Previous Close</th>
               <th>Open</th>
               <th>Close</th>
@@ -141,9 +141,9 @@
           <thead>
             <tr>
               <th>Stock</th>
-              <th>Last Price</th>
+              <th>LastPrice</th>
               <th>Change</th>
-              <th>Change %</th>
+              <th>Change%</th>
               <th>Previous Close</th>
               <th>Open</th>
               <th>Intra Day Low</th>
