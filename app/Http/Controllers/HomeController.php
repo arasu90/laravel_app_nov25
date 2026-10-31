@@ -16,6 +16,7 @@ use App\Http\Controllers\Traits\ApplicationTrait;
 use App\Http\Controllers\NSEStockControllerNew;
 use App\Services\HelperServices;
 
+use App\Models\Account;
 use App\Models\StockSymbol;
 use App\Models\StockHoliday;
 use App\Models\StockDetails;
@@ -531,7 +532,8 @@ class HomeController extends Controller
                     ->where('dp.date', $today);
             })
             ->where('s.is_active', true)
-            ->where('p.portfolio_type',2)
+            ->where('p.portfolio_type', 2)
+            ->where('p.is_active', true)
             ->select(
                 'p.symbol',
                 'd.company_name',
@@ -613,24 +615,52 @@ class HomeController extends Controller
     // last tested on 06 Sep 2026 11:48 AM
     public function addMyPortfolio(Request $request)
     {
-        $portfolio_type = $request->input('portfolio_type') ?? 1;
-        $request->validate([
+        $portfolio_type = (int) $request->input('portfolio_type');
+        $rules = [
+            'portfolio_type' => ['required', 'integer', 'in:1,2'],
             'stock_name' => 'required',
             'buy_qty' => 'required|numeric|min:1',
             'buy_price' => 'required|numeric|min:0',
-            'buy_date' => 'required|date'
-        ]);
+            'buy_date' => 'required|date',
+            'account_type' => ['nullable', 'integer'],
+        ];
+
+        if ($portfolio_type === 1) {
+            $rules['account_type'] = [
+                'required',
+                'integer',
+                'exists:accounts,id,is_active,1',
+            ];
+        }
+
+        $validated = $request->validate($rules);
 
         MyPortfolioStock::create([
-            'symbol' => $request->stock_name,
-            'buy_price' => $request->buy_price,
-            'buy_qty' => $request->buy_qty,
-            'buy_date' => date('Y-m-d', strtotime($request->buy_date)),
-            'portfolio_type' => $portfolio_type
+            'symbol' => $validated['stock_name'],
+            'buy_price' => $validated['buy_price'],
+            'buy_qty' => $validated['buy_qty'],
+            'buy_date' => date('Y-m-d', strtotime($validated['buy_date'])),
+            'portfolio_type' => $portfolio_type,
+            'account_type' => $validated['account_type'] ?? null,
+            'user_id' => auth()->id(),
         ]);
         
         return redirect()->back()
             ->with('success', 'Stock added to portfolio successfully');
+    }
+
+    public function deletePortfolioRecord(int $accountType, int $record)
+    {
+        $portfolioStock = MyPortfolioStock::query()
+            ->whereKey($record)
+            ->where('portfolio_type', 1)
+            ->where('account_type', $accountType)
+            ->firstOrFail();
+
+        $portfolioStock->delete();
+
+        return redirect()->route('myPortfolio')
+            ->with('success', 'Portfolio purchase record deleted successfully.');
     }
 
     // last tested on 23 Sep 2026 11:48 AM
@@ -738,29 +768,62 @@ class HomeController extends Controller
 
         $today = $this->today;
 
+        $latestPriceDates = DB::table('s_stock_daily_price_data')
+            ->select('symbol', DB::raw('MAX(date) as latest_date'))
+            ->where('date', '<=', $today)
+            ->groupBy('symbol');
+
         $myPortfolioStocks = DB::table('s_portfolio_stocks as p')
             ->join('s_stock_symbols as s', 's.symbol', '=', 'p.symbol')
             ->join('s_stock_details as d', 'd.symbol', '=', 's.symbol')
-            ->join('s_stock_daily_price_data as dp', function($join) use ($today) {
-                $join->on('dp.symbol', '=', 'p.symbol')
-                    ->where('dp.date', $today);
+            ->leftJoinSub($latestPriceDates, 'latest_price_dates', function ($join) {
+                $join->on('latest_price_dates.symbol', '=', 'p.symbol');
+            })
+            ->leftJoin('s_stock_daily_price_data as dp', function ($join) {
+                $join->on('dp.symbol', '=', 'latest_price_dates.symbol')
+                    ->on('dp.date', '=', 'latest_price_dates.latest_date');
             })
             ->where('s.is_active', true)
-            ->where('p.portfolio_type',1)
+            ->where('p.is_active', true)
+            ->where('p.portfolio_type', 1)
             ->select(
+                'p.account_type',
                 'p.symbol',
                 'd.company_name',
+                'd.stock_last_price as live_price',
                 DB::raw('SUM(p.buy_qty) as total_qty'),
                 DB::raw('ROUND(SUM(p.buy_qty * p.buy_price)/SUM(p.buy_qty), 2) as avg_buy_price'),
+                DB::raw('SUM(p.buy_qty * p.buy_price) as invested_amount'),
+                DB::raw('SUM(p.buy_qty * dp.last_price) as live_value'),
+                DB::raw('(SUM(p.buy_qty * dp.last_price) - SUM(p.buy_qty * p.buy_price)) as overall_profit_loss'),
+                DB::raw('SUM(p.buy_qty * dp.change) as today_profit_loss'),
+                DB::raw('SUM(p.buy_qty * dp.previous_close) as previous_close_value'),
                 'dp.last_price',
                 'dp.change',
-                'dp.p_change'
+                'dp.p_change',
+                'dp.date as price_date'
             )
-            ->groupBy('p.symbol', 'd.company_name', 'dp.last_price', 'dp.change', 'dp.p_change')
+            ->groupBy('p.account_type', 'p.symbol', 'd.company_name', 'd.stock_last_price', 'dp.last_price', 'dp.change', 'dp.p_change', 'dp.date')
             ->orderBy('p.symbol', 'asc')
             ->get();
 
-        return view('my_portfolio', compact('stock_list', 'myPortfolioStocks'));
+        $account_list = Account::where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
+        $myPortfolioStocks = $myPortfolioStocks->groupBy('account_type');
+        $portfolioLots = DB::table('s_portfolio_stocks')
+            ->where('is_active', true)
+            ->where('portfolio_type', 1)
+            ->whereNotNull('account_type')
+            ->select('id', 'account_type', 'symbol', 'buy_date', 'buy_qty', 'buy_price')
+            ->orderBy('buy_date')
+            ->orderBy('id')
+            ->get()
+            ->groupBy('account_type')
+            ->map(fn ($accountLots) => $accountLots->groupBy('symbol'));
+
+        return view('my_portfolio', compact('stock_list', 'myPortfolioStocks', 'account_list', 'portfolioLots'));
     }
 
     // last tested on 23 Sep 2026 11:48 AM
@@ -821,19 +884,25 @@ class HomeController extends Controller
         $priceMax = $request->input('price_max');
         $today = $this->today;
 
+        $latestPriceDates = DB::table('s_stock_daily_price_data')
+            ->select('symbol', DB::raw('MAX(date) as latest_date'))
+            ->where('date', '<=', $today)
+            ->groupBy('symbol');
+
         $selectColumns = [
             's_stock_symbols.symbol',
             's_stock_details.company_name',
-            's_stock_daily_price_data.last_price',
-            's_stock_daily_price_data.change',
-            's_stock_daily_price_data.p_change',
-            's_stock_daily_price_data.previous_close',
-            's_stock_daily_price_data.open',
-            's_stock_daily_price_data.close',
-            's_stock_daily_price_data.lower_cp',
-            's_stock_daily_price_data.upper_cp',
-            's_stock_daily_price_data.intra_day_high_low_min',
-            's_stock_daily_price_data.intra_day_high_low_max',
+            DB::raw('COALESCE(dp.last_price, s_stock_details.stock_last_price) as last_price'),
+            'dp.change',
+            'dp.p_change',
+            'dp.previous_close',
+            'dp.open',
+            'dp.close',
+            'dp.lower_cp',
+            'dp.upper_cp',
+            'dp.intra_day_high_low_min',
+            'dp.intra_day_high_low_max',
+            'dp.date as price_date',
             's_stock_details.week_high_low_min',
             's_stock_details.week_high_low_min_date',
             's_stock_details.week_high_low_max',
@@ -842,18 +911,18 @@ class HomeController extends Controller
 
         $baseQuery = DB::table('s_stock_symbols')
             ->join(
-                's_stock_daily_price_data',
-                's_stock_daily_price_data.symbol',
-                '=',
-                's_stock_symbols.symbol'
-            )
-            ->join(
                 's_stock_details',
                 's_stock_details.symbol',
                 '=',
                 's_stock_symbols.symbol'
             )
-            ->where('s_stock_daily_price_data.date', $today)
+            ->leftJoinSub($latestPriceDates, 'latest_price_dates', function ($join) {
+                $join->on('latest_price_dates.symbol', '=', 's_stock_symbols.symbol');
+            })
+            ->leftJoin('s_stock_daily_price_data as dp', function ($join) {
+                $join->on('dp.symbol', '=', 'latest_price_dates.symbol')
+                    ->on('dp.date', '=', 'latest_price_dates.latest_date');
+            })
             ->where('s_stock_symbols.is_active', true)
             ->when($stockName, function ($query) use ($stockName) {
                 $query->where('s_stock_symbols.symbol', $stockName);
@@ -862,7 +931,7 @@ class HomeController extends Controller
                 !$stockName && $priceMin !== null && $priceMax !== null,
                 function ($query) use ($priceMin, $priceMax) {
                     $query->whereBetween(
-                        's_stock_daily_price_data.last_price',
+                        DB::raw('COALESCE(dp.last_price, s_stock_details.stock_last_price)'),
                         [$priceMin, $priceMax]
                     );
                 }
@@ -889,7 +958,9 @@ class HomeController extends Controller
             ];
 
             // dd($filter_type, $allowedGroupColumns);
-            $groupColumn = $filter_type ?? 'sector';
+            $groupColumn = in_array($filter_type, $allowedGroupColumns, true)
+                ? $filter_type
+                : 'sector';
             $groups = StockDetails::query()
                
                 ->selectRaw(
@@ -912,8 +983,8 @@ class HomeController extends Controller
                         $query->whereNull($groupColumn);
                     })
                     ->select($selectColumns)
-                    ->orderBy('s_stock_daily_price_data.last_price')
-                    ->orderBy('s_stock_daily_price_data.p_change')
+                    ->orderByRaw('COALESCE(dp.last_price, s_stock_details.stock_last_price)')
+                    ->orderBy('dp.p_change')
                     ->get();
 
                 if ($stockList->isNotEmpty()) {
@@ -1025,21 +1096,21 @@ class HomeController extends Controller
 
                 if ($group['max'] === null) {
                     $query->where(
-                        's_stock_daily_price_data.last_price',
+                        DB::raw('COALESCE(dp.last_price, s_stock_details.stock_last_price)'),
                         '>',
                         $group['min']
                     );
                 } else {
                     $query->whereBetween(
-                        's_stock_daily_price_data.last_price',
+                        DB::raw('COALESCE(dp.last_price, s_stock_details.stock_last_price)'),
                         [$group['min'], $group['max']]
                     );
                 }
 
                 $stockList = $query
                     ->select($selectColumns)
-                    ->orderBy('s_stock_daily_price_data.last_price')
-                    ->orderBy('s_stock_daily_price_data.p_change')
+                    ->orderByRaw('COALESCE(dp.last_price, s_stock_details.stock_last_price)')
+                    ->orderBy('dp.p_change')
                     ->get();
 
                 if ($stockList->isNotEmpty()) {

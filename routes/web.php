@@ -41,6 +41,10 @@ Route::get('/my-portfolio', [HomeController::class, 'myPortfolio'])->name('myPor
 
 // add my portfolio stocks
 Route::post('/add-my-portfolio', [HomeController::class, 'addMyPortfolio'])->name('addMyPortfolio');
+Route::delete('/my-portfolio/{accountType}/records/{record}', [HomeController::class, 'deletePortfolioRecord'])
+    ->whereNumber('accountType')
+    ->whereNumber('record')
+    ->name('deletePortfolioRecord');
 
 /*** My WatchList ***/
 Route::get('/my-watch-list', [HomeController::class, 'myWatchList'])->name('myWatchList');

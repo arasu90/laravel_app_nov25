@@ -42,6 +42,13 @@
         <a href="inactive-stocks-web/{{ $stock_details->symbol }}" class="btn btn-link btn-sm text-danger float-right">
           <i class="fa fa-trash-o"></i>
         </a>
+        <a href="{{ url('update-stock-data/' . $stock_details->symbol) }}"
+           class="btn btn-link btn-sm text-success float-right"
+           id="refresh-stock-data"
+           aria-label="Refresh stock data"
+           title="Refresh stock data">
+          <i class="fa fa-refresh"></i>
+        </a>
       </h3>
       <div class="row">
         <div class="col-md-4">
@@ -231,4 +238,40 @@
   });
 </script>
 @endif
+<script>
+  var refreshStockDataLink = document.getElementById('refresh-stock-data');
+
+  if (refreshStockDataLink) {
+    refreshStockDataLink.addEventListener('click', function (event) {
+      event.preventDefault();
+
+      var refreshIcon = refreshStockDataLink.querySelector('i');
+      refreshStockDataLink.classList.add('disabled');
+      refreshStockDataLink.setAttribute('aria-disabled', 'true');
+      refreshIcon.classList.add('fa-spin');
+
+      fetch(refreshStockDataLink.href, {
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(function (response) {
+          if (!response.ok) {
+            return response.json().then(function (data) {
+              throw new Error(data.message || data.msg || 'Unable to refresh stock data.');
+            });
+          }
+
+          return response.json();
+        })
+        .then(function () {
+          window.location.reload();
+        })
+        .catch(function (error) {
+          window.alert(error.message || 'Unable to refresh stock data.');
+          refreshStockDataLink.classList.remove('disabled');
+          refreshStockDataLink.removeAttribute('aria-disabled');
+          refreshIcon.classList.remove('fa-spin');
+        });
+    });
+  }
+</script>
 @endsection

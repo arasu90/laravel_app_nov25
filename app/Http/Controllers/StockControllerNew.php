@@ -132,7 +132,9 @@ class StockControllerNew extends Controller
                     'status' => $response->getStatusCode(),
                     'response' => $data,
                 ], 'warning');
-                return null;
+                return response()->json([
+                    'message' => "Unable to refresh stock data for {$symbol}.",
+                ], 502);
             }
 
             foreach (['metaData', 'securityData', 'priceData'] as $section) {
@@ -141,7 +143,9 @@ class StockControllerNew extends Controller
                         'message' => "Incomplete stock data returned for stock: {$symbol}",
                         'missing_section' => $section,
                     ], 'warning');
-                    return null;
+                    return response()->json([
+                        'message' => "Stock data for {$symbol} is incomplete. Please try again.",
+                    ], 502);
                 }
             }
                     

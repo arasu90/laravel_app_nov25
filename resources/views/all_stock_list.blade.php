@@ -184,21 +184,36 @@ use App\Http\Controllers\HomeController;
                           {{ $watchListItem->symbol }}
                         </a>
                       </td>
-                      <td>{{ $watchListItem->last_price }}</td>
+                      <td>
+                        {{ $watchListItem->last_price ?? 'Unavailable' }}
+                        @if ($watchListItem->price_date)
+                          <small class="d-block text-muted">Data date: {{ $watchListItem->price_date }}</small>
+                        @else
+                          <small class="d-block text-muted">Using stock details price</small>
+                        @endif
+                      </td>
                       <td class="{{ $priceClass }}">
-                        {{ $watchListItem->change }} ({{ $watchListItem->p_change }} %)<br>
-                        P.Close: {{ $watchListItem->previous_close }}<br>
-                        Open: {{ $watchListItem->open }}<br>
-                        Close: {{ $watchListItem->close }}
+                        @if ($watchListItem->price_date)
+                          {{ $watchListItem->change }} ({{ $watchListItem->p_change }} %)<br>
+                          P.Close: {{ $watchListItem->previous_close }}<br>
+                          Open: {{ $watchListItem->open }}<br>
+                          Close: {{ $watchListItem->close }}
+                        @else
+                          Daily price details unavailable
+                        @endif
                       </td>
                       <td>
-                        @if ($watchListItem->lower_cp)
-                          Lower CP: {{ $watchListItem->lower_cp }}<br>
-                        @endif
-                        Low: {{ $watchListItem->intra_day_high_low_min }}<br>
-                        High: {{ $watchListItem->intra_day_high_low_max }}
-                        @if ($watchListItem->upper_cp)
-                          <br>Upper CP: {{ $watchListItem->upper_cp }}
+                        @if (!$watchListItem->price_date)
+                          Daily price details unavailable
+                        @else
+                          @if ($watchListItem->lower_cp)
+                            Lower CP: {{ $watchListItem->lower_cp }}<br>
+                          @endif
+                          Low: {{ $watchListItem->intra_day_high_low_min }}<br>
+                          High: {{ $watchListItem->intra_day_high_low_max }}
+                          @if ($watchListItem->upper_cp)
+                            <br>Upper CP: {{ $watchListItem->upper_cp }}
+                          @endif
                         @endif
                       </td>
                       <td>
